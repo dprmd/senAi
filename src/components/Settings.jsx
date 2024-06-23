@@ -2,7 +2,7 @@ export default function Settings({ model, setModel, handleGearMenuClicked }) {
   return (
     <div className="absolute top-0 left-0 right-0 bottom-0 bg-colorLight dark:bg-colorDark text-slate-900 dark:text-slate-100 z-10 simetris flex justify-center items-center">
       <i
-        className="bi bi-x-lg absolute top-0 right-0 px-4 py-3 text-xl"
+        className="bi bi-x-lg absolute top-0 right-0 px-4 py-3 text-xl cursor-pointer"
         onClick={handleGearMenuClicked}
       ></i>
       <form>
@@ -23,6 +23,7 @@ export default function Settings({ model, setModel, handleGearMenuClicked }) {
             <option value="gemma-7b-it">gemma-7b-it</option>
             <option value="llama3-70b-8192">llama3-70b-8192</option>
             <option value="llama3-8b-8192">llama3-8b-8192</option>
+            <option value="mixtral-8x7b-32768">mixtral-8x7b-32768</option>
           </select>
         </div>
       </form>

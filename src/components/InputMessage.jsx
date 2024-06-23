@@ -1,35 +1,24 @@
 import EmojiPicker from "emoji-picker-react";
 import { useRef, useState, memo, useEffect } from "react";
 
-export default function InputMessage({ handleSubmit, showPP, showSenInfo }) {
+export default function InputMessage({
+  handleSubmit,
+  showPP,
+  showSenInfo,
+  darkMode,
+}) {
   const MemoEmojiPicker = memo(EmojiPicker);
   const hiddenForm = showPP || showSenInfo ? "hidden" : "inline-block";
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
   const pesanref = useRef(null);
-  const [isDarkMode, setIsDarkMode] = useState(null);
 
   const handleEmojiClick = (emojiObj) => {
     pesanref.current.value += emojiObj.emoji;
   };
 
-  const getPreferredColorScheme = () => {
-    if (window.matchMedia) {
-      if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-        return true;
-      } else {
-        return false;
-      }
-    }
-    return false;
-  };
-
-  useEffect(() => {
-    setIsDarkMode(getPreferredColorScheme());
-  }, []);
-
   return (
     <form
-      className={`fixed bottom-0 w-screen duration-500 origin-l bg-colorLight dark:bg-colorDark text-slate-900 dark:text-slate-100 ${hiddenForm}`}
+      className={`fixed bottom-0 w-screen origin-l bg-colorLight dark:bg-colorDark text-slate-900 dark:text-slate-100 ${hiddenForm}`}
       onSubmit={(e) => {
         e.preventDefault();
         handleSubmit();
@@ -66,7 +55,7 @@ export default function InputMessage({ handleSubmit, showPP, showSenInfo }) {
             onEmojiClick={handleEmojiClick}
             autoFocusSearch={false}
             searchDisabled={true}
-            theme={isDarkMode ? "dark" : "light"}
+            theme={darkMode ? "dark" : "light"}
             emojiStyle="google"
             suggestedEmojisMode="recent"
             lazyLoadEmojis={true}

@@ -3,7 +3,7 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { tomorrow } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 const chatStyle =
-  "font-inter leading-loose text-sm w-fit h-fit px-2 py-1 mt-3 inline-block rounded-bl-xl rounded-br-xl text-clip";
+  "font-inter leading-loose text-sm w-fit h-fit px-3 py-1 mt-3 inline-block rounded-bl-xl rounded-br-xl text-clip";
 
 export default function Body({ messages, endChat }) {
   return (

@@ -21,6 +21,8 @@ function App() {
     ? localStorage.getItem("model")
     : "llama3-8b-8192";
   const [model, setModel] = useState(defaultModel);
+  const isDarkMode = localStorage.getItem("theme") === "dark" ? true : false;
+  const [darkMode, setDarkMode] = useState(isDarkMode);
 
   const scrollEndChat = () => {
     endChat.current.scrollIntoView({ behavior: "smooth" });
@@ -69,12 +71,15 @@ function App() {
         showPP={showPP}
         setShowPP={setShowPP}
         handleGearMenuClicked={handleGearMenuClicked}
+        darkMode={darkMode}
+        setDarkMode={setDarkMode}
       />
       <Body messages={messages} setMessages={setMessages} endChat={endChat} />
       <InputMessage
         handleSubmit={handleSubmit}
         showPP={showPP}
         showSenInfo={showSenInfo}
+        darkMode={darkMode}
       />
     </div>
   );

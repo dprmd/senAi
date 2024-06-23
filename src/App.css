@@ -1,14 +1,5 @@
 body {
-  @apply bg-[#222222] text-slate-100 overflow-x-hidden;
-}
-
-header,
-form .input-message {
-  @apply bg-[#222222];
-}
-
-form #pesan {
-  @apply bg-stone-700;
+  @apply overflow-x-hidden bg-colorLight dark:bg-colorDark text-slate-900 dark:text-slate-100;
 }
 
 .simetris {
@@ -16,7 +7,7 @@ form #pesan {
 }
 
 .debug {
-  @apply border border-slate-100;
+  @apply border border-slate-900 dark:border-slate-100;
 }
 
 .disable-zoom {

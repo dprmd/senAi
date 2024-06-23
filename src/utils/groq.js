@@ -7,7 +7,7 @@ const groq = new Groq({
   dangerouslyAllowBrowser: true,
 });
 
-export const requestToGroq = async (pesan) => {
+export const requestToGroq = async (pesan, model) => {
   const balasan = await groq.chat.completions.create({
     messages: [
       {
@@ -15,7 +15,7 @@ export const requestToGroq = async (pesan) => {
         content: pesan,
       },
     ],
-    model: "llama3-8b-8192",
+    model: model,
   });
   return balasan.choices[0].message.content;
 };

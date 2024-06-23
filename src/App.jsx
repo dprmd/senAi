@@ -5,6 +5,7 @@ import Body from "./components/Body";
 import InputMessage from "./components/InputMessage";
 import useOnlineStatus from "./hooks/getOnlineStatus";
 import "./App.css";
+import Settings from "./components/Settings";
 
 let tempMessages = [];
 
@@ -15,6 +16,11 @@ function App() {
   const endChat = useRef(null);
   const [showSenInfo, setShowSenInfo] = useState(false);
   const [showPP, setShowPP] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const defaultModel = localStorage.getItem("model")
+    ? localStorage.getItem("model")
+    : "llama3-8b-8192";
+  const [model, setModel] = useState(defaultModel);
 
   const scrollEndChat = () => {
     endChat.current.scrollIntoView({ behavior: "smooth" });
@@ -29,7 +35,7 @@ function App() {
     tempMessages.push(message);
     setMessages(tempMessages);
     let reply;
-    if (online) reply = await requestToGroq(message);
+    if (online) reply = await requestToGroq(message, model);
     else reply = "Please check your internet connection...";
     tempMessages.push(reply);
     setMessages(tempMessages);
@@ -42,8 +48,19 @@ function App() {
     setMessages([]);
   };
 
+  const handleGearMenuClicked = () => {
+    setShowSettings(!showSettings);
+  };
+
   return (
     <div>
+      {showSettings ? (
+        <Settings
+          model={model}
+          setModel={setModel}
+          handleGearMenuClicked={handleGearMenuClicked}
+        />
+      ) : null}
       <Header
         senTyping={senTyping}
         handleClearMessages={handleClearMessages}
@@ -51,6 +68,7 @@ function App() {
         setShowSenInfo={setShowSenInfo}
         showPP={showPP}
         setShowPP={setShowPP}
+        handleGearMenuClicked={handleGearMenuClicked}
       />
       <Body messages={messages} setMessages={setMessages} endChat={endChat} />
       <InputMessage

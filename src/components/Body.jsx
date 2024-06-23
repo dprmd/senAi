@@ -9,7 +9,7 @@ export default function Body({ messages, endChat }) {
   return (
     <main>
       {messages.length === 0 ? (
-        <span className="text-center inline-block w-screen mt-4 text-xl font-thin italic">
+        <span className="text-center inline-block w-screen text-xl font-thin italic mt-8">
           No Messages
         </span>
       ) : (
@@ -20,8 +20,8 @@ export default function Body({ messages, endChat }) {
                 <li
                   className={`${chatStyle} ${
                     (i + 1) % 2 === 0
-                      ? "self-start rounded-tr-xl bg-stone-700"
-                      : "self-end rounded-tl-xl bg-green-800"
+                      ? "self-start rounded-tr-xl bg-stone-300 dark:bg-stone-700 mr-4"
+                      : "self-end rounded-tl-xl bg-green-300 dark:bg-green-800 ml-4"
                   }`}
                   key={i}
                 >

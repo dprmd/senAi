@@ -1,7 +1,7 @@
 import useOnlineStatus from "../../hooks/getOnlineStatus";
 
 const infoStyle =
-  "disable-zoom fixed top-0 bottom-0 left-0 right-0 bg-stone-800 bg-opacity-50 backdrop-blur-sm md:flex md:items-center";
+  "disable-zoom fixed top-0 bottom-0 left-0 right-0 bg-stone-100 dark:bg-stone-800 bg-opacity-50 dark:bg-opacity-50 backdrop-blur-sm md:flex md:items-center";
 const upperStyle = "font-inter block my-[2px] text-center text-lg font-bold";
 const lowerStyle = "font-inter block my-[2px] text-center font-thin mb-2";
 

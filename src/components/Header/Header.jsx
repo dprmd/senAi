@@ -8,9 +8,10 @@ export default function Header({
   setShowSenInfo,
   showPP,
   setShowPP,
+  handleGearMenuClicked,
 }) {
   return (
-    <header className="flex items-center justify-between simetris border-b border-b-slate-600 sticky top-0">
+    <header className="flex items-center justify-between simetris border-b border-b-slate-600 sticky top-0 bg-colorLight text-slate-900 dark:bg-colorDark dark:text-slate-100">
       <div className="flex items-center flex-1">
         <ProfilePhoto showPP={showPP} setShowPP={setShowPP} />
         <SenStatus
@@ -21,11 +22,13 @@ export default function Header({
       </div>
       <div>
         <button
-          className="text-sm border border-slate-600 px-3 py-2 rounded-xl duration-1000 active:bg-slate-100 active:text-slate-900 cursor-pointer font-poppins"
+          className="bi bi-trash3-fill px-3 py-1 text-slate-900 fill-current dark:text-slate-300"
           onClick={handleClearMessages}
-        >
-          Clear Chat
-        </button>
+        ></button>
+        <button
+          className="  bi bi-gear-fill px-3 py-1 text-slate-900 fill-current dark:text-slate-300"
+          onClick={handleGearMenuClicked}
+        ></button>
       </div>
     </header>
   );

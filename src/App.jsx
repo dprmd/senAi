@@ -16,6 +16,8 @@ function App() {
   const endChat = useRef(null);
   const [showSenInfo, setShowSenInfo] = useState(false);
   const [showPP, setShowPP] = useState(false);
+  const [showAskBoxWhenClearMessages, setShowAskBoxWhenClearMessages] =
+    useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const defaultModel = localStorage.getItem("model")
     ? localStorage.getItem("model")
@@ -26,6 +28,7 @@ function App() {
 
   const scrollEndChat = () => {
     endChat.current.scrollIntoView({ behavior: "smooth" });
+    console.log(endChat.current);
   };
 
   const handleSubmit = async () => {
@@ -73,13 +76,21 @@ function App() {
         handleGearMenuClicked={handleGearMenuClicked}
         darkMode={darkMode}
         setDarkMode={setDarkMode}
+        showAskBoxWhenClearMessages={showAskBoxWhenClearMessages}
+        setShowAskBoxWhenClearMessages={setShowAskBoxWhenClearMessages}
       />
-      <Body messages={messages} setMessages={setMessages} endChat={endChat} />
+      <Body
+        messages={messages}
+        setMessages={setMessages}
+        endChat={endChat}
+        darkMode={darkMode}
+      />
       <InputMessage
         handleSubmit={handleSubmit}
         showPP={showPP}
         showSenInfo={showSenInfo}
         darkMode={darkMode}
+        showAskBoxWhenClearMessages={showAskBoxWhenClearMessages}
       />
     </div>
   );

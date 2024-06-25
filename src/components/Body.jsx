@@ -1,15 +1,20 @@
 import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { tomorrow } from "react-syntax-highlighter/dist/esm/styles/prism";
+import {
+  gruvboxLight,
+  gruvboxDark,
+} from "react-syntax-highlighter/dist/esm/styles/prism";
 
 const chatStyle =
-  "font-inter leading-loose text-sm w-fit h-fit px-3 py-1 mt-3 inline-block rounded-bl-xl rounded-br-xl text-clip";
+  "font-inter leading-loose text-sm max-w-full h-fit px-3 py-1 mt-3 inline-block rounded-bl-xl rounded-br-xl text-clip";
 
-export default function Body({ messages, endChat }) {
+export default function Body({ messages, endChat, darkMode }) {
   return (
     <main>
       {messages.length === 0 ? (
-        <span className="text-center inline-block w-screen text-xl font-thin italic mt-8">
+        <span className="text-center inline-block w-screen text-xl mt-8">
           No Messages
         </span>
       ) : (
@@ -18,43 +23,48 @@ export default function Body({ messages, endChat }) {
             {messages.map((message, i) => {
               return (
                 <li
-                  className={`${chatStyle} ${
-                    (i + 1) % 2 === 0
-                      ? "self-start rounded-tr-xl bg-stone-300 dark:bg-stone-700 mr-4"
-                      : "self-end rounded-tl-xl bg-green-300 dark:bg-green-800 ml-4"
-                  }`}
+                  className={`${chatStyle} ${(i + 1) % 2 === 0
+                    ? "self-start rounded-tr-xl bg-stone-300 dark:bg-stone-700 mr-4"
+                    : "self-end rounded-tl-xl bg-green-300 dark:bg-green-800 ml-4"
+                    }`}
+                  ref={endChat}
                   key={i}
                 >
                   <Markdown
-                    children={message}
+                    remarkPlugins={[remarkGfm]}
+                    rehypePlugins={[rehypeRaw]}
                     components={{
-                      code(props) {
-                        const { children, className, node, ...rest } = props;
+                      code({ inline, className, children, ...props }) {
                         const match = /language-(\w+)/.exec(className || "");
-                        return match ? (
+
+                        return !inline && match ? (
                           <SyntaxHighlighter
-                            {...rest}
+                            style={darkMode ? gruvboxDark : gruvboxLight}
                             PreTag="div"
-                            children={String(children).replace(/\n$/, "")}
                             language={match[1]}
-                            style={tomorrow}
-                            wrapLongLines={true}
-                          />
+                            {...props}
+                          >
+                            {String(children).replace(/\n$/, "")}
+                          </SyntaxHighlighter>
                         ) : (
                           <code
-                            {...rest}
-                            className="font-bold bg-stone-500 px-2 py-1 rounded mx-1 text-slate-100"
+                            className={
+                              className +
+                              " font-bold text-slate-900 dark:text-white"
+                            }
+                            {...props}
                           >
                             {children}
                           </code>
                         );
                       },
                     }}
-                  />
+                  >
+                    {message}
+                  </Markdown>
                 </li>
               );
             })}
-            <li ref={endChat}></li>
           </ul>
         </>
       )}

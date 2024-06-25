@@ -1,14 +1,15 @@
 import EmojiPicker from "emoji-picker-react";
-import { useRef, useState, memo, useEffect } from "react";
+import { useRef, useState, memo } from "react";
 
 export default function InputMessage({
   handleSubmit,
   showPP,
   showSenInfo,
+  showAskBoxWhenClearMessages,
   darkMode,
 }) {
   const MemoEmojiPicker = memo(EmojiPicker);
-  const hiddenForm = showPP || showSenInfo ? "hidden" : "inline-block";
+  const hiddenForm = showPP || showSenInfo || showAskBoxWhenClearMessages ? "hidden" : "inline-block";
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
   const pesanref = useRef(null);
 
@@ -33,7 +34,7 @@ export default function InputMessage({
           ></div>
           <input
             type="text"
-            className="flex-1 px-3 py-2 outline-none font-bold bg-stone-100 dark:bg-stone-700 text-slate-900 dark:text-slate-100 rounded-full font-inter"
+            className="flex-1 px-3 py-2 outline-none font-bold bg-stone-200 dark:bg-stone-700 text-slate-900 dark:text-slate-100 rounded-full font-inter"
             id="pesan"
             placeholder="Message"
             ref={pesanref}

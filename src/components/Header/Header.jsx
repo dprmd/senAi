@@ -1,6 +1,7 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import ProfilePhoto from "./ProfilePhoto";
 import SenStatus from "./SenStatus";
+import AskBox from "../AskBox/AskBox";
 
 export default function Header({
   senTyping,
@@ -12,7 +13,17 @@ export default function Header({
   handleGearMenuClicked,
   darkMode,
   setDarkMode,
+  showAskBoxWhenClearMessages,
+  setShowAskBoxWhenClearMessages,
 }) {
+  const whenClearMessageIsTrue = () => {
+    handleClearMessages();
+  };
+
+  const handleClearMessagesInThisComponent = () => {
+    setShowAskBoxWhenClearMessages(true);
+  };
+
   const handleSwitchTheme = () => {
     if (darkMode) {
       localStorage.setItem("theme", "light");
@@ -32,7 +43,14 @@ export default function Header({
   }, [darkMode]);
 
   return (
-    <header className="flex items-center justify-between simetris border-b border-b-slate-600 sticky top-0 bg-colorLight text-slate-900 dark:bg-colorDark dark:text-slate-100">
+    <header className="flex items-center justify-between simetris border-b border-b-slate-300 dark:border-b-slate-600 sticky top-0 bg-colorLight text-slate-900 dark:bg-colorDark dark:text-slate-100">
+      {showAskBoxWhenClearMessages && (
+        <AskBox
+          message={"do you want to delete all messages ?"}
+          whenTrue={whenClearMessageIsTrue}
+          setShowAskBox={setShowAskBoxWhenClearMessages}
+        />
+      )}
       <div className="flex items-center flex-1">
         <ProfilePhoto showPP={showPP} setShowPP={setShowPP} />
         <SenStatus
@@ -44,7 +62,7 @@ export default function Header({
       <div>
         <button
           className="bi bi-trash3-fill px-3 py-1 text-slate-900 fill-current dark:text-slate-300"
-          onClick={handleClearMessages}
+          onClick={handleClearMessagesInThisComponent}
         ></button>
         {darkMode ? (
           <button

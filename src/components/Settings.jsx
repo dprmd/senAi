@@ -34,7 +34,7 @@ export default function Settings() {
             "To apply the changes, you must refresh the page. Do you want to refresh the page?"
           }
           whenOkClicked={() => {
-            location.href = "/";
+            location.reload();
           }}
           setShowAskBox={setShowAskBoxWhenApiKeyChanged}
         />

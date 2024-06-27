@@ -20,3 +20,8 @@ body {
   user-select: text; /* Allow text selection */
   touch-action: auto; /* Allow mobile zooming */
 }
+
+select,
+option {
+  cursor: pointer;
+}

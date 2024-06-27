@@ -19,9 +19,9 @@ export default function AskBox({ message, setShowAskBox, whenOkClicked }) {
   }, []);
 
   return (
-    <div className="fixed top-0 left-0 bottom-0 right-0 bg-stone-300 dark:bg-stone-500 bg-opacity-90 dark:bg-opacity-90 flex justify-center items-center z-100">
-      <div className="bg-stone-400 dark:bg-stone-600 flex flex-col justify-between items-center px-4 py-3 rounded min-h-[150px]">
-        <span className="px-4 py-3 flex justify-center items-center flex-1">
+    <div className="fixed top-0 left-0 bottom-0 right-0 bg-stone-200 dark:bg-stone-600 bg-opacity-90 dark:bg-opacity-90 flex justify-center items-center z-100">
+      <div className="bg-stone-300 dark:bg-stone-700 flex flex-col justify-between items-center px-4 py-3 rounded min-h-[150px] max-w-[90vw] sm:max-w-[400px]">
+        <span className="px-4 flex justify-center items-center flex-1 text-center py-5">
           {message}
         </span>
         <div className="flex justify-end gap-x-4 w-full">

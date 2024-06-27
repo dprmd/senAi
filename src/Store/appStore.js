@@ -24,6 +24,9 @@ export const useAppStore = create((set) => ({
   showAskBoxWhenClearMessages: false,
   setShowAskBoxWhenClearMessages: (showAskBoxWhenClearMessages) =>
     set({ showAskBoxWhenClearMessages }),
+  showAskBoxWhenApiKeyChanged: false,
+  setShowAskBoxWhenApiKeyChanged: (showAskBoxWhenApiKeyChanged) =>
+    set({ showAskBoxWhenApiKeyChanged }),
   showSettings: false,
   setShowSettings: (showSettings) => set({ showSettings }),
   model: localStorage.getItem("model")

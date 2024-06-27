@@ -12,6 +12,7 @@ const chatStyle =
   "font-inter leading-loose text-sm max-w-full h-fit px-3 py-1 mt-3 inline-block rounded-bl-xl rounded-br-xl text-clip";
 
 export default function Body({ endChat }) {
+  // zustand appStore
   const [messages, darkMode] = useAppStore((state) => [
     state.messages,
     state.darkMode,

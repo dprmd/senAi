@@ -13,6 +13,7 @@ import useOnlineStatus from "../hooks/getOnlineStatus";
 export default function InputMessage({ scrollEndChat }) {
   // zustand appStore
   const [
+    darkMode,
     senTyping,
     setSenTyping,
     showPP,
@@ -22,6 +23,7 @@ export default function InputMessage({ scrollEndChat }) {
     model,
   ] = useAppStore(
     useShallow((state) => [
+      state.darkMode,
       state.senTyping,
       state.setSenTyping,
       state.showPP,

@@ -1,3 +1,4 @@
+import { useShallow } from "zustand/react/shallow";
 import { useAppStore } from "../../Store/appStore";
 import useOnlineStatus from "../../hooks/getOnlineStatus";
 
@@ -7,11 +8,14 @@ const upperStyle = "font-inter block my-[2px] text-center text-lg font-bold";
 const lowerStyle = "font-inter block my-[2px] text-center font-thin mb-2";
 
 export default function SenStatus() {
-  const [senTyping, showSenInfo, setShowSenInfo] = useAppStore((state) => [
-    state.senTyping,
-    state.showSenInfo,
-    state.setShowSenInfo,
-  ]);
+  // zustand appStore
+  const [senTyping, showSenInfo, setShowSenInfo] = useAppStore(
+    useShallow((state) => [
+      state.senTyping,
+      state.showSenInfo,
+      state.setShowSenInfo,
+    ])
+  );
   const online = useOnlineStatus();
   const status = online ? "online" : "offline";
 
@@ -38,9 +42,9 @@ export default function SenStatus() {
       >
         <span className="font-bold">Sen</span>
         {senTyping ? (
-          <span className="text-sm duration-300 font-poppins">typing...</span>
+          <span className="text-sm font-poppins">typing...</span>
         ) : (
-          <span className="text-sm duration-300 font-poppins">{status}</span>
+          <span className="text-sm font-poppins">{status}</span>
         )}
       </div>
       {showSenInfo && (

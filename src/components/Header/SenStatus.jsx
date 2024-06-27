@@ -1,3 +1,4 @@
+import { useAppStore } from "../../Store/appStore";
 import useOnlineStatus from "../../hooks/getOnlineStatus";
 
 const infoStyle =
@@ -5,7 +6,12 @@ const infoStyle =
 const upperStyle = "font-inter block my-[2px] text-center text-lg font-bold";
 const lowerStyle = "font-inter block my-[2px] text-center font-thin mb-2";
 
-export default function SenStatus({ senTyping, showSenInfo, setShowSenInfo }) {
+export default function SenStatus() {
+  const [senTyping, showSenInfo, setShowSenInfo] = useAppStore((state) => [
+    state.senTyping,
+    state.showSenInfo,
+    state.setShowSenInfo,
+  ]);
   const online = useOnlineStatus();
   const status = online ? "online" : "offline";
 

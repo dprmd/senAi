@@ -1,27 +1,44 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import ProfilePhoto from "./ProfilePhoto";
 import SenStatus from "./SenStatus";
 import AskBox from "../AskBox/AskBox";
+import { useShallow } from "zustand/react/shallow";
+import { useAppStore, resetTempMessages } from "../../Store/appStore";
 
-export default function Header({
-  senTyping,
-  handleClearMessages,
-  showSenInfo,
-  setShowSenInfo,
-  showPP,
-  setShowPP,
-  handleGearMenuClicked,
-  darkMode,
-  setDarkMode,
-  showAskBoxWhenClearMessages,
-  setShowAskBoxWhenClearMessages,
-}) {
-  const whenClearMessageIsTrue = () => {
-    handleClearMessages();
+export default function Header() {
+  // zustand appStore
+  const [
+    messages,
+    darkMode,
+    setDarkMode,
+    showAskBoxWhenClearMessages,
+    setShowAskBoxWhenClearMessages,
+    setMessages,
+    showSettings,
+    setShowSettings,
+  ] = useAppStore(
+    useShallow((state) => [
+      state.messages,
+      state.darkMode,
+      state.setDarkMode,
+      state.showAskBoxWhenClearMessages,
+      state.setShowAskBoxWhenClearMessages,
+      state.setMessages,
+      state.showSettings,
+      state.setShowSettings,
+    ])
+  );
+
+  const handleClearMessages = () => {
+    resetTempMessages();
+    setMessages([]);
   };
 
   const handleClearMessagesInThisComponent = () => {
-    setShowAskBoxWhenClearMessages(true);
+    if (messages.length > 0) {
+      setShowAskBoxWhenClearMessages(true);
+    }
+    return;
   };
 
   const handleSwitchTheme = () => {
@@ -32,6 +49,10 @@ export default function Header({
       localStorage.setItem("theme", "dark");
       setDarkMode(true);
     }
+  };
+
+  const handleGearMenuClicked = () => {
+    setShowSettings(!showSettings);
   };
 
   useEffect(() => {
@@ -47,17 +68,13 @@ export default function Header({
       {showAskBoxWhenClearMessages && (
         <AskBox
           message={"do you want to delete all messages ?"}
-          whenTrue={whenClearMessageIsTrue}
+          whenOkClicked={handleClearMessages}
           setShowAskBox={setShowAskBoxWhenClearMessages}
         />
       )}
       <div className="flex items-center flex-1">
-        <ProfilePhoto showPP={showPP} setShowPP={setShowPP} />
-        <SenStatus
-          senTyping={senTyping}
-          showSenInfo={showSenInfo}
-          setShowSenInfo={setShowSenInfo}
-        />
+        <ProfilePhoto />
+        <SenStatus />
       </div>
       <div>
         <button

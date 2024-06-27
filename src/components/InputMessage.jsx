@@ -1,20 +1,70 @@
-import EmojiPicker from "emoji-picker-react";
+/* eslint-disable no-undef */
 import { useRef, useState, memo } from "react";
+import {
+  addToTempMessages,
+  tempMessages,
+  useAppStore,
+} from "../Store/appStore";
+import EmojiPicker from "emoji-picker-react";
+import { requestToGroq } from "../utils/groq";
+import { useShallow } from "zustand/react/shallow";
+import useOnlineStatus from "../hooks/getOnlineStatus";
 
-export default function InputMessage({
-  handleSubmit,
-  showPP,
-  showSenInfo,
-  showAskBoxWhenClearMessages,
-  darkMode,
-}) {
-  const MemoEmojiPicker = memo(EmojiPicker);
-  const hiddenForm = showPP || showSenInfo || showAskBoxWhenClearMessages ? "hidden" : "inline-block";
+export default function InputMessage({ scrollEndChat }) {
+  // zustand appStore
+  const [
+    senTyping,
+    setSenTyping,
+    showPP,
+    showSenInfo,
+    showAskBoxWhenClearMessages,
+    setMessages,
+    model,
+  ] = useAppStore(
+    useShallow((state) => [
+      state.senTyping,
+      state.setSenTyping,
+      state.showPP,
+      state.showSenInfo,
+      state.showAskBoxWhenClearMessages,
+      state.setMessages,
+      state.model,
+      state.tempMessages,
+      state.pushTempMessages,
+      state.messages,
+    ])
+  );
+
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
+  const MemoEmojiPicker = memo(EmojiPicker);
+  const hiddenForm =
+    showPP || showSenInfo || showAskBoxWhenClearMessages
+      ? "hidden"
+      : "inline-block";
   const pesanref = useRef(null);
+  const online = useOnlineStatus();
 
   const handleEmojiClick = (emojiObj) => {
     pesanref.current.value += emojiObj.emoji;
+  };
+
+  const handleSubmit = async () => {
+    if (pesan.value.length === 0) return;
+    if (senTyping) return;
+    const message = pesan.value;
+    pesan.value = "";
+    setSenTyping(true);
+    // tempMessages.push(message);
+    addToTempMessages(message);
+    setMessages(tempMessages);
+    let reply;
+    if (online) reply = await requestToGroq(message, model);
+    else reply = "Please check your internet connection...";
+    // tempMessages.push(reply);
+    addToTempMessages(reply);
+    setMessages(tempMessages);
+    setSenTyping(false);
+    scrollEndChat();
   };
 
   return (

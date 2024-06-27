@@ -6,11 +6,17 @@ import {
   gruvboxLight,
   gruvboxDark,
 } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { useAppStore } from "../Store/appStore";
 
 const chatStyle =
   "font-inter leading-loose text-sm max-w-full h-fit px-3 py-1 mt-3 inline-block rounded-bl-xl rounded-br-xl text-clip";
 
-export default function Body({ messages, endChat, darkMode }) {
+export default function Body({ endChat }) {
+  const [messages, darkMode] = useAppStore((state) => [
+    state.messages,
+    state.darkMode,
+  ]);
+
   return (
     <main>
       {messages.length === 0 ? (
@@ -23,10 +29,11 @@ export default function Body({ messages, endChat, darkMode }) {
             {messages.map((message, i) => {
               return (
                 <li
-                  className={`${chatStyle} ${(i + 1) % 2 === 0
-                    ? "self-start rounded-tr-xl bg-stone-300 dark:bg-stone-700 mr-4"
-                    : "self-end rounded-tl-xl bg-green-300 dark:bg-green-800 ml-4"
-                    }`}
+                  className={`${chatStyle} ${
+                    (i + 1) % 2 === 0
+                      ? "self-start rounded-tr-xl bg-stone-300 dark:bg-stone-700 mr-4"
+                      : "self-end rounded-tl-xl bg-green-300 dark:bg-green-800 ml-4"
+                  }`}
                   ref={endChat}
                   key={i}
                 >

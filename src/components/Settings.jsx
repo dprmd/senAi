@@ -1,4 +1,20 @@
-export default function Settings({ model, setModel, handleGearMenuClicked }) {
+import { useShallow } from "zustand/react/shallow";
+import { useAppStore } from "../Store/appStore";
+
+export default function Settings() {
+  const [model, setModel, showSettings, setShowSettings] = useAppStore(
+    useShallow((state) => [
+      state.model,
+      state.setModel,
+      state.showSettings,
+      state.setShowSettings,
+    ])
+  );
+
+  const handleGearMenuClicked = () => {
+    setShowSettings(!showSettings);
+  };
+
   return (
     <div className="absolute top-0 left-0 right-0 bottom-0 bg-colorLight dark:bg-colorDark text-slate-900 dark:text-slate-100 z-10 simetris flex justify-center items-center">
       <i

@@ -1,4 +1,4 @@
-import { useAppStore } from "../../Store/appStore";
+import { useAppStore } from "../../store/appStore";
 import { useShallow } from "zustand/react/shallow";
 
 const normalPP =
@@ -9,7 +9,7 @@ const showPPStyle =
 export default function ProfilePhoto() {
   // zustand appStore
   const [showPP, setShowPP] = useAppStore(
-    useShallow((state) => [state.showPP, state.setShowPP])
+    useShallow((state) => [state.showPP, state.setShowPP]),
   );
 
   const handlePPClick = () => {

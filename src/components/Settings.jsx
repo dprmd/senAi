@@ -1,5 +1,5 @@
 import { useShallow } from "zustand/react/shallow";
-import { useAppStore } from "../Store/appStore";
+import { useAppStore } from "../store/appStore";
 import AskBox from "./AskBox/AskBox";
 
 export default function Settings() {
@@ -7,6 +7,8 @@ export default function Settings() {
   const [
     model,
     setModel,
+    role,
+    setRole,
     showSettings,
     setShowSettings,
     showAskBoxWhenApiKeyChanged,
@@ -15,6 +17,8 @@ export default function Settings() {
     useShallow((state) => [
       state.model,
       state.setModel,
+      state.role,
+      state.setRole,
       state.showSettings,
       state.setShowSettings,
       state.showAskBoxWhenApiKeyChanged,
@@ -45,41 +49,63 @@ export default function Settings() {
           onClick={handleGearMenuClicked}
         ></i>
       )}
-      <form className="flex flex-col gap-y-3">
-        {/* Api Key Selection */}
-        <div className="flex flex-col items-center gap-y-2">
-          <label htmlFor="apiKeyIndex" className="font-bold">
-            Api Key
+
+      <form className="flex flex-col gap-y-3 w-full min-h-[75vh] px-6 py-4">
+        {/* User */}
+        <div className="flex flex-col items-start gap-y-2">
+          <label htmlFor="user" className="font-bold">
+            User
           </label>
           <select
-            name="apiKeyIndex"
-            id="apiKeyIndex"
-            className="bg-stone-100 dark:bg-stone-700 px-4 py-2 outline-none border border-slate-400 rounded-md"
+            name="user"
+            id="user"
+            className={selectStyles}
             onChange={(e) => {
-              localStorage.setItem("apiKeyIndex", e.target.value);
+              localStorage.setItem("senAi-user", e.target.value);
               setShowAskBoxWhenApiKeyChanged(true);
             }}
-            defaultValue={localStorage.getItem("apiKeyIndex")}
+            defaultValue={localStorage.getItem("senAi-user")}
           >
-            <option value="0">gsk_D8par</option>
-            <option value="1">gsk_9XfDt</option>
-            <option value="2">gsk_uU3ll</option>
-            <option value="3">gsk_eTmNy</option>
-            <option value="4">gsk_JIT4Z</option>
+            <option value="0">User 0</option>
+            <option value="1">User 1</option>
+            <option value="2">User 2</option>
+            <option value="3">User 3</option>
+            <option value="4">User 4</option>
           </select>
         </div>
 
-        {/* Model Selection */}
-        <div className="flex flex-col items-center gap-y-2">
+        {/* Role */}
+        <div className="flex flex-col items-start gap-y-2">
+          <label htmlFor="role" className="font-bold">
+            Role
+          </label>
+          <select
+            name="role"
+            id="role"
+            className={selectStyles}
+            onChange={(e) => {
+              localStorage.setItem("senAi-role", e.target.value);
+              setRole(e.target.value);
+            }}
+            defaultValue={role}
+          >
+            <option value="user">User</option>
+            <option value="system">System</option>
+            <option value="assistant">Assistant</option>
+          </select>
+        </div>
+
+        {/* Model  */}
+        <div className="flex flex-col items-start gap-y-2">
           <label htmlFor="model" className="font-bold">
             Model
           </label>
           <select
             name="model"
             id="model"
-            className="bg-stone-100 dark:bg-stone-700 px-4 py-2 outline-none border border-slate-400 rounded-md"
+            className={selectStyles}
             onChange={(e) => {
-              localStorage.setItem("model", e.target.value);
+              localStorage.setItem("senAi-model", e.target.value);
               setModel(e.target.value);
             }}
             defaultValue={model}
@@ -94,3 +120,6 @@ export default function Settings() {
     </div>
   );
 }
+
+const selectStyles =
+  "bg-stone-100 dark:bg-stone-700 px-4 py-1 outline-none border border-slate-400 dark:border-slate-600 text-sm";

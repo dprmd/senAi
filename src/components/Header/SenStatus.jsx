@@ -1,5 +1,5 @@
 import { useShallow } from "zustand/react/shallow";
-import { useAppStore } from "../../Store/appStore";
+import { useAppStore } from "../../store/appStore";
 import useOnlineStatus from "../../hooks/getOnlineStatus";
 
 const infoStyle =
@@ -14,7 +14,7 @@ export default function SenStatus() {
       state.senTyping,
       state.showSenInfo,
       state.setShowSenInfo,
-    ])
+    ]),
   );
   const online = useOnlineStatus();
   const status = online ? "online" : "offline";

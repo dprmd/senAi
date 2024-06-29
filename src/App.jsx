@@ -4,7 +4,7 @@ import Body from "./components/Body";
 import InputMessage from "./components/InputMessage";
 import "./App.css";
 import Settings from "./components/Settings";
-import { useAppStore } from "./Store/appStore";
+import { useAppStore } from "./store/appStore";
 
 function App() {
   const showSettings = useAppStore((state) => state.showSettings);

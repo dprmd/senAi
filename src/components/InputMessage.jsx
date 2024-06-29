@@ -4,7 +4,7 @@ import {
   addToTempMessages,
   tempMessages,
   useAppStore,
-} from "../Store/appStore";
+} from "../store/appStore";
 import EmojiPicker from "emoji-picker-react";
 import { requestToGroq } from "../utils/groq";
 import { useShallow } from "zustand/react/shallow";
@@ -21,6 +21,7 @@ export default function InputMessage({ scrollEndChat }) {
     showAskBoxWhenClearMessages,
     setMessages,
     model,
+    role,
   ] = useAppStore(
     useShallow((state) => [
       state.darkMode,
@@ -31,9 +32,7 @@ export default function InputMessage({ scrollEndChat }) {
       state.showAskBoxWhenClearMessages,
       state.setMessages,
       state.model,
-      state.tempMessages,
-      state.pushTempMessages,
-      state.messages,
+      state.role,
     ])
   );
 
@@ -51,20 +50,18 @@ export default function InputMessage({ scrollEndChat }) {
   };
 
   const handleSubmit = async () => {
-    if (pesan.value.length === 0) return;
+    if (pesan.value.replaceAll(" ", "").length === 0) return;
     if (senTyping) return;
     const message = pesan.value;
     pesan.value = "";
     setSenTyping(true);
-    // tempMessages.push(message);
-    addToTempMessages(message);
-    setMessages(tempMessages);
+    addToTempMessages(message); //
+    setMessages(tempMessages); //
     let reply;
-    if (online) reply = await requestToGroq(message, model);
+    if (online) reply = await requestToGroq(message, role, model);
     else reply = "Please check your internet connection...";
-    // tempMessages.push(reply);
-    addToTempMessages(reply);
-    setMessages(tempMessages);
+    addToTempMessages(reply); //
+    setMessages(tempMessages); //
     setSenTyping(false);
     scrollEndChat();
   };

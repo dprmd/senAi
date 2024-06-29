@@ -16,15 +16,15 @@ const groq = new Groq({
   dangerouslyAllowBrowser: true,
 });
 
-export const requestToGroq = async (pesan, model) => {
+export const requestToGroq = async (pesan, role, model) => {
   const balasan = await groq.chat.completions.create({
     messages: [
       {
-        role: "system",
+        role,
         content: pesan,
       },
     ],
-    model: model,
+    model,
   });
   return balasan.choices[0].message.content;
 };

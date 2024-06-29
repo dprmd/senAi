@@ -9,10 +9,6 @@ export const addToTempMessages = (message) => {
 };
 
 export const useAppStore = create((set) => ({
-  // tempMessages: [],
-  // resetTempMessages: () => set({ tempMessages: [] }),
-  // pushTempMessages: (newMessage) =>
-  //   set((state) => ({ tempMessages: [...state.tempMessages, newMessage] })),
   senTyping: false,
   setSenTyping: (senTyping) => set({ senTyping }),
   messages: [],
@@ -29,10 +25,14 @@ export const useAppStore = create((set) => ({
     set({ showAskBoxWhenApiKeyChanged }),
   showSettings: false,
   setShowSettings: (showSettings) => set({ showSettings }),
-  model: localStorage.getItem("model")
-    ? localStorage.getItem("model")
+  model: localStorage.getItem("senAi-model")
+    ? localStorage.getItem("senAi-model")
     : "llama3-8b-8192",
   setModel: (model) => set({ model }),
-  darkMode: localStorage.getItem("theme") === "dark" ? true : false,
+  role: localStorage.getItem("senAi-role")
+    ? localStorage.getItem("senAi-role")
+    : "user",
+  setRole: (role) => set({ role }),
+  darkMode: localStorage.getItem("senAi-theme") === "dark" ? true : false,
   setDarkMode: (darkMode) => set({ darkMode }),
 }));

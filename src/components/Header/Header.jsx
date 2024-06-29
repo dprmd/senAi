@@ -3,7 +3,7 @@ import ProfilePhoto from "./ProfilePhoto";
 import SenStatus from "./SenStatus";
 import AskBox from "../AskBox/AskBox";
 import { useShallow } from "zustand/react/shallow";
-import { useAppStore, resetTempMessages } from "../../Store/appStore";
+import { useAppStore, resetTempMessages } from "../../store/appStore";
 
 export default function Header() {
   // zustand appStore
@@ -43,10 +43,10 @@ export default function Header() {
 
   const handleSwitchTheme = () => {
     if (darkMode) {
-      localStorage.setItem("theme", "light");
+      localStorage.setItem("senAi-theme", "light");
       setDarkMode(false);
     } else {
-      localStorage.setItem("theme", "dark");
+      localStorage.setItem("senAi-theme", "dark");
       setDarkMode(true);
     }
   };

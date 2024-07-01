@@ -1,19 +1,18 @@
 /* eslint-disable no-undef */
-import { useRef, useState, memo } from "react";
+import { useRef } from "react";
 import {
   addToTempMessages,
   tempMessages,
   useAppStore,
 } from "../store/appStore";
-import EmojiPicker from "emoji-picker-react";
 import { requestToGroq } from "../utils/groq";
 import { useShallow } from "zustand/react/shallow";
 import useOnlineStatus from "../hooks/getOnlineStatus";
+import { addNewMessagesToFirestore } from "@/store/CRUDFirestore";
 
 export default function InputMessage({ scrollEndChat }) {
   // zustand appStore
   const [
-    darkMode,
     senTyping,
     setSenTyping,
     showPP,
@@ -22,9 +21,9 @@ export default function InputMessage({ scrollEndChat }) {
     setMessages,
     model,
     role,
+    userId,
   ] = useAppStore(
     useShallow((state) => [
-      state.darkMode,
       state.senTyping,
       state.setSenTyping,
       state.showPP,
@@ -33,11 +32,10 @@ export default function InputMessage({ scrollEndChat }) {
       state.setMessages,
       state.model,
       state.role,
-    ])
+      state.userId,
+    ]),
   );
 
-  const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
-  const MemoEmojiPicker = memo(EmojiPicker);
   const hiddenForm =
     showPP || showSenInfo || showAskBoxWhenClearMessages
       ? "hidden"
@@ -45,77 +43,52 @@ export default function InputMessage({ scrollEndChat }) {
   const pesanref = useRef(null);
   const online = useOnlineStatus();
 
-  const handleEmojiClick = (emojiObj) => {
-    pesanref.current.value += emojiObj.emoji;
-  };
-
   const handleSubmit = async () => {
     if (pesan.value.replaceAll(" ", "").length === 0) return;
     if (senTyping) return;
+
     const message = pesan.value;
     pesan.value = "";
+
     setSenTyping(true);
-    addToTempMessages(message); //
-    setMessages(tempMessages); //
+    addToTempMessages(message);
+    setMessages(tempMessages);
+
     let reply;
     if (online) reply = await requestToGroq(message, role, model);
     else reply = "Please check your internet connection...";
-    addToTempMessages(reply); //
-    setMessages(tempMessages); //
+
+    addToTempMessages(reply);
+    setMessages(tempMessages);
+    addNewMessagesToFirestore(userId, message, reply);
     setSenTyping(false);
     scrollEndChat();
   };
 
   return (
     <form
-      className={`fixed bottom-0 w-screen origin-l bg-colorLight dark:bg-colorDark text-slate-900 dark:text-slate-100 ${hiddenForm}`}
+      className={`origin-l fixed bottom-0 w-screen bg-[#F0F2F5] text-slate-900 dark:bg-[#202C33] dark:text-slate-100 ${hiddenForm}`}
       onSubmit={(e) => {
         e.preventDefault();
         handleSubmit();
-        setEmojiPickerOpen(false);
       }}
     >
-      <div className="input-message flex gap-x-1 justify-evenly items-center simetris">
-        <div className="flex flex-1 items-center">
-          <div
-            className="pr-2 py-2 bi bi-emoji-smile text-slate-400 text-xl cursor-pointer text-slate-900 fill-current dark:text-slate-100"
-            onClick={() => setEmojiPickerOpen(!emojiPickerOpen)}
-          ></div>
-          <input
-            type="text"
-            className="flex-1 px-3 py-2 outline-none font-bold bg-stone-200 dark:bg-stone-700 text-slate-900 dark:text-slate-100 rounded-full font-inter"
-            id="pesan"
-            placeholder="Message"
-            ref={pesanref}
-            onFocus={() => setEmojiPickerOpen(false)}
-          />
-        </div>
+      <div className="input-message simetris flex items-center justify-evenly gap-x-1">
+        <input
+          type="text"
+          className="flex-1 rounded-full bg-[#FFFFFF] px-3 py-2 font-inter font-bold text-slate-900 outline-none placeholder:text-slate-500 dark:bg-[#2A3942] dark:text-slate-100 dark:placeholder:text-slate-400"
+          id="pesan"
+          placeholder="Message"
+          ref={pesanref}
+        />
         <button
           type="button"
-          className="bi bi-send-fill inline-block px-3 py-2 rounded-full dark:bg-green-600 text-black ml-1 dark:text-slate-200 fill-current text-slate-800 bg-green-500"
+          className="bi bi-send-fill ml-1 inline-block rounded-full bg-green-500 fill-current px-3 py-2 text-black text-slate-800 dark:bg-green-600 dark:text-slate-200"
           onClick={() => {
-            setEmojiPickerOpen(false);
             handleSubmit();
           }}
         ></button>
       </div>
-      {emojiPickerOpen && (
-        <div className="relative left-0 right-0 bottom-0">
-          <MemoEmojiPicker
-            onEmojiClick={handleEmojiClick}
-            autoFocusSearch={false}
-            searchDisabled={true}
-            theme={darkMode ? "dark" : "light"}
-            emojiStyle="google"
-            suggestedEmojisMode="recent"
-            lazyLoadEmojis={true}
-            width="100vw"
-            height="40vh"
-            previewConfig={{ showPreview: false }}
-            emojiD
-          ></MemoEmojiPicker>
-        </div>
-      )}
     </form>
   );
 }

@@ -3,7 +3,7 @@ import { useAppStore } from "../../store/appStore";
 import useOnlineStatus from "../../hooks/getOnlineStatus";
 
 const infoStyle =
-  "disable-zoom fixed top-0 bottom-0 left-0 right-0 bg-stone-100 dark:bg-stone-800 bg-opacity-50 dark:bg-opacity-50 backdrop-blur-sm md:flex md:items-center";
+  "disable-zoom fixed top-0 bottom-0 left-0 right-0 bg-slate-100 dark:bg-slate-800 bg-opacity-50 dark:bg-opacity-50 backdrop-blur-sm md:flex md:items-center";
 const upperStyle = "font-inter block my-[2px] text-center text-lg font-bold";
 const lowerStyle = "font-inter block my-[2px] text-center font-thin mb-2";
 
@@ -37,23 +37,23 @@ export default function SenStatus() {
   return (
     <>
       <div
-        className="flex flex-col justify-center ml-3 pr-10 cursor-pointer"
+        className="ml-3 flex cursor-pointer flex-col justify-center pr-10"
         onClick={handleSenClick}
       >
         <span className="font-bold">Sen</span>
         {senTyping ? (
-          <span className="text-sm font-poppins">typing...</span>
+          <span className="font-poppins text-sm">typing...</span>
         ) : (
-          <span className="text-sm font-poppins">{status}</span>
+          <span className="font-poppins text-sm">{status}</span>
         )}
       </div>
       {showSenInfo && (
         <div className={infoStyle} onClick={handleSenClick}>
-          <div className="flex flex-col justify-center items-center md:flex-row md:justify-start md:flex-1 md:px-20">
+          <div className="flex flex-col items-center justify-center md:flex-1 md:flex-row md:justify-start md:px-20">
             <img
               src="img/sen.jpg"
               className={
-                "w-[40%] sm:w-[30%] md:w-[30%] rounded-full h-fit my-10"
+                "my-10 h-fit w-[40%] rounded-full sm:w-[30%] md:w-[30%]"
               }
             />
             <ul className="md:ml-20">

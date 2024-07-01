@@ -1,6 +1,24 @@
 import { useShallow } from "zustand/react/shallow";
 import { useAppStore } from "../store/appStore";
-import AskBox from "./AskBox/AskBox";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useState } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function Settings() {
   // zustand appStore
@@ -12,7 +30,6 @@ export default function Settings() {
     showSettings,
     setShowSettings,
     showAskBoxWhenApiKeyChanged,
-    setShowAskBoxWhenApiKeyChanged,
   ] = useAppStore(
     useShallow((state) => [
       state.model,
@@ -22,104 +39,136 @@ export default function Settings() {
       state.showSettings,
       state.setShowSettings,
       state.showAskBoxWhenApiKeyChanged,
-      state.setShowAskBoxWhenApiKeyChanged,
-    ])
+    ]),
   );
+
+  const [user, setUser] = useState(
+    localStorage.getItem("senAi-user")
+      ? localStorage.getItem("senAi-user")
+      : "0",
+  );
+  const [userChangeDialog, setUserChangeDialog] = useState(false);
 
   const handleGearMenuClicked = () => {
     setShowSettings(!showSettings);
   };
 
   return (
-    <div className="fixed top-0 left-0 right-0 bottom-0 bg-colorLight dark:bg-colorDark text-slate-900 dark:text-slate-100 z-10 simetris flex justify-center items-center">
-      {showAskBoxWhenApiKeyChanged && (
-        <AskBox
-          message={
-            "To apply the changes, you must refresh the page. Do you want to refresh the page?"
-          }
-          whenOkClicked={() => {
-            location.reload();
-          }}
-          setShowAskBox={setShowAskBoxWhenApiKeyChanged}
-        />
-      )}
+    <div className="simetris fixed bottom-0 left-0 right-0 top-0 z-10 flex items-center justify-center bg-[#FFFFFF] text-slate-900 dark:bg-[#202C33] dark:text-slate-100">
       {!showAskBoxWhenApiKeyChanged && (
         <i
-          className="bi bi-x-lg absolute top-0 right-0 px-4 py-3 text-xl cursor-pointer"
+          className="bi bi-x-lg absolute right-0 top-0 cursor-pointer px-4 py-3 text-xl"
           onClick={handleGearMenuClicked}
         ></i>
       )}
 
-      <form className="flex flex-col gap-y-3 w-full min-h-[75vh] px-6 py-4">
+      <form className="flex min-h-[75vh] w-full flex-col items-center gap-y-3 px-6 py-4 sm:w-[80%] md:w-[40%]">
+        {/* Alert */}
+        <AlertDialog open={userChangeDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Refresh ?</AlertDialogTitle>
+              <AlertDialogDescription>
+                To apply the changes, you must refresh this page. Do you want to
+                refresh?
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel
+                onClick={() => {
+                  setUserChangeDialog(false);
+                }}
+              >
+                Cancel
+              </AlertDialogCancel>
+              <AlertDialogAction
+                className="bg-green-600 text-white hover:bg-green-400 dark:bg-green-600 dark:text-white dark:hover:bg-green-400"
+                onClick={() => {
+                  location.reload();
+                }}
+              >
+                Continue
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
         {/* User */}
-        <div className="flex flex-col items-start gap-y-2">
-          <label htmlFor="user" className="font-bold">
-            User
-          </label>
-          <select
-            name="user"
-            id="user"
-            className={selectStyles}
-            onChange={(e) => {
-              localStorage.setItem("senAi-user", e.target.value);
-              setShowAskBoxWhenApiKeyChanged(true);
-            }}
-            defaultValue={localStorage.getItem("senAi-user")}
-          >
-            <option value="0">User 0</option>
-            <option value="1">User 1</option>
-            <option value="2">User 2</option>
-            <option value="3">User 3</option>
-            <option value="4">User 4</option>
-          </select>
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild className="w-56">
+            <Button variant="senAi">User</Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56">
+            <DropdownMenuRadioGroup
+              value={user}
+              onValueChange={(e) => {
+                localStorage.setItem("senAi-user", e);
+                setUser(e);
+                setUserChangeDialog(true);
+              }}
+            >
+              <DropdownMenuRadioItem value="0">User 0</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="1">User 1</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="2">User 2</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="3">User 3</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="4">User 4</DropdownMenuRadioItem>
+            </DropdownMenuRadioGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         {/* Role */}
-        <div className="flex flex-col items-start gap-y-2">
-          <label htmlFor="role" className="font-bold">
-            Role
-          </label>
-          <select
-            name="role"
-            id="role"
-            className={selectStyles}
-            onChange={(e) => {
-              localStorage.setItem("senAi-role", e.target.value);
-              setRole(e.target.value);
-            }}
-            defaultValue={role}
-          >
-            <option value="user">User</option>
-            <option value="system">System</option>
-            <option value="assistant">Assistant</option>
-          </select>
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild className="w-56">
+            <Button variant="senAi">Role</Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56">
+            <DropdownMenuRadioGroup
+              value={role}
+              onValueChange={(e) => {
+                localStorage.setItem("senAi-role", e);
+                setRole(e);
+              }}
+            >
+              <DropdownMenuRadioItem value="user">User</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="system">
+                System
+              </DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="assistant">
+                Assistant
+              </DropdownMenuRadioItem>
+            </DropdownMenuRadioGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
-        {/* Model  */}
-        <div className="flex flex-col items-start gap-y-2">
-          <label htmlFor="model" className="font-bold">
-            Model
-          </label>
-          <select
-            name="model"
-            id="model"
-            className={selectStyles}
-            onChange={(e) => {
-              localStorage.setItem("senAi-model", e.target.value);
-              setModel(e.target.value);
-            }}
-            defaultValue={model}
-          >
-            <option value="gemma-7b-it">gemma-7b-it</option>
-            <option value="llama3-70b-8192">llama3-70b-8192</option>
-            <option value="llama3-8b-8192">llama3-8b-8192</option>
-            <option value="mixtral-8x7b-32768">mixtral-8x7b-32768</option>
-          </select>
-        </div>
+        {/* Model */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild className="w-56">
+            <Button variant="senAi">Model</Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56">
+            <DropdownMenuRadioGroup
+              value={model}
+              onValueChange={(e) => {
+                localStorage.setItem("senAi-model", e);
+                setModel(e);
+              }}
+            >
+              <DropdownMenuRadioItem value="gemma-7b-it">
+                gemma-7b-it
+              </DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="llama3-70b-8192">
+                llama3-70b-8192
+              </DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="llama3-8b-8192">
+                llama3-8b-8192
+              </DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="mixtral-8x7b-32768">
+                mixtral-8x7b-32768
+              </DropdownMenuRadioItem>
+            </DropdownMenuRadioGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </form>
     </div>
   );
 }
-
-const selectStyles =
-  "bg-stone-100 dark:bg-stone-700 px-4 py-1 outline-none border border-slate-400 dark:border-slate-600 text-sm";

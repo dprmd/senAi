@@ -6,34 +6,69 @@ import {
   gruvboxLight,
   gruvboxDark,
 } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { useAppStore } from "../store/appStore";
+import {
+  getAllMessagesFromFirestoreAndSetToTempMessages,
+  useAppStore,
+} from "../store/appStore";
+import { useEffect, useState } from "react";
+import { addNewUserToFirestoreIfNotExists } from "@/store/CRUDFirestore";
 
 const chatStyle =
-  "font-inter leading-loose text-sm max-w-full h-fit px-3 py-1 mt-3 inline-block rounded-bl-xl rounded-br-xl text-clip";
+  "font-inter leading-loose text-sm h-fit px-3 py-1 mt-3 inline-block rounded-bl-xl rounded-br-xl max-w-[90vw] text-wrap";
 
 export default function Body({ endChat }) {
   // zustand appStore
-  const [messages, darkMode] = useAppStore((state) => [
-    state.messages,
-    state.darkMode,
-  ]);
+  const [messages, setMessages, darkMode, userId, setUserId] = useAppStore(
+    (state) => [
+      state.messages,
+      state.setMessages,
+      state.darkMode,
+      state.userId,
+      state.setUserId,
+    ],
+  );
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const init = async () => {
+      const generateUserId = await addNewUserToFirestoreIfNotExists();
+      setUserId(generateUserId);
+    };
+
+    init();
+  }, []);
+
+  useEffect(() => {
+    const init = async () => {
+      const messages =
+        await getAllMessagesFromFirestoreAndSetToTempMessages(userId);
+      setMessages(messages);
+      setLoading(false);
+    };
+
+    init();
+  }, [userId]);
 
   return (
     <main>
       {messages.length === 0 ? (
-        <span className="text-center inline-block w-screen text-xl mt-8">
-          No Messages
-        </span>
+        <div className="flex items-center justify-center">
+          <span className="mt-8 inline-block max-w-[90vw] rounded-md bg-[#FFEECD] px-4 py-2 text-center text-sm text-slate-500 dark:bg-[#182229] dark:text-[#F8BF57]">
+            {loading ? "Loading . . ." : "No Messages"}
+          </span>
+        </div>
       ) : (
         <>
-          <ul className="flex flex-col w-screen simetris mb-[58px]">
+          <ul className="simetris mb-[58px] flex w-screen flex-col">
             {messages.map((message, i) => {
               return (
                 <li
-                  className={`${chatStyle} ${(i + 1) % 2 === 0
-                      ? "self-start rounded-tr-xl bg-stone-300 dark:bg-stone-700 mr-4"
-                      : "self-end rounded-tl-xl bg-green-300 dark:bg-green-800 ml-4"
-                    }`}
+                  className={`${chatStyle} ${
+                    (i + 1) % 2 === 0
+                      ? "self-start rounded-tr-xl bg-[#FFFFFF] dark:bg-[#202C33]"
+                      : "self-end rounded-tl-xl bg-[#D9FDD3] dark:bg-[#005C4B]"
+                  }`}
                   ref={endChat}
                   key={i}
                 >
@@ -57,7 +92,7 @@ export default function Body({ endChat }) {
                           <code
                             className={
                               className +
-                              " font-bold text-slate-900 dark:text-white"
+                              "overflow-x-scroll text-wrap font-bold text-slate-900 dark:text-white"
                             }
                             {...props}
                           >

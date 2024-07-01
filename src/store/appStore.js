@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { getAllMessagesFromFirestore } from "./CRUDFirestore";
 
 export let tempMessages = [];
 export const resetTempMessages = () => {
@@ -6,6 +7,13 @@ export const resetTempMessages = () => {
 };
 export const addToTempMessages = (message) => {
   tempMessages.push(message);
+};
+export const getAllMessagesFromFirestoreAndSetToTempMessages = async (
+  userId,
+) => {
+  const { messages } = await getAllMessagesFromFirestore(userId);
+  tempMessages = messages;
+  return messages;
 };
 
 export const useAppStore = create((set) => ({
@@ -17,12 +25,6 @@ export const useAppStore = create((set) => ({
   setShowSenInfo: (showSenInfo) => set({ showSenInfo }),
   showPP: false,
   setShowPP: (showPP) => set({ showPP }),
-  showAskBoxWhenClearMessages: false,
-  setShowAskBoxWhenClearMessages: (showAskBoxWhenClearMessages) =>
-    set({ showAskBoxWhenClearMessages }),
-  showAskBoxWhenApiKeyChanged: false,
-  setShowAskBoxWhenApiKeyChanged: (showAskBoxWhenApiKeyChanged) =>
-    set({ showAskBoxWhenApiKeyChanged }),
   showSettings: false,
   setShowSettings: (showSettings) => set({ showSettings }),
   model: localStorage.getItem("senAi-model")
@@ -35,4 +37,6 @@ export const useAppStore = create((set) => ({
   setRole: (role) => set({ role }),
   darkMode: localStorage.getItem("senAi-theme") === "dark" ? true : false,
   setDarkMode: (darkMode) => set({ darkMode }),
+  userId: "",
+  setUserId: (userId) => set({ userId }),
 }));

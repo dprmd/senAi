@@ -11,7 +11,10 @@ import {
   useAppStore,
 } from "../store/appStore";
 import { useEffect, useState } from "react";
-import { addNewUserToFirestoreIfNotExists } from "@/store/CRUDFirestore";
+import {
+  addNewUserToFirestoreIfNotExists,
+  uploadSeenHistory,
+} from "@/store/CRUDFirestore";
 
 const chatStyle =
   "font-inter leading-loose text-sm h-fit px-3 py-1 mt-3 inline-block rounded-bl-xl rounded-br-xl max-w-[90vw] text-wrap";
@@ -43,7 +46,10 @@ export default function Body({ endChat }) {
     const init = async () => {
       const messages =
         await getAllMessagesFromFirestoreAndSetToTempMessages(userId);
+      const compareUserId = localStorage.getItem("senAi-userId2") === userId;
+      if (!compareUserId) setUserId(localStorage.getItem("senAi-userId2"));
       setMessages(messages);
+      uploadSeenHistory(userId);
       setLoading(false);
     };
 

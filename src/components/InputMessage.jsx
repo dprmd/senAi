@@ -55,12 +55,15 @@ export default function InputMessage({ scrollEndChat }) {
     setMessages(tempMessages);
 
     let reply;
-    if (online) reply = await requestToGroq(message, role, model);
-    else reply = "Please check your internet connection...";
+    if (online) {
+      reply = await requestToGroq(message, role, model);
+      addNewMessagesToFirestore(userId, message, reply);
+    } else {
+      reply = "Please check your internet connection...";
+    }
 
     addToTempMessages(reply);
     setMessages(tempMessages);
-    addNewMessagesToFirestore(userId, message, reply);
     setSenTyping(false);
     scrollEndChat();
   };

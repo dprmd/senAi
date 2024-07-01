@@ -2,15 +2,17 @@ import { arrayUnion, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { firestore } from "@/utils/firebase";
 import { v4 } from "uuid";
 
+const collectionName = "users_prod";
+
 export const addNewUserToFirestoreIfNotExists = async () => {
-  if (localStorage.getItem("senAi-userId")) {
-    const userIdFromLocalStorage = localStorage.getItem("senAi-userId");
+  if (localStorage.getItem("senAi-userId1")) {
+    const userIdFromLocalStorage = localStorage.getItem("senAi-userId1");
     return userIdFromLocalStorage;
   } else {
     const newUserId = v4();
-    localStorage.setItem("senAi-userId", newUserId);
+    localStorage.setItem("senAi-userId1", newUserId);
     try {
-      await setDoc(doc(firestore, "users", newUserId), {
+      await setDoc(doc(firestore, collectionName, newUserId), {
         userId: newUserId,
         messages: [],
       });
@@ -23,7 +25,7 @@ export const addNewUserToFirestoreIfNotExists = async () => {
 
 export const getAllMessagesFromFirestore = async (userId) => {
   try {
-    const userRef = doc(firestore, "users", userId);
+    const userRef = doc(firestore, collectionName, userId);
     const userSnap = await getDoc(userRef);
 
     if (userSnap.exists()) {
@@ -43,7 +45,7 @@ export const addNewMessagesToFirestore = async (
   newMessageFromAi,
 ) => {
   try {
-    const userRef = doc(firestore, "users", userId);
+    const userRef = doc(firestore, collectionName, userId);
     await updateDoc(userRef, {
       messages: arrayUnion(newMessageFromUser, newMessageFromAi),
     });
@@ -54,7 +56,7 @@ export const addNewMessagesToFirestore = async (
 
 export const removeAllMessagesInFirestore = async (userId) => {
   try {
-    const userRef = doc(firestore, "users", userId);
+    const userRef = doc(firestore, collectionName, userId);
     await updateDoc(userRef, {
       messages: [],
     });

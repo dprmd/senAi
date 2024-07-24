@@ -1,6 +1,6 @@
 {
   "homepage": "https://dprmd.github.io/senAi",
-  "name": "senai",
+  "name": "senai_client",
   "private": true,
   "version": "1.2.0",
   "type": "module",

@@ -1,6 +1,17 @@
 import Groq from "groq-sdk";
 import { config } from "dotenv";
 config();
+import fs from "fs";
+
+const getModelDescription = () => {
+  try {
+    const data = fs.readFileSync("./controller/modelDescription.json", "utf8");
+    const jsonData = JSON.parse(data);
+    return jsonData;
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 export const getGroqReply = async (req, res) => {
   const apiKeys = process.env.GROQ_API_KEYS.split(",");
@@ -35,54 +46,47 @@ export const getGroqModels = async (req, res) => {
   const apiKeys = process.env.GROQ_API_KEYS.split(",");
   const { apiKeyIndex } = req.body;
   const apiKey = apiKeys[Number(apiKeyIndex)];
+  const modelDescription = getModelDescription();
 
   const groq = new Groq({ apiKey });
   try {
     const groqModels = await groq.models.list();
     const groqModelsDetails = groqModels.data.map((model) => {
+      const theModel = {
+        ...model,
+        description: "",
+      };
       switch (model.id) {
         case "gemma2-9b-it":
-          return {
-            ...model,
-            description:
-              "V2 9B parameter version of Google's Gemma models- a family of lightweight, state-of-the-art language models from Google, with open weights, and pre-trained variants.",
-          };
+          theModel.description = modelDescription.gemma2_9b_it;
+          break;
         case "gemma-7b-it":
-          return {
-            ...model,
-            description:
-              "V1.1 7B parameter version of Google's Gemma models- a family of lightweight, state-of-the-art language models from Google, with open weights, and pre-trained variants.",
-          };
+          theModel.description = modelDescription.gemma_7b_it;
+          break;
         case "llama3-70b-8192":
-          return {
-            ...model,
-            description:
-              "The 70B parameter version of Meta's Llama model delivers state of the art performance.",
-          };
+          theModel.description = modelDescription.llama3_70b_8192;
+          break;
         case "llama3-8b-8192":
-          return {
-            ...model,
-            description:
-              "The 8B parameter version of Meta's Llama model delivers compelling performance at best in class speed and price.",
-          };
+          theModel.description = modelDescription.llama3_8b_8192;
+          break;
         case "mixtral-8x7b-32768":
-          return {
-            ...model,
-            description:
-              "A high-quality sparse mixture of experts model (SMOE) with open weights that handles a context of 32K tokens.",
-          };
+          theModel.description = modelDescription.mixtral_8x7b_32768;
+          break;
         case "whisper-large-v3":
-          return {
-            ...model,
-            description:
-              "pre-trained model for automatic speech recognition (ASR) and speech translation",
-          };
+          theModel.description = modelDescription.whisper_large_v3;
+          break;
+        case "llama-3.1-70b-versatile":
+          theModel.description = modelDescription.llama_3_1_70b_versatile;
+          break;
+        case "llama-3.1-8b-instant":
+          theModel.description = modelDescription.llama_3_1_8b_instant;
+          break;
         default:
-          return {
-            ...model,
-            description: "there is no information about this model",
-          };
+          theModel.description = "there is no information about this model";
+          break;
       }
+
+      return theModel;
     });
     res.status(200).json({ status: 200, models: groqModelsDetails });
   } catch (error) {

@@ -1,0 +1,8 @@
+fix bug hold chat
+handle error offline when fetch data
+implementation langchain to make conversational chatbot
+improve image tag
+can change profile photo
+improve unlimited scroll with intersection observer api
+add scroll to bottom
+add voice message

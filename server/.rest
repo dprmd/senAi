@@ -1,0 +1,55 @@
+###New Message To Groq
+POST http://localhost:5000/groqMessage
+Content-Type: application/json
+
+{
+  "apiKeyIndex": 0,
+  "message": "hay",
+  "role": "user",
+  "model": "llama3-8b-8192"
+}
+
+###Create New User In Firestore
+POST http://localhost:5000/newUser
+Content-Type: application/json
+
+{
+  "deviceName": "Redmi 9"
+}
+
+###Get All Messages With Spesific User Id
+POST  http://localhost:5000/allMessages
+Content-Type: application/json
+
+{
+  "userId": "582ac152-0389-4b22-b408-131bcc1b5a20"
+}
+
+###Save New Message To Firestore
+POST http://localhost:5000/newMessage
+Content-Type: application/json
+
+{
+  "userId": "582ac152-0389-4b22-b408-131bcc1b5a20",
+  "newMessageFromUser":"Hallo",
+  "newMessageFromAi":"HalloBack"
+}
+
+###delete messages with backup
+DELETE  http://localhost:5000/allMessages
+Content-Type: application/json
+
+{
+  "userId": "582ac152-0389-4b22-b408-131bcc1b5a20",
+  "deleteWithBackup": true,
+  "password": "aawm1973"
+}
+
+###upload seen history
+PATCH http://localhost:5000/seenHistory
+Content-Type: application/json
+
+{
+  "userId": "582ac152-0389-4b22-b408-131bcc1b5a20",
+  "lastSeen": "21 w1 21"
+}

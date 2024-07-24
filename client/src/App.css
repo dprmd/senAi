@@ -1,0 +1,115 @@
+@font-face {
+  font-family: "Poppins";
+  src: url("/fonts/Poppins/Poppins-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/Inter/Inter-Regular.ttf") format("truetype");
+}
+
+body {
+  @apply overflow-x-hidden text-slate-900 dark:text-slate-100;
+}
+
+.main-chat {
+  background-image: url(/img/flower.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+  @apply bg-[#EFEAE2] dark:bg-[#0B141A];
+}
+
+.simetris {
+  @apply px-4 py-2;
+}
+
+.debug {
+  @apply border border-slate-900 dark:border-slate-100;
+}
+
+.disable-zoom {
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: none;
+}
+
+.allow-zoom {
+  user-select: text; /* Allow text selection */
+  touch-action: auto; /* Allow mobile zooming */
+}
+
+/* Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+  @apply w-[6px];
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-slate-100 dark:bg-stone-500;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 dark:bg-stone-700;
+}
+
+::webkit-scrollbar-thumb:hover {
+  @apply bg-slate-300 dark:bg-stone-700;
+}
+
+.dark\:message-leftAfter:is(.dark *) {
+  border-color: transparent #202c33 transparent transparent;
+}
+
+.dark\:message-rightAfter:is(.dark *) {
+  border-color: transparent transparent transparent #005c4b;
+}
+
+.message {
+  position: relative;
+}
+
+.message:after {
+  position: absolute;
+  content: "";
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+.message-left {
+  @apply relative self-start rounded-tr-xl bg-[#FFFFFF] pl-3 dark:bg-[#202C33];
+}
+
+.message-left:after {
+  border-width: 0px 10px 10px 0;
+  border-color: transparent #fff transparent transparent;
+  top: 0;
+  left: -9px;
+  @apply dark:message-leftAfter;
+}
+
+.message-right {
+  @apply relative self-end rounded-tl-xl bg-[#D9FDD3] pl-3 dark:bg-[#005C4B];
+}
+
+.message-right:after {
+  border-width: 0px 0 10px 10px;
+  border-color: transparent transparent transparent #d9fdd3;
+  top: 0;
+  right: -9px;
+  @apply dark:message-rightAfter;
+}
+
+.input-message-field {
+  @apply max-h-[40px] min-h-[40px] flex-1 resize-none rounded-full bg-[#FFFFFF] px-3 py-2 font-inter font-bold text-slate-900 outline-none placeholder:text-slate-500 dark:bg-[#2A3942] dark:text-slate-100 dark:placeholder:text-slate-400;
+}

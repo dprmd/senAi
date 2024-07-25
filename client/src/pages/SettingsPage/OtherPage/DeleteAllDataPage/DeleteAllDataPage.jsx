@@ -33,7 +33,7 @@ const SettingOtherDeleteAllData = () => {
     withBackupChats: false,
     withLastSeenHistory: false,
   });
-  const maxLengthSecurityCode = 10;
+  const maxLengthSecurityCode = 6;
   const [securityCode, setSecurityCode] = useState("");
   const [isChecking, setIsChecking] = useState(false);
   const [securityCodeWrongDialog, setSecurityCodeWrongDialog] = useState(false);
@@ -134,16 +134,12 @@ const SettingOtherDeleteAllData = () => {
                   <InputOTPSlot index={0} />
                   <InputOTPSlot index={1} />
                   <InputOTPSlot index={2} />
-                  <InputOTPSlot index={3} />
-                  <InputOTPSlot index={4} />
                 </InputOTPGroup>
                 <InputOTPSeparator />
                 <InputOTPGroup>
+                  <InputOTPSlot index={3} />
+                  <InputOTPSlot index={4} />
                   <InputOTPSlot index={5} />
-                  <InputOTPSlot index={6} />
-                  <InputOTPSlot index={7} />
-                  <InputOTPSlot index={8} />
-                  <InputOTPSlot index={9} />
                 </InputOTPGroup>
               </InputOTP>
             </div>

@@ -1,5 +1,5 @@
-// const serverSource = "https://senaiserver-adi-permadis-projects.vercel.app";
-const serverSource = "http://192.168.43.228:5000";
+const serverSource = "https://senaiserver-adi-permadis-projects.vercel.app";
+// const serverSource = "http://192.168.43.228:5000";
 export const groqGetReplyEndPoint = `${serverSource}/getGroqReply`;
 export const groqGetModelsEndPoint = `${serverSource}/getGroqModels`;
 export const firestoreAddNewUserEndPoint = `${serverSource}/addNewUser`;

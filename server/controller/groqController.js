@@ -1,17 +1,7 @@
 import Groq from "groq-sdk";
 import { config } from "dotenv";
+import { modelDescription } from "./modelDescription.js";
 config();
-import fs from "fs";
-
-const getModelDescription = () => {
-  try {
-    const data = fs.readFileSync("./controller/modelDescription.json", "utf8");
-    const jsonData = JSON.parse(data);
-    return jsonData;
-  } catch (err) {
-    console.log(err);
-  }
-};
 
 export const getGroqReply = async (req, res) => {
   const apiKeys = process.env.GROQ_API_KEYS.split(",");
@@ -46,7 +36,6 @@ export const getGroqModels = async (req, res) => {
   const apiKeys = process.env.GROQ_API_KEYS.split(",");
   const { apiKeyIndex } = req.body;
   const apiKey = apiKeys[Number(apiKeyIndex)];
-  const modelDescription = getModelDescription();
 
   const groq = new Groq({ apiKey });
   try {

@@ -6,3 +6,4 @@ can change profile photo
 improve unlimited scroll with intersection observer api
 add scroll to bottom
 add voice message
+can send an image with caption

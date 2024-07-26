@@ -1,3 +1,4 @@
+import { filterModels } from "../lib/myUtils";
 import { groqGetReplyEndPoint, groqGetModelsEndPoint } from "./serverSource";
 
 export const getGroqModels = async () => {
@@ -16,8 +17,8 @@ export const getGroqModels = async () => {
   });
 
   if (models.status === 200) {
-    const modelsList = models.models;
-    return modelsList;
+    const modelsList = filterModels(models.models);
+    return modelsList
   } else {
     console.log(models);
   }

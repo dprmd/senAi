@@ -59,26 +59,33 @@ const SettingsModelPage = () => {
             setModel(e);
           }}
         >
-          {currentModels.map((model) => (
-            <div
-              className="my-2 flex space-x-4"
-              key={`senAi_model-${model.id}`}
-            >
-              <div>
-                <RadioGroupItem
-                  value={model.id}
-                  id={`senAi_model-${model.id}`}
-                />
-              </div>
-              <Label
-                htmlFor={`senAi_model-${model.id}`}
-                className="cursor-pointer"
-              >
-                <div>{model.id}</div>
-                <div className="mt-2 text-sm text-slate-400">
-                  {model.description}
+          {currentModels.map((ownedModel, i) => (
+            <div key={i}>
+              <h2 className="mb-5 mt-4 text-lg font-bold">
+                {ownedModel.owned}
+              </h2>
+              {ownedModel.models.map((model) => (
+                <div
+                  className="my-2 flex space-x-4"
+                  key={`senAi_model-${model.id}`}
+                >
+                  <div>
+                    <RadioGroupItem
+                      value={model.id}
+                      id={`senAi_model-${model.id}`}
+                    />
+                  </div>
+                  <Label
+                    htmlFor={`senAi_model-${model.id}`}
+                    className="cursor-pointer"
+                  >
+                    <div>{model.id}</div>
+                    <div className="mt-2 text-sm text-slate-400">
+                      {model.description}
+                    </div>
+                  </Label>
                 </div>
-              </Label>
+              ))}
             </div>
           ))}
         </RadioGroup>

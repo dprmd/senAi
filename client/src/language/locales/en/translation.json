@@ -4,6 +4,9 @@
   "continue": "Continue",
   "delete": "Delete",
   "loading": "Loading",
+  "start": "Start",
+  "done": "Done",
+  "send": "Send",
   "no_messages": "No Messages",
   "message_placeholder": "Message",
   "settings": "Settings",
@@ -55,5 +58,6 @@
   "senAi_ai_source": "AI Source",
   "senAi_model": "Model",
   "senAi_version": "Version",
-  "senAi_cant_receive_message": "Sen can't receive your message if youre offline"
+  "senAi_cant_receive_message": "Sen can't receive your message if youre offline",
+  "record_title": "Press Start then Speak"
 }

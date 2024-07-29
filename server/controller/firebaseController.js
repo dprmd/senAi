@@ -21,6 +21,7 @@ const firebaseConfig = {
   storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
   messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.FIREBASE_APP_ID,
+  measurementId: process.env.FIREBASE_MEASUREMENT_ID,
 };
 
 // Initialize Firebase
@@ -225,7 +226,7 @@ export const deleteAllDataInFirestore = async (req, res) => {
             whichDelete.backupChats = [];
           }
           if (option.withLastSeenHistory) {
-            whichDelete.lastSeen = ""
+            whichDelete.lastSeen = "";
             whichDelete.seenHistory = [];
           }
           await updateDoc(userRef, whichDelete);
@@ -254,18 +255,5 @@ export const deleteAllDataInFirestore = async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ status: 500, error });
-  }
-};
-
-export const getUsersDocs = async (req, res) => {
-  try {
-    let users = [];
-    const usersSnapshot = await getDocs(collection(firestore, "users"));
-    usersSnapshot.forEach((doc) => {
-      users.push(doc.data());
-    });
-    res.status(200).json({ status: 200, users });
-  } catch (error) {
-    res.status(500).json({ status: 500, error: error });
   }
 };

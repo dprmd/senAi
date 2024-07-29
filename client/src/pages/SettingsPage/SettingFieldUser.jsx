@@ -33,6 +33,8 @@ const SettingFieldUser = () => {
       <AlertDialogNormal
         openState={changeUserDialog}
         setOpenState={setChangeUserDialog}
+        showTitle={true}
+        showDescription={true}
         title={t("user_change_title")}
         showCancel={true}
         showContinue={true}

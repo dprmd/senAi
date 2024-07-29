@@ -13,55 +13,66 @@ import {
 const AlertDialogNormal = ({
   openState,
   setOpenState,
+  showTitle,
+  showDescription,
+  showCancel,
+  showContinue,
   title,
   description,
   centerDescription,
-  showCancel,
-  showContinue,
-  handleCancel = () => {},
-  handleContinue = () => {},
   cancelTitle,
   continueTitle,
+  handleCancel = () => {},
+  handleContinue = () => {},
+  customAction = [],
   children,
+  className,
 }) => {
   // hooks
   const { t } = useTranslation();
 
   return (
     <AlertDialog open={openState}>
-      <AlertDialogContent>
+      <AlertDialogContent className={className}>
         <AlertDialogHeader>
-          <AlertDialogTitle className="mb-1">
-            {title ? title : ""}
-          </AlertDialogTitle>
-          <AlertDialogDescription
-            className={centerDescription ? "text-center" : "text-left"}
-          >
-            {description ? description : ""}
-            {children}
-          </AlertDialogDescription>
+          {showTitle && (
+            <AlertDialogTitle className="mb-1">{title}</AlertDialogTitle>
+          )}
+          {showDescription && (
+            <AlertDialogDescription
+              className={centerDescription ? "text-center" : "text-left"}
+            >
+              {description ? description : ""}
+              {children}
+            </AlertDialogDescription>
+          )}
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel
-            onClick={() => {
-              setOpenState(false);
-              handleCancel();
-            }}
-          >
-            {showCancel ? (cancelTitle ? cancelTitle : t("cancel")) : null}
-          </AlertDialogCancel>
-          <AlertDialogAction
-            onClick={() => {
-              setOpenState(false);
-              handleContinue();
-            }}
-          >
-            {showContinue
-              ? continueTitle
-                ? continueTitle
-                : t("continue")
-              : null}
-          </AlertDialogAction>
+          {showCancel && (
+            <AlertDialogCancel
+              onClick={() => {
+                setOpenState(false);
+                handleCancel();
+              }}
+            >
+              {cancelTitle ? cancelTitle : t("cancel")}
+            </AlertDialogCancel>
+          )}
+          {showContinue && (
+            <AlertDialogAction
+              onClick={() => {
+                setOpenState(false);
+                handleContinue();
+              }}
+            >
+              {continueTitle ? continueTitle : t("continue")}
+            </AlertDialogAction>
+          )}
+          {customAction.map(({ actionTitle, actionFunction }, i) => (
+            <AlertDialogAction onClick={actionFunction} key={i}>
+              {actionTitle}
+            </AlertDialogAction>
+          ))}
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

@@ -2,29 +2,40 @@ import Groq from "groq-sdk";
 import { config } from "dotenv";
 import { modelDescription } from "./modelDescription.js";
 config();
+import fs from "fs";
+import { pathUpload } from "../routes/routes.js";
 
 export const getGroqReply = async (req, res) => {
   const apiKeys = process.env.GROQ_API_KEYS.split(",");
-  const { apiKeyIndex, message, role, model } = req.body;
+  const { apiKeyIndex, message, systemInstruction, model } = req.body;
   const apiKey = apiKeys[Number(apiKeyIndex)];
 
   const groq = new Groq({ apiKey });
 
   try {
-    const requestToGroq = async (message, role, model) => {
+    const requestToGroq = async (message, systemInstruction, model) => {
       const reply = await groq.chat.completions.create({
         messages: [
           {
-            role,
+            role: "system",
+            content: systemInstruction,
+          },
+          {
+            role: "user",
             content: message,
           },
         ],
-        model,
+        model: model,
+        temperature: 1,
+        max_tokens: 1024,
+        top_p: 1,
+        stream: false,
+        stop: null,
       });
       return reply.choices[0].message.content;
     };
 
-    const reply = await requestToGroq(message, role, model);
+    const reply = await requestToGroq(message, systemInstruction, model);
 
     res.status(200).json({ status: 200, reply: reply });
   } catch (error) {
@@ -80,5 +91,30 @@ export const getGroqModels = async (req, res) => {
     res.status(200).json({ status: 200, models: groqModelsDetails });
   } catch (error) {
     res.status(500).json({ status: 500, error: error });
+  }
+};
+
+export const getGroqTranscription = async (req, res) => {
+  const apiKeys = process.env.GROQ_API_KEYS.split(",");
+  const { userId, apiKeyIndex } = JSON.parse(req.body.jsonData);
+  const apiKey = apiKeys[Number(apiKeyIndex)];
+
+  try {
+    const groq = new Groq({ apiKey });
+    const transcription = await groq.audio.transcriptions.create({
+      file: fs.createReadStream(`${pathUpload}/${userId}-recording.webm`),
+      model: "whisper-large-v3",
+      prompt: "Specify context or spelling",
+      response_format: "json",
+    });
+    let text;
+    if (transcription.text.length === 0) {
+      text = " ";
+    } else {
+      text = transcription.text;
+    }
+    res.status(200).json({ status: 200, text });
+  } catch (error) {
+    res.status(500).json({ status: 500, error });
   }
 };

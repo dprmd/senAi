@@ -6,7 +6,7 @@ import { getAge } from "@/lib/generateTime";
 import senAi from "@/../package.json";
 
 const infoStyle =
-  "disable-zoom fixed top-0 bottom-0 left-0 right-0 bg-slate-100 dark:bg-slate-800 bg-opacity-90 dark:bg-opacity-90 backdrop-blur-sm md:flex md:items-center";
+  "min-w-[100vw] disable-zoom fixed top-0 bottom-0 left-0 right-0 bg-slate-100 dark:bg-slate-800 bg-opacity-90 dark:bg-opacity-90 backdrop-blur-sm md:flex md:items-center";
 const upperStyle = "font-poppins block my-[2px] text-center text-lg font-bold";
 const lowerStyle =
   "font-poppins block my-[2px] text-center mb-2 text-sm text-slate-700 dark:text-slate-400";
@@ -31,16 +31,16 @@ const SenStatus = () => {
   return (
     <>
       <button
-        className="ml-3 flex flex-col justify-center pr-10"
+        className="inline-block ml-3 flex flex-col justify-center pr-10"
         onClick={handleSenClick}
       >
-        <h1 className="font-bold">Sen</h1>
+        <h1 className="font-bold text-left">Sen</h1>
         {senTyping ? (
-          <span className="font-poppins text-sm duration-500">
+          <span className="text-left font-poppins inline-block text-sm duration-500">
             {t("typing")}
           </span>
         ) : (
-          <span className="font-poppins text-sm duration-500">
+          <span className="text-left font-poppins inline-block text-sm duration-500">
             {online ? "online" : "offline"}
           </span>
         )}

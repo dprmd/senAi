@@ -31,6 +31,7 @@ const SecondNavbarTop = () => {
       <AlertDialogNormal
         openState={deleteSomeChatsDialog}
         setOpenState={setDeleteSomeChatsDialog}
+        showDescription={true}
         description={`${t("delete_some_chat_delete")} ${holdChats.length} ${t("delete_some_chat_chat")}`}
         centerDescription={true}
         showCancel={true}

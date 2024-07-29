@@ -36,9 +36,10 @@ const MainNavbarTop = () => {
       <AlertDialogNormal
         openState={deleteAllChatsDialog}
         setOpenState={setDeleteAllChatsDialog}
+        showTitle={true}
+        showDescription={true}
         title={t("delete_all_chats_title")}
         description={t("delete_all_chats_desc")}
-        // centerDescription={true}
         showCancel={true}
         showContinue={true}
         handleContinue={handleDeleteAllChats}

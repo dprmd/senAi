@@ -4,6 +4,9 @@
   "continue": "Lanjutkan",
   "delete": "Hapus",
   "loading": "Memuat",
+  "start": "Mulai",
+  "done": "Selesai",
+  "send": "Kirim",
   "no_messages": "Tidak ada pesan",
   "message_placeholder": "Pesan",
   "settings": "Pengaturan",
@@ -55,5 +58,6 @@
   "senAi_ai_source": "Sumber AI",
   "senAi_model": "Model",
   "senAi_version": "Versi",
-  "senAi_cant_receive_message": "Sen tidak dapat menerima pesan jika kamu offline"
+  "senAi_cant_receive_message": "Sen tidak dapat menerima pesan jika kamu offline",
+  "record_title": "Klik mulai untuk merekam"
 }

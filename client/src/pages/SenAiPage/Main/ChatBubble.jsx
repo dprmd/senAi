@@ -6,6 +6,7 @@ import { useShallow } from "zustand/react/shallow";
 import CodeBlockSkeleton from "../../../components/Skeleton/CodeBlockSkeleton";
 import DynamicSvgComponent from "@/components/svg/DynamicSvg";
 import { useLongPress } from "@/hooks/useUtils";
+import { useInView } from "react-intersection-observer";
 // React Markdown
 const Markdown = lazy(() => import("react-markdown"));
 const CodeBlock = lazy(() => import("./CodeBlock"));
@@ -19,6 +20,10 @@ const ChatBubble = ({ chat }) => {
     useShallow((state) => [state.stillHold, state.triggerClearHolding]),
   );
   const online = useOnlineStatus();
+  const {ref} = useInView({
+    threshold: 0,
+    triggerOnce: true,
+  })
 
   // Holding Operation
   const [holding, setHolding] = useState(false);
@@ -45,6 +50,7 @@ const ChatBubble = ({ chat }) => {
       onMouseDown={handleHoldStart}
       onMouseUp={handleHoldEnd}
       onClick={handleClick}
+      ref={ref}
     >
       <div
         className={`${chatBubbleStyle} ${

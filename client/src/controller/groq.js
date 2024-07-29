@@ -1,8 +1,12 @@
 import { filterModels } from "../lib/myUtils";
-import { groqGetReplyEndPoint, groqGetModelsEndPoint } from "./serverSource";
+import { fetchJson } from "../lib/myUtils";
+import {
+  groqGetReplyEndPoint,
+  groqGetModelsEndPoint,
+  groqGetTranscriptionEndPoint,
+} from "./serverSource";
 
 export const getGroqModels = async () => {
-  const { fetchJson } = await import("../lib/myUtils");
   const getApiKeyIndex = localStorage.getItem("senAi-user");
   const apiKeyIndex = getApiKeyIndex ? getApiKeyIndex : 0;
 
@@ -18,14 +22,13 @@ export const getGroqModels = async () => {
 
   if (models.status === 200) {
     const modelsList = filterModels(models.models);
-    return modelsList
+    return modelsList;
   } else {
     console.log(models);
   }
 };
 
-export const getGroqReply = async (message, role, model) => {
-  const { fetchJson } = await import("../lib/myUtils");
+export const getGroqReply = async (message, systemInstruction, model) => {
   const getApiKeyIndex = localStorage.getItem("senAi-user");
   const apiKeyIndex = getApiKeyIndex ? getApiKeyIndex : 0;
 
@@ -37,7 +40,7 @@ export const getGroqReply = async (message, role, model) => {
     body: JSON.stringify({
       apiKeyIndex,
       message,
-      role,
+      systemInstruction,
       model,
     }),
   });
@@ -48,5 +51,22 @@ export const getGroqReply = async (message, role, model) => {
   if (replyUserMessage.status === 500) {
     console.log(replyUserMessage);
     return replyUserMessage.error.error.error.message;
+  }
+};
+
+export const getGroqTranscription = async (formData) => {
+  const req = await fetch(groqGetTranscriptionEndPoint, {
+    method: "POST",
+    body: formData,
+  });
+
+  const transcriptionText = await req.json();
+  console.log(transcriptionText);
+  if (transcriptionText.status === 200) {
+    return transcriptionText.text;
+  }
+  if (transcriptionText.status === 500) {
+    console.log(transcriptionText);
+    return transcriptionText.error;
   }
 };

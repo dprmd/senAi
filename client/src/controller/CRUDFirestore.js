@@ -10,9 +10,9 @@ import {
   firestoreGetPermissionToDeleteAllDataEndPoint,
   firestoreDeleteAllDataEndPoint,
 } from "./serverSource";
+import { fetchJson } from "../lib/myUtils";
 
 export const addNewUserToFirestoreIfNotExists = async () => {
-  const { fetchJson } = await import("../lib/myUtils");
   if (localStorage.getItem("senAi-userId")) {
     const userIdFromLocalStorage = localStorage.getItem("senAi-userId");
     return userIdFromLocalStorage;
@@ -41,7 +41,6 @@ export const addNewUserToFirestoreIfNotExists = async () => {
 };
 
 export const getAllChatsFromFirestore = async (userId) => {
-  const { fetchJson } = await import("../lib/myUtils");
   const chats = await fetchJson(firestoreGetAllChatsEndPoint, {
     method: "POST",
     headers: {
@@ -68,7 +67,6 @@ export const addNewChatsToFirestore = async (
   newChatFromUser,
   newChatFromAi,
 ) => {
-  const { fetchJson } = await import("../lib/myUtils");
   const savedChats = await fetchJson(firestoreAddNewChatsEndPoint, {
     method: "POST",
     headers: {
@@ -95,7 +93,6 @@ export const addNewChatsToFirestore = async (
 };
 
 export const deleteAllChatsInFirestore = async (userId) => {
-  const { fetchJson } = await import("../lib/myUtils");
   const deletedAllChats = await fetchJson(firestoreDeleteAllChatsEndPoint, {
     method: "DELETE",
     headers: {
@@ -112,7 +109,6 @@ export const deleteAllChatsInFirestore = async (userId) => {
 };
 
 export const deleteSomeChatsInFirestore = async (userId, someChats) => {
-  const { fetchJson } = await import("../lib/myUtils");
   const deletedSomeChats = await fetchJson(firestoreDeleteSomeChatsEndPoint, {
     method: "DELETE",
     headers: {
@@ -129,7 +125,6 @@ export const deleteSomeChatsInFirestore = async (userId, someChats) => {
 };
 
 export const getName = async (userId) => {
-  const { fetchJson } = await import("../lib/myUtils");
   const gettedName = await fetchJson(firestoreGetNameEndPoint, {
     method: "POST",
     headers: {
@@ -149,7 +144,6 @@ export const getName = async (userId) => {
 };
 
 export const updateName = async (userId, newName) => {
-  const { fetchJson } = await import("../lib/myUtils");
   const updatedName = await fetchJson(firestoreUpdateNameEndPoint, {
     method: "POST",
     headers: {
@@ -169,7 +163,6 @@ export const updateName = async (userId, newName) => {
 };
 
 export const uploadSeenHistory = async (userId) => {
-  const { fetchJson } = await import("../lib/myUtils");
   const { generateTimeNow } = await import("../lib/generateTime");
   const { day, monthName, year, hour, minute, second } = generateTimeNow();
   const lastSeen = `${day} ${monthName} ${year} , ${hour}:${minute}:${second}`;
@@ -193,7 +186,6 @@ export const uploadSeenHistory = async (userId) => {
 };
 
 export const getPermissionToDeleteAllData = async (securityCode) => {
-  const { fetchJson } = await import("../lib/myUtils");
   const getPermission = await fetchJson(
     firestoreGetPermissionToDeleteAllDataEndPoint,
     {
@@ -217,7 +209,6 @@ export const deleteAllDataInFirestore = async (
   securityCode,
   option,
 ) => {
-  const { fetchJson } = await import("../lib/myUtils");
   const deleteAllData = await fetchJson(firestoreDeleteAllDataEndPoint, {
     method: "DELETE",
     headers: {

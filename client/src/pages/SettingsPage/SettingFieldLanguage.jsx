@@ -42,6 +42,8 @@ const SettingFieldLanguage = () => {
       <AlertDialogNormal
         openState={changeLanguageDialog}
         setOpenState={setChangeLanguageDialog}
+        showTitle={true}
+        showDescription={true}
         title={t("language_change_title")}
         showCancel={true}
         showContinue={true}

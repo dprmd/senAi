@@ -67,8 +67,6 @@ const SettingOtherDeleteAllData = () => {
       return;
     setIsDeleting(true);
     if (option.withChats) {
-      const { resetTempChats } = await import("@/store/appStore");
-      resetTempChats();
       setChats([]);
     }
     setDeleteAllDataDialog(false);
@@ -175,6 +173,8 @@ const SettingOtherDeleteAllData = () => {
       <AlertDialogNormal
         openState={securityCodeWrongDialog}
         setOpenState={setSecurityCodeWrongDialog}
+        showTitle={true}
+        showDescription={true}
         title={t("wrong_security_code")}
         description={t("wrong_security_code_desc")}
         showCancel={false}
@@ -189,8 +189,9 @@ const SettingOtherDeleteAllData = () => {
       <AlertDialogNormal
         openState={deleteAllDataDialog}
         setOpenState={setDeleteAllDataDialog}
+        showTitle={true}
+        showDescription={true}
         title={t("choose_to_delete")}
-        description=""
         showCancel={true}
         showContinue={true}
         handleCancel={() => {

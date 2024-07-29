@@ -10,12 +10,14 @@ import useOnlineStatus from "./useOnlineStatus";
 
 export const useSubmitGroq = () => {
   // hooks
-  const [setChats] = useChatsStore(useShallow((state) => [state.setChats]));
-  const [messageFromUser, setMessageFromUser] = useInputMessagesStore(
-    useShallow((state) => [state.messageFromUser, state.setMessageFromUser]),
+  const [setChats, getChats] = useChatsStore(
+    useShallow((state) => [state.setChats, state.getChats]),
   );
-  const [model, role] = useSettingsStore(
-    useShallow((state) => [state.model, state.role]),
+  const [setMessageFromUser] = useInputMessagesStore(
+    useShallow((state) => [state.setMessageFromUser]),
+  );
+  const [model, languageLabel] = useSettingsStore(
+    useShallow((state) => [state.model, state.languageLabel]),
   );
   const [senTyping, setSenTyping, userId, loading] = useAppStore(
     useShallow((state) => [
@@ -28,11 +30,10 @@ export const useSubmitGroq = () => {
   const online = useOnlineStatus();
   const { t } = useTranslation();
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (messageFromUser) => {
     if (messageFromUser.trim().length === 0) return;
     if (senTyping || loading) return;
 
-    const { addToTempChats, tempChats } = await import("../store/appStore");
     const { sleep } = await import("../lib/generateTime");
     const { getGroqReply } = await import("../controller/groq");
     const { addNewChatsToFirestore } = await import(
@@ -46,8 +47,7 @@ export const useSubmitGroq = () => {
     };
     setMessageFromUser("");
 
-    addToTempChats(chatFromUser);
-    setChats(tempChats);
+    setChats([...getChats(), chatFromUser]);
 
     const chatFromAi = {
       position: "left",
@@ -58,7 +58,18 @@ export const useSubmitGroq = () => {
     if (online) {
       await sleep(1000);
       setSenTyping(true);
-      const reply = await getGroqReply(chatFromUser.message, role, model);
+      let systemInstruction = "";
+      if (languageLabel === "English") {
+        systemInstruction = "Please answer me in English language";
+      }
+      if (languageLabel === "Indonesia") {
+        systemInstruction = "Please answer me in Indonesian language";
+      }
+      const reply = await getGroqReply(
+        chatFromUser.message,
+        systemInstruction,
+        model,
+      );
       chatFromAi.time = new Date().getTime();
       chatFromAi.message = reply;
       // comment this when firebase is error
@@ -71,8 +82,7 @@ export const useSubmitGroq = () => {
 
     setSenTyping(false);
     await sleep(500);
-    addToTempChats(chatFromAi);
-    setChats(tempChats);
+    setChats([...getChats(), chatFromAi]);
   };
 
   return handleSubmit;

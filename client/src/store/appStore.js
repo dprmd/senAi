@@ -1,25 +1,4 @@
 import { create } from "zustand";
-// import chats from "../chats.json";
-
-// tempChats
-export let tempChats = [];
-export const setTempChats = (chats) => {
-  tempChats = chats;
-};
-export const resetTempChats = () => {
-  tempChats = [];
-};
-export const addToTempChats = (chat) => {
-  tempChats.push(chat);
-};
-export const getAllChatsFromFirestoreAndSetToTempChats = async (userId) => {
-  const { getAllChatsFromFirestore } = await import(
-    "../controller/CRUDFirestore"
-  );
-  const chats = await getAllChatsFromFirestore(userId);
-  tempChats = chats;
-  return chats;
-};
 
 // Holding ChatBubble
 export let firstTimeHold = false;
@@ -31,9 +10,12 @@ export const setStillHold = (value) => {
   stillHold = value;
 };
 
-export const useChatsStore = create((set) => ({
+export const useChatsStore = create((set, get) => ({
   chats: [],
   setChats: (chats) => set({ chats }),
+  getChats: () => {
+    return get().chats;
+  }
 }));
 
 export const useHoldChatsStore = create((set) => ({
@@ -79,10 +61,6 @@ export const useSettingsStore = create((set) => ({
     ? localStorage.getItem("senAi-model")
     : "gemma2-9b-it",
   setModel: (model) => set({ model }),
-  role: localStorage.getItem("senAi-role")
-    ? localStorage.getItem("senAi-role")
-    : "user",
-  setRole: (role) => set({ role }),
   darkMode: localStorage.getItem("senAi-theme") === "dark" ? true : false,
   setDarkMode: (darkMode) => set({ darkMode }),
 }));

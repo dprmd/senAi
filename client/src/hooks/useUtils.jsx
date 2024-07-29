@@ -113,11 +113,9 @@ export const useDeleteSomeChats = () => {
     const { deleteSomeChatsInFirestore } = await import(
       "@/controller/CRUDFirestore"
     );
-    const { setTempChats } = await import("@/store/appStore");
 
     deleteSomeChatsInFirestore(userId, deletedSelectedChats);
     setChats(deletedSelectedChats);
-    setTempChats(deletedSelectedChats);
     clearHoldChats();
   };
 
@@ -133,11 +131,9 @@ export const useDeleteAllChats = () => {
     const { deleteAllChatsInFirestore } = await import(
       "@/controller/CRUDFirestore"
     );
-    const { resetTempChats } = await import("@/store/appStore");
     if (online) {
       deleteAllChatsInFirestore(userId);
     }
-    resetTempChats();
     setChats([]);
   };
 
@@ -158,16 +154,16 @@ export const useSenAiPageFetch = () => {
     try {
       const { addNewUserToFirestoreIfNotExists, uploadSeenHistory } =
         await import("@/controller/CRUDFirestore");
-      const { getAllChatsFromFirestoreAndSetToTempChats } = await import(
-        "@/store/appStore"
-      );
+        const { getAllChatsFromFirestore } = await import(
+          "../controller/CRUDFirestore"
+        );
 
       const generatedUserId = await addNewUserToFirestoreIfNotExists();
       localStorage.setItem("senAi-userId", generatedUserId);
       setUserId(generatedUserId);
 
       const [chats] = await Promise.all([
-        getAllChatsFromFirestoreAndSetToTempChats(generatedUserId),
+        getAllChatsFromFirestore(generatedUserId),
         uploadSeenHistory(generatedUserId),
       ]);
 

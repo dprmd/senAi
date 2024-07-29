@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 import { useAppStore, useSettingsStore } from "../../store/appStore";
 import { motion } from "framer-motion";
 import SettingFieldUser from "./SettingFieldUser";
-import SettingFieldRole from "./SettingFieldRole";
 import SettingFieldModel from "./SettingFieldModel";
 import SettingFieldName from "./SettingFieldName";
 import SettingField from "./SettingsField";
@@ -103,8 +102,6 @@ const SettingsPage = () => {
         <SettingFieldName />
         {/* User */}
         <SettingFieldUser />
-        {/* Role */}
-        <SettingFieldRole />
         {/* Model */}
         <SettingFieldModel />
         {/* Language */}

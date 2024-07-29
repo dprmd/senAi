@@ -112,7 +112,7 @@ const Footer = () => {
                     <audio
                       ref={audioPlaybackRef}
                       controls
-                      className="debug bg-light dark:bg-dark"
+                      className="bg-light dark:bg-dark"
                     >
                       <track kind="captions" />
                     </audio>

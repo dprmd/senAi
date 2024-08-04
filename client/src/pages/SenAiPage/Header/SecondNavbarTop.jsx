@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { useTranslation } from "react-i18next";
-import { useHoldChatsStore } from "@/store/appStore";
+import { useChatsStore } from "@/store/useChatsStore";
 import ReturnButton from "@/components/composable/ReturnButton";
 import AlertDialogNormal from "@/components/composable/AlertDialogNormal";
 import DynamicSvgComponent from "@/components/svg/DynamicSvg";
@@ -9,9 +9,7 @@ import { useClearHoldChats, useDeleteSomeChats } from "@/hooks/useUtils";
 
 const SecondNavbarTop = () => {
   // hooks
-  const [holdChats] = useHoldChatsStore(
-    useShallow((state) => [state.holdChats]),
-  );
+  const [holdChats] = useChatsStore(useShallow((state) => [state.holdChats]));
   const { t } = useTranslation();
   const clearHoldChats = useClearHoldChats();
   const handleDeleteSomeChats = useDeleteSomeChats();

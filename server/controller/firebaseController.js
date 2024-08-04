@@ -27,21 +27,29 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const firestore = getFirestore(app);
-const collectionName = "users";
 
 export const addNewUserToFirestore = async (req, res) => {
   const { deviceName, lastSeen } = req.body;
   const newUserId = v4();
-  const userRef = doc(firestore, collectionName, newUserId);
+  const userRef = doc(firestore, "users", newUserId);
   try {
-    await setDoc(userRef, {
+    // create default document in users collection
+    await setDoc(doc(firestore, "users", newUserId), {
       userId: newUserId,
       name: "Unknown",
       deviceName,
-      chats: [],
-      backupChats: [],
       lastSeen,
       seenHistory: [],
+    });
+    // create chats document in chats collection
+    await setDoc(doc(firestore, "chats", newUserId), {
+      owned: newUserId,
+      chats: [],
+    });
+    // create backupChats document in backupChats collection
+    await setDoc(doc(firestore, "backupChats", newUserId), {
+      owned: newUserId,
+      backupChats: [],
     });
     res.status(201).json({ status: 201, newUserId });
   } catch (error) {
@@ -51,9 +59,9 @@ export const addNewUserToFirestore = async (req, res) => {
 
 export const getAllChatsFromFirestore = async (req, res) => {
   const { userId } = req.body;
-  const userRef = doc(firestore, collectionName, userId);
+  const chatsRef = doc(firestore, "chats", userId);
   try {
-    const userSnap = await getDoc(userRef);
+    const userSnap = await getDoc(chatsRef);
 
     if (userSnap.exists()) {
       res.status(200).json({ status: 200, chats: userSnap.data().chats });
@@ -70,13 +78,17 @@ export const getAllChatsFromFirestore = async (req, res) => {
 
 export const addNewChatsToFirestore = async (req, res) => {
   const { userId, newChatFromUser, newChatFromAi } = req.body;
-  const userRef = doc(firestore, collectionName, userId);
+  const chatsRef = doc(firestore, "chats", userId);
+  const backupChatsRef = doc(firestore, "backupChats", userId);
   try {
-    const userSnap = await getDoc(userRef);
+    const chatsSnap = await getDoc(chatsRef);
+    const backupChatsSnap = await getDoc(backupChatsRef);
 
-    if (userSnap.exists()) {
-      await updateDoc(userRef, {
+    if (chatsSnap.exists() && backupChatsSnap.exists()) {
+      await updateDoc(chatsRef, {
         chats: arrayUnion(newChatFromUser, newChatFromAi),
+      });
+      await updateDoc(backupChatsRef, {
         backupChats: arrayUnion(newChatFromUser, newChatFromAi),
       });
       res.status(201).json({ status: 201, message: "Chats added" });
@@ -94,8 +106,8 @@ export const addNewChatsToFirestore = async (req, res) => {
 export const deleteAllChatsInFirestore = async (req, res) => {
   const { userId } = req.body;
   try {
-    const userRef = doc(firestore, collectionName, userId);
-    await updateDoc(userRef, {
+    const chatsRef = doc(firestore, "chats", userId);
+    await updateDoc(chatsRef, {
       chats: [],
     });
     res.status(202).json({ status: 202, message: "Delete All Chats" });
@@ -108,8 +120,8 @@ export const deleteSomeChatsInFirestore = async (req, res) => {
   const { userId, someChats } = req.body;
 
   try {
-    const userRef = doc(firestore, collectionName, userId);
-    await updateDoc(userRef, {
+    const chatsRef = doc(firestore, "chats", userId);
+    await updateDoc(chatsRef, {
       chats: someChats,
     });
     res
@@ -122,7 +134,7 @@ export const deleteSomeChatsInFirestore = async (req, res) => {
 
 export const getName = async (req, res) => {
   const { userId } = req.body;
-  const userRef = doc(firestore, collectionName, userId);
+  const userRef = doc(firestore, "users", userId);
   try {
     const userSnap = await getDoc(userRef);
 
@@ -141,7 +153,7 @@ export const getName = async (req, res) => {
 
 export const updateName = async (req, res) => {
   const { userId, newName } = req.body;
-  const userRef = doc(firestore, collectionName, userId);
+  const userRef = doc(firestore, "users", userId);
   try {
     const userSnap = await getDoc(userRef);
 
@@ -159,23 +171,20 @@ export const updateName = async (req, res) => {
       });
     }
   } catch (error) {
-    // TODO benarkan kode
     res.status(500).json({ status: 500, error });
   }
 };
 
 export const uploadSeenHistory = async (req, res) => {
   const { userId, lastSeen } = req.body;
-  const userRef = doc(firestore, collectionName, userId);
+  const userRef = doc(firestore, "users", userId);
   try {
     await updateDoc(userRef, {
       lastSeen,
       seenHistory: arrayUnion(lastSeen),
     });
-    // TODO benarkan kode
     res.status(201).json({ status: 201, message: "Seen History Updated" });
   } catch (error) {
-    // TODO benarkan kode
     res.status(500).json({ status: 500, error });
   }
 };
@@ -208,28 +217,33 @@ export const getPermissionToDeleteAllData = async (req, res) => {
 export const deleteAllDataInFirestore = async (req, res) => {
   const { userId, securityCode, option } = req.body;
   const passwordRef = doc(firestore, "password", "passwordDeleteAllData");
-  const userRef = doc(firestore, collectionName, userId);
+  const userRef = doc(firestore, "users", userId);
+  const chatsRef = doc(firestore, "chats", userId);
+  const backupChatsRef = doc(firestore, "backupChats", userId);
   try {
     const passwordSnap = await getDoc(passwordRef);
     const userSnap = await getDoc(userRef);
-    const whichDelete = {};
+    const chatsSnap = await getDoc(chatsRef);
+    const backupChatsSnap = await getDoc(backupChatsRef);
 
     if (passwordSnap.exists()) {
       const encryptedPassword = passwordSnap.data().passwordDeleteAllData;
       const compareResult = comparePassword(securityCode, encryptedPassword);
       if (compareResult) {
-        if (userSnap.exists()) {
+        if (
+          userSnap.exists() &&
+          chatsSnap.exists() &&
+          backupChatsSnap.exists()
+        ) {
+          if (option.withLastSeenHistory) {
+            await updateDoc(userRef, { lastSeen: "", seenHistory: [] });
+          }
           if (option.withChats) {
-            whichDelete.chats = [];
+            await updateDoc(chatsRef, { chats: [] });
           }
           if (option.withBackupChats) {
-            whichDelete.backupChats = [];
+            await updateDoc(backupChatsRef, { backupChats: [] });
           }
-          if (option.withLastSeenHistory) {
-            whichDelete.lastSeen = "";
-            whichDelete.seenHistory = [];
-          }
-          await updateDoc(userRef, whichDelete);
           res.status(202).json({
             status: 202,
             whichDelete: {

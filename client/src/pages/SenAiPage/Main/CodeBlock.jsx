@@ -5,7 +5,7 @@ import {
   materialLight,
   materialOceanic,
 } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { useSettingsStore } from "../../../store/appStore";
+import { useSettingsStore } from "@/store/useSettingsStore";
 import Check from "@/components/svg/icons/Check";
 import Clipboard from "@/components/svg/icons/Clipboard";
 

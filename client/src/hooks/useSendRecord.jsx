@@ -4,20 +4,28 @@ import { useShallow } from "zustand/react/shallow";
 import { useSubmitGroq } from "./useSubmitGroq";
 import { toast } from "../components/ui/use-toast";
 import { useRef } from "react";
+import { useTranslation } from "react-i18next";
 
-export const useSendRecord = (audioPlaybackRef) => {
+export const useSendRecord = (audioPlaybackRef, seekBar) => {
   // hooks
-  const [setIsRecording, setIsRecordingStart, setHaveRecord, setSendProgress] =
-    useRecordStore(
-      useShallow((state) => [
-        state.setIsRecording,
-        state.setIsRecordingStart,
-        state.setHaveRecord,
-        state.setSendProgress,
-      ]),
-    );
+  const [
+    setIsRecording,
+    setIsRecordingStart,
+    setHaveRecord,
+    setSendProgress,
+    setIsPlayRecord,
+  ] = useRecordStore(
+    useShallow((state) => [
+      state.setIsRecording,
+      state.setIsRecordingStart,
+      state.setHaveRecord,
+      state.setSendProgress,
+      state.setIsPlayRecord,
+    ]),
+  );
   const [userId] = useAppStore(useShallow((state) => [state.userId]));
   const handleSubmit = useSubmitGroq();
+  const { t } = useTranslation();
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const audioBlobRef = useRef();
@@ -27,7 +35,7 @@ export const useSendRecord = (audioPlaybackRef) => {
     setHaveRecord(false);
   };
 
-  const startRecording = async () => {
+  const handleStartRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaRecorderRef.current = new MediaRecorder(stream, {
@@ -54,20 +62,20 @@ export const useSendRecord = (audioPlaybackRef) => {
     } catch (err) {
       console.log(err);
       toast({
-        description:
-          "Could not access microphone, Please check your permission",
+        description: t("microphone_allow_false"),
         duration: 2000,
       });
     }
   };
 
-  const stopRecording = () => {
+  const handleStopRecording = () => {
     mediaRecorderRef.current.stop();
     setIsRecordingStart(false);
     setHaveRecord(true);
   };
 
   const handleSendRecord = async () => {
+    setIsPlayRecord(false);
     setIsRecording(false);
     setHaveRecord(false);
     setSendProgress(true);
@@ -86,5 +94,41 @@ export const useSendRecord = (audioPlaybackRef) => {
     setSendProgress(false);
   };
 
-  return { handleCancel, startRecording, stopRecording, handleSendRecord };
+  const handlePlayRecordResult = () => {
+    if (audioPlaybackRef.current.paused) {
+      setIsPlayRecord(true);
+      audioPlaybackRef.current.play();
+    } else {
+      setIsPlayRecord(false);
+      audioPlaybackRef.current.pause();
+    }
+  };
+
+  const handleEndedRecordResult = () => {
+    setIsPlayRecord(false);
+  };
+
+  const handleTimeUpdateRecordResult = () => {
+    const value =
+      (100 / audioPlaybackRef.current.duration) *
+      audioPlaybackRef.current.currentTime;
+    seekBar.current.value = value;
+  };
+
+  const handleSeekBarChangeRecordResult = () => {
+    const time =
+      audioPlaybackRef.current.duration * (seekBar.current.value / 100);
+    audioPlaybackRef.current.currentTime = time;
+  };
+
+  return {
+    handleCancel,
+    handleStartRecording,
+    handleStopRecording,
+    handlePlayRecordResult,
+    handleEndedRecordResult,
+    handleTimeUpdateRecordResult,
+    handleSeekBarChangeRecordResult,
+    handleSendRecord,
+  };
 };

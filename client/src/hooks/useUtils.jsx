@@ -1,16 +1,13 @@
 import { useShallow } from "zustand/react/shallow";
-import {
-  useAppStore,
-  useChatsStore,
-  useHoldChatsStore,
-  useSettingsStore,
-} from "../store/appStore";
-import { firstTimeHold, setFirstTimeHold } from "../store/appStore";
+import { useAppStore } from "../store/appStore";
+import { useChatsStore } from "../store/useChatsStore";
+import { firstTimeHold, setFirstTimeHold } from "../store/useChatsStore";
 import useOnlineStatus from "./useOnlineStatus";
+import { useSettingsStore } from "@/store/useSettingsStore";
 
 export const useClearHoldChats = () => {
   const [setHoldChats, stillHold, setStillHold, setTriggerClearHolding] =
-    useHoldChatsStore(
+    useChatsStore(
       useShallow((state) => [
         state.setHoldChats,
         state.stillHold,
@@ -32,9 +29,9 @@ export const useClearHoldChats = () => {
   return clearHoldChats;
 };
 
-export const useLongPress = ({ chat, holding, setHolding }) => {
+export const useLongPressChat = ({ chat, holding, setHolding }) => {
   // hooks
-  const [holdChats, setHoldChats, stillHold, setStillHold] = useHoldChatsStore(
+  const [holdChats, setHoldChats, stillHold, setStillHold] = useChatsStore(
     useShallow((state) => [
       state.holdChats,
       state.setHoldChats,
@@ -44,7 +41,7 @@ export const useLongPress = ({ chat, holding, setHolding }) => {
   );
 
   let isHolding;
-  const handleLongPress = () => {
+  const handleLongPressChat = () => {
     if (isHolding && !stillHold) {
       setStillHold(true);
       setFirstTimeHold(true);
@@ -53,19 +50,19 @@ export const useLongPress = ({ chat, holding, setHolding }) => {
     }
     isHolding = false;
   };
-  const handleHoldStart = () => {
+  const handleHoldChatStart = () => {
     if (!stillHold) {
       isHolding = true;
       setTimeout(() => {
-        handleLongPress();
+        handleLongPressChat();
       }, 1000);
     }
   };
-  const handleHoldEnd = () => {
+  const handleHoldChatEnd = () => {
     isHolding = false;
   };
 
-  const handleClick = () => {
+  const handleClickHoldChat = () => {
     if (!stillHold) return;
     else {
       if (holding && !firstTimeHold) {
@@ -88,7 +85,7 @@ export const useLongPress = ({ chat, holding, setHolding }) => {
     }
   };
 
-  return { handleHoldStart, handleHoldEnd, handleClick };
+  return { handleHoldChatStart, handleHoldChatEnd, handleClickHoldChat };
 };
 
 export const useDeleteSomeChats = () => {
@@ -96,9 +93,7 @@ export const useDeleteSomeChats = () => {
     useShallow((state) => [state.chats, state.setChats]),
   );
   const [userId] = useAppStore(useShallow((state) => [state.userId]));
-  const [holdChats] = useHoldChatsStore(
-    useShallow((state) => [state.holdChats]),
-  );
+  const [holdChats] = useChatsStore(useShallow((state) => [state.holdChats]));
   const clearHoldChats = useClearHoldChats();
 
   const handleDeleteSomeChats = async () => {
@@ -154,9 +149,9 @@ export const useSenAiPageFetch = () => {
     try {
       const { addNewUserToFirestoreIfNotExists, uploadSeenHistory } =
         await import("@/controller/CRUDFirestore");
-        const { getAllChatsFromFirestore } = await import(
-          "../controller/CRUDFirestore"
-        );
+      const { getAllChatsFromFirestore } = await import(
+        "../controller/CRUDFirestore"
+      );
 
       const generatedUserId = await addNewUserToFirestoreIfNotExists();
       localStorage.setItem("senAi-userId", generatedUserId);

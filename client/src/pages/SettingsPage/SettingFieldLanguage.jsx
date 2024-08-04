@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { useTranslation } from "react-i18next";
-import { useSettingsStore } from "../../store/appStore";
+import { useSettingsStore } from "../../store/useSettingsStore";
 import SettingField from "./SettingsField";
 import AlertDialogNormal from "@/components/composable/AlertDialogNormal";
 // shadcn ui

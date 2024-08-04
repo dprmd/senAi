@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useShallow } from "zustand/react/shallow";
-import { useSettingsStore } from "@/store/appStore";
+import { useSettingsStore } from "@/store/useSettingsStore";
 import { motion } from "framer-motion";
 import SettingsTop from "@/components/composable/SettingsTop";
 // shadcn ui

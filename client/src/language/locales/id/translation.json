@@ -59,5 +59,9 @@
   "senAi_model": "Model",
   "senAi_version": "Versi",
   "senAi_cant_receive_message": "Sen tidak dapat menerima pesan jika kamu offline",
-  "record_title": "Klik mulai untuk merekam"
+  "click_to_start_record": "Klik mulai untuk merekam",
+  "microphone_allow_false": "Tidak dapat mengakses mikrofon, Harap periksa izin Anda",
+  "see_dependencies": "Lihat Dependencies",
+  "senai_dependencies": "Sen Ai dibuat dengan",
+  "made_with": "dibuat dengan sepenuh hati"
 }

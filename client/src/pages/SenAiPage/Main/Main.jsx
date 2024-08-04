@@ -1,7 +1,8 @@
 import { useEffect, lazy, Suspense, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { useTranslation } from "react-i18next";
-import { useChatsStore, useAppStore } from "@/store/appStore";
+import { useAppStore } from "@/store/appStore";
+import { useChatsStore } from "@/store/useChatsStore";
 import { useEscClicked, useSenAiPageFetch } from "@/hooks/useUtils";
 import ChatBubbleSkeleton from "@/components/Skeleton/ChatBubbleSkeleton";
 import { useLocation } from "react-router-dom";

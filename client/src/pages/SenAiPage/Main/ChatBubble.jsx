@@ -1,11 +1,11 @@
 import { useState, useEffect, lazy, Suspense } from "react";
 import { generateTimeNow } from "../../../lib/generateTime";
 import useOnlineStatus from "../../../hooks/useOnlineStatus";
-import { useHoldChatsStore } from "../../../store/appStore";
+import { useChatsStore } from "@/store/useChatsStore";
 import { useShallow } from "zustand/react/shallow";
 import CodeBlockSkeleton from "../../../components/Skeleton/CodeBlockSkeleton";
 import DynamicSvgComponent from "@/components/svg/DynamicSvg";
-import { useLongPress } from "@/hooks/useUtils";
+import { useLongPressChat } from "@/hooks/useUtils";
 import { useInView } from "react-intersection-observer";
 // React Markdown
 const Markdown = lazy(() => import("react-markdown"));
@@ -16,22 +16,23 @@ import { Skeleton } from "../../../components/ui/skeleton";
 
 const ChatBubble = ({ chat }) => {
   // hooks
-  const [stillHold, triggerClearHolding] = useHoldChatsStore(
+  const [stillHold, triggerClearHolding] = useChatsStore(
     useShallow((state) => [state.stillHold, state.triggerClearHolding]),
   );
   const online = useOnlineStatus();
-  const {ref} = useInView({
+  const { ref } = useInView({
     threshold: 0,
     triggerOnce: true,
-  })
+  });
 
   // Holding Operation
   const [holding, setHolding] = useState(false);
-  const { handleHoldStart, handleHoldEnd, handleClick } = useLongPress({
-    chat,
-    holding,
-    setHolding,
-  });
+  const { handleHoldChatStart, handleHoldChatEnd, handleClickHoldChat } =
+    useLongPressChat({
+      chat,
+      holding,
+      setHolding,
+    });
 
   useEffect(() => {
     setHolding(false);
@@ -42,14 +43,14 @@ const ChatBubble = ({ chat }) => {
       aria-hidden={true}
       className={`simetris flex w-screen flex-col py-0 ${stillHold && holding ? "bg-green-800 bg-opacity-50" : ""}`}
       onTouchStart={() => {
-        handleHoldStart();
+        handleHoldChatStart();
       }}
       onTouchEnd={() => {
-        handleHoldEnd();
+        handleHoldChatEnd();
       }}
-      onMouseDown={handleHoldStart}
-      onMouseUp={handleHoldEnd}
-      onClick={handleClick}
+      onMouseDown={handleHoldChatStart}
+      onMouseUp={handleHoldChatEnd}
+      onClick={handleClickHoldChat}
       ref={ref}
     >
       <div

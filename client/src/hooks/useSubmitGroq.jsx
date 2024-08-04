@@ -1,11 +1,8 @@
 import { useShallow } from "zustand/react/shallow";
 import { useTranslation } from "react-i18next";
-import {
-  useChatsStore,
-  useAppStore,
-  useInputMessagesStore,
-  useSettingsStore,
-} from "../store/appStore";
+import { useAppStore } from "../store/appStore";
+import { useChatsStore } from "@/store/useChatsStore";
+import { useSettingsStore } from "@/store/useSettingsStore";
 import useOnlineStatus from "./useOnlineStatus";
 
 export const useSubmitGroq = () => {
@@ -13,20 +10,19 @@ export const useSubmitGroq = () => {
   const [setChats, getChats] = useChatsStore(
     useShallow((state) => [state.setChats, state.getChats]),
   );
-  const [setMessageFromUser] = useInputMessagesStore(
-    useShallow((state) => [state.setMessageFromUser]),
-  );
   const [model, languageLabel] = useSettingsStore(
     useShallow((state) => [state.model, state.languageLabel]),
   );
-  const [senTyping, setSenTyping, userId, loading] = useAppStore(
-    useShallow((state) => [
-      state.senTyping,
-      state.setSenTyping,
-      state.userId,
-      state.loading,
-    ]),
-  );
+  const [senTyping, setSenTyping, userId, loading, setMessageFromUser] =
+    useAppStore(
+      useShallow((state) => [
+        state.senTyping,
+        state.setSenTyping,
+        state.userId,
+        state.loading,
+        state.setMessageFromUser,
+      ]),
+    );
   const online = useOnlineStatus();
   const { t } = useTranslation();
 

@@ -1,9 +1,9 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useShallow } from "zustand/react/shallow";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
-import { useSettingsStore } from "@/store/appStore";
+import { useSettingsStore } from "@/store/useSettingsStore";
 import SettingsTop from "@/components/composable/SettingsTop";
 // shadcn ui
 import { Switch } from "@/components/ui/switch";
@@ -78,6 +78,17 @@ const SettingOthersPage = () => {
                 }
               }}
             />
+          </div>
+
+          {/* see dependencies */}
+          <div className="flex items-center justify-between">
+            <Link
+              to="/settings/other/dependencies"
+              className="flex-1 py-3 pr-3 text-sm font-medium"
+              id="dark-mode-toggle"
+            >
+              {t("see_dependencies")}
+            </Link>
           </div>
         </div>
 

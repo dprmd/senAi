@@ -15,8 +15,7 @@ const useOnlineStatus = () => {
       window.removeEventListener("online", handleOnlineChange);
       window.removeEventListener("offline", handleOnlineChange);
     };
-  }, []); // Empty dependency array for effect to run only on mount
-
+  }, []);
   return isOnline;
 };
 

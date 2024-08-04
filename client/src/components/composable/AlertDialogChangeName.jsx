@@ -1,6 +1,7 @@
 import { useShallow } from "zustand/react/shallow";
 import { useTranslation } from "react-i18next";
-import { useAppStore, useSettingsStore } from "@/store/appStore";
+import { useAppStore } from "@/store/appStore";
+import { useSettingsStore } from "@/store/useSettingsStore";
 import {
   AlertDialog,
   AlertDialogAction,

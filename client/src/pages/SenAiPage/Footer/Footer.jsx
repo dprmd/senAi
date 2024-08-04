@@ -2,11 +2,8 @@ import { useRef } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { SendHorizonal, Mic } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import {
-  useAppStore,
-  useInputMessagesStore,
-  useSettingsStore,
-} from "../../../store/appStore";
+import { useAppStore } from "../../../store/appStore";
+import { useSettingsStore } from "@/store/useSettingsStore";
 import { useSubmitGroq } from "../../../hooks/useSubmitGroq";
 import { useClearHoldChats } from "@/hooks/useUtils";
 import AlertDialogNormal from "@/components/composable/AlertDialogNormal";
@@ -14,15 +11,13 @@ import Loading from "@/components/composable/Loading";
 import { Toaster } from "@/components/ui/toaster";
 import { useRecordStore } from "@/store/useRecordStore";
 import { useSendRecord } from "@/hooks/useSendRecord";
+import DynamicSvgComponent from "@/components/svg/DynamicSvg";
 
 const Footer = () => {
   // hooks
   const { t } = useTranslation();
   const handleSubmit = useSubmitGroq();
   const clearHoldChats = useClearHoldChats();
-  const [messageFromUser, setMessageFromUser] = useInputMessagesStore(
-    useShallow((state) => [state.messageFromUser, state.setMessageFromUser]),
-  );
   const [enterIsSend] = useSettingsStore(
     useShallow((state) => [
       state.enterIsSend,
@@ -30,15 +25,22 @@ const Footer = () => {
       state.languageLabel,
     ]),
   );
-  const [showPP, showSenInfo] = useAppStore(
-    useShallow((state) => [state.showPP, state.showSenInfo]),
-  );
+  const [showPP, showSenInfo, messageFromUser, setMessageFromUser] =
+    useAppStore(
+      useShallow((state) => [
+        state.showPP,
+        state.showSenInfo,
+        state.messageFromUser,
+        state.setMessageFromUser,
+      ]),
+    );
   const [
     isRecording,
     setIsRecording,
     isRecordingStart,
     sendProgress,
     haveRecord,
+    isPlayRecord,
   ] = useRecordStore(
     useShallow((state) => [
       state.isRecording,
@@ -46,13 +48,25 @@ const Footer = () => {
       state.isRecordingStart,
       state.sendProgress,
       state.haveRecord,
+      state.isPlayRecord,
     ]),
   );
 
+  // state
+
   // media recorder ref
   const audioPlaybackRef = useRef(null);
-  const { handleCancel, handleSendRecord, startRecording, stopRecording } =
-    useSendRecord(audioPlaybackRef);
+  const seekBar = useRef(null);
+  const {
+    handleCancel,
+    handleStartRecording,
+    handleStopRecording,
+    handlePlayRecordResult,
+    handleEndedRecordResult,
+    handleTimeUpdateRecordResult,
+    handleSeekBarChangeRecordResult,
+    handleSendRecord,
+  } = useSendRecord(audioPlaybackRef, seekBar);
 
   return (
     <footer>
@@ -65,12 +79,15 @@ const Footer = () => {
         showCancel={true}
         showContinue={false}
         handleCancel={handleCancel}
+        // Dynamic Action "Start" if not record yet,
+        // "done" when recording,
+        // and "send" when record file is ready, to send to the express server
         customAction={
           isRecordingStart
             ? [
                 {
                   actionTitle: t("done"),
-                  actionFunction: stopRecording,
+                  actionFunction: handleStopRecording,
                 },
               ]
             : haveRecord
@@ -83,19 +100,22 @@ const Footer = () => {
               : [
                   {
                     actionTitle: t("start"),
-                    actionFunction: startRecording,
+                    actionFunction: handleStartRecording,
                   },
                 ]
         }
       >
         <div>
           <div className="flex flex-col items-center justify-center p-3">
+            {/* Mic Icon */}
             <div className="rounded-full bg-green-500 p-2 text-slate-800 dark:bg-green-600 dark:text-slate-200">
               <Mic className="h-10 w-10" />
             </div>
+            {/* The circle animation when Recording */}
             <div className="mt-6 flex">
               {isRecordingStart ? (
-                <ul className="flex h-6 items-center justify-center">
+                <ul className="flex">
+                  <li className="animate-record-0 mx-1.5 h-2 w-2 rounded-full bg-slate-800 dark:bg-slate-200"></li>
                   <li className="mx-1.5 h-2 w-2 animate-record-1 rounded-full bg-slate-800 dark:bg-slate-200"></li>
                   <li className="mx-1.5 h-2 w-2 animate-record-2 rounded-full bg-slate-800 dark:bg-slate-200"></li>
                   <li className="mx-1.5 h-2 w-2 animate-record-3 rounded-full bg-slate-800 dark:bg-slate-200"></li>
@@ -104,20 +124,49 @@ const Footer = () => {
                   <li className="mx-1.5 h-2 w-2 animate-record-6 rounded-full bg-slate-800 dark:bg-slate-200"></li>
                   <li className="mx-1.5 h-2 w-2 animate-record-7 rounded-full bg-slate-800 dark:bg-slate-200"></li>
                   <li className="mx-1.5 h-2 w-2 animate-record-8 rounded-full bg-slate-800 dark:bg-slate-200"></li>
-                  <li className="mx-1.5 h-2 w-2 animate-record-9 rounded-full bg-slate-800 dark:bg-slate-200"></li>
                 </ul>
               ) : (
+                // the playback component when record is finish
                 <div className="h-6 text-slate-800 dark:text-slate-200">
                   {haveRecord ? (
-                    <audio
-                      ref={audioPlaybackRef}
-                      controls
-                      className="bg-light dark:bg-dark"
-                    >
-                      <track kind="captions" />
-                    </audio>
+                    <div id="audioPlayer">
+                      <audio
+                        ref={audioPlaybackRef}
+                        onTimeUpdate={handleTimeUpdateRecordResult}
+                        onEnded={handleEndedRecordResult}
+                      >
+                        <track kind="captions" />
+                      </audio>
+                      <div className="flex items-center justify-center p-2">
+                        <button
+                          onClick={handlePlayRecordResult}
+                          className="flex min-h-[40px] min-w-[50px] items-center justify-center"
+                        >
+                          {isPlayRecord ? (
+                            <DynamicSvgComponent
+                              name="Pause"
+                              className="h-8 w-8 animate-small-to-big fill-current font-bold text-slate-900 dark:text-slate-300"
+                            />
+                          ) : (
+                            <DynamicSvgComponent
+                              name="Play"
+                              className="h-8 w-8 animate-small-to-big fill-current font-bold text-slate-900 dark:text-slate-300"
+                            />
+                          )}
+                        </button>
+                        <input
+                          type="range"
+                          value="0"
+                          max="100"
+                          ref={seekBar}
+                          onInput={handleSeekBarChangeRecordResult}
+                        />
+                      </div>
+                    </div>
                   ) : (
-                    <span className="font-poppins">{t("record_title")}</span>
+                    <span className="font-poppins">
+                      {t("click_to_start_record")}
+                    </span>
                   )}
                 </div>
               )}

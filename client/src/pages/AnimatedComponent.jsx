@@ -7,6 +7,7 @@ import SettingsPage from "@/pages/SettingsPage/SettingsPage";
 import SettingsModelPage from "@/pages/SettingsPage/ModelPage/ModelPage";
 import SettingsOtherPage from "@/pages/SettingsPage/OtherPage/OtherPage";
 import SettingsOtherDeleteAllData from "@/pages/SettingsPage/OtherPage/DeleteAllDataPage/DeleteAllDataPage";
+import DependenciesPage from "./SettingsPage/OtherPage/DependenciesPage/DependenciesPage";
 
 const AnimatedComponent = () => {
   const location = useLocation();
@@ -22,6 +23,10 @@ const AnimatedComponent = () => {
         <Route
           path="/settings/other/deleteAllData"
           element={<SettingsOtherDeleteAllData />}
+        />
+        <Route
+          path="/settings/other/dependencies"
+          element={<DependenciesPage />}
         />
       </Routes>
     </AnimatePresence>

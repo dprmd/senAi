@@ -33,9 +33,9 @@ const SettingField = ({
             </div>
           )}
         </div>
-        <div className="text-sm text-slate-700 dark:text-slate-300">
+        <p className="text-sm text-slate-700 dark:text-slate-300">
           {description}
-        </div>
+        </p>
       </div>
     </div>
   );

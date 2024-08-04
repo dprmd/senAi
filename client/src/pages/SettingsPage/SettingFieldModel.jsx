@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useShallow } from "zustand/react/shallow";
 import { useTranslation } from "react-i18next";
-import { useSettingsStore } from "../../store/appStore";
+import { useSettingsStore } from "../../store/useSettingsStore";
 import SettingField from "./SettingsField";
 
 const SettingFieldModel = () => {

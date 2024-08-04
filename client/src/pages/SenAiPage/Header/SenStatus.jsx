@@ -1,6 +1,7 @@
 import { useShallow } from "zustand/react/shallow";
 import { useTranslation } from "react-i18next";
-import { useAppStore, useSettingsStore } from "@/store/appStore";
+import { useAppStore } from "@/store/appStore";
+import { useSettingsStore } from "@/store/useSettingsStore";
 import useOnlineStatus from "@/hooks/useOnlineStatus";
 import { getAge } from "@/lib/generateTime";
 import senAi from "@/../package.json";
@@ -31,16 +32,16 @@ const SenStatus = () => {
   return (
     <>
       <button
-        className="inline-block ml-3 flex flex-col justify-center pr-10"
+        className="ml-3 inline-block flex flex-col justify-center pr-10"
         onClick={handleSenClick}
       >
-        <h1 className="font-bold text-left">Sen</h1>
+        <h1 className="text-left font-bold">Sen</h1>
         {senTyping ? (
-          <span className="text-left font-poppins inline-block text-sm duration-500">
+          <span className="inline-block text-left font-poppins text-sm duration-500">
             {t("typing")}
           </span>
         ) : (
-          <span className="text-left font-poppins inline-block text-sm duration-500">
+          <span className="inline-block text-left font-poppins text-sm duration-500">
             {online ? "online" : "offline"}
           </span>
         )}

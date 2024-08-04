@@ -58,6 +58,10 @@
   "senAi_ai_source": "AI Source",
   "senAi_model": "Model",
   "senAi_version": "Version",
-  "senAi_cant_receive_message": "Sen can't receive your message if youre offline",
-  "record_title": "Press Start then Speak"
+  "senAi_cant_receive_message": "Sen can't receive your message if you're offline",
+  "click_to_start_record": "Press Start then Speak",
+  "microphone_allow_false": "Could not access microphone, Please check your permission",
+  "see_dependencies": "See Dependencies",
+  "senai_dependencies": "Sen Ai built on",
+  "made_with": "made with all my heart"
 }

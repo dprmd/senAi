@@ -6,19 +6,25 @@ import { useChatsStore } from "@/store/useChatsStore";
 import { useEscClicked, useSenAiPageFetch } from "@/hooks/useUtils";
 import ChatBubbleSkeleton from "@/components/Skeleton/ChatBubbleSkeleton";
 import { useLocation } from "react-router-dom";
+import ScrollToBottom from "./ScrollToBottom";
 const ChatBubble = lazy(() => import("./ChatBubble"));
 
 const Main = () => {
   // hooks
-  const [chats] = useChatsStore((state) => [state.chats]);
-  const [loadingMessages, bodyComponentDidFetch, setBodyComponentDidFetch] =
-    useAppStore(
-      useShallow((state) => [
-        state.loadingMessages,
-        state.bodyComponentDidFetch,
-        state.setBodyComponentDidFetch,
-      ]),
-    );
+  const [chats] = useChatsStore(useShallow((state) => [state.chats]));
+  const [
+    loadingMessages,
+    bodyComponentDidFetch,
+    setBodyComponentDidFetch,
+    groqFetchProses,
+  ] = useAppStore(
+    useShallow((state) => [
+      state.loadingMessages,
+      state.bodyComponentDidFetch,
+      state.setBodyComponentDidFetch,
+      state.groqFetchProses,
+    ]),
+  );
   const { t } = useTranslation();
   const initFetch = useSenAiPageFetch();
   const handleEscClick = useEscClicked();
@@ -42,8 +48,15 @@ const Main = () => {
     main.style.minHeight = `${windowHeight - 60 - 56}px`;
   }, [location]);
 
+  useEffect(() => {
+    window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: "smooth",
+    });
+  }, [groqFetchProses]);
+
   return (
-    <main className="main-chat pt-2">
+    <main className="main-chat relative pt-2">
       {chats.length === 0 ? (
         <div className="flex items-center justify-center">
           <span className="mt-4 inline-block max-w-[90vw] rounded-md bg-[#FFEECD] px-4 py-2 text-center text-sm text-slate-700 dark:bg-[#182229] dark:text-[#F8BF57]">
@@ -51,21 +64,24 @@ const Main = () => {
           </span>
         </div>
       ) : (
-        <ul className="mb-[58px] flex flex-col gap-y-1">
-          {chats.map((chat) => (
-            <Suspense
-              fallback={
-                <ChatBubbleSkeleton
-                  position={chat.position}
-                ></ChatBubbleSkeleton>
-              }
-              key={chat.time}
-            >
-              <ChatBubble chat={chat} />
-            </Suspense>
-          ))}
-        </ul>
+        <>
+          <ul className="mb-[58px] flex flex-col gap-y-1">
+            {chats.map((chat) => (
+              <Suspense
+                fallback={
+                  <ChatBubbleSkeleton
+                    position={chat.position}
+                  ></ChatBubbleSkeleton>
+                }
+                key={chat.time}
+              >
+                <ChatBubble chat={chat} />
+              </Suspense>
+            ))}
+          </ul>
+        </>
       )}
+      <ScrollToBottom />
     </main>
   );
 };

@@ -14,3 +14,4 @@ export const firestoreUpdateNameEndPoint = `${serverSource}/updateName`;
 export const firestoreUploadSeenHistoryEndPoint = `${serverSource}/uploadSeenHistory`;
 export const firestoreGetPermissionToDeleteAllDataEndPoint = `${serverSource}/getPermissionToDeleteAllData`;
 export const firestoreDeleteAllDataEndPoint = `${serverSource}/deleteAllData`;
+export const firestoreAddNewVoiceChatEndPoint = `${serverSource}/addNewVoiceChat`;

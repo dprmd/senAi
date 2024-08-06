@@ -10,24 +10,29 @@ export const useSubmitGroq = () => {
   const [setChats, getChats] = useChatsStore(
     useShallow((state) => [state.setChats, state.getChats]),
   );
-  const [model, languageLabel] = useSettingsStore(
-    useShallow((state) => [state.model, state.languageLabel]),
+  const [model] = useSettingsStore(useShallow((state) => [state.model]));
+  const [
+    senTyping,
+    setSenTyping,
+    userId,
+    loading,
+    setMessageFromUser,
+    setGroqFetchProses,
+  ] = useAppStore(
+    useShallow((state) => [
+      state.senTyping,
+      state.setSenTyping,
+      state.userId,
+      state.loading,
+      state.setMessageFromUser,
+      state.setGroqFetchProses,
+    ]),
   );
-  const [senTyping, setSenTyping, userId, loading, setMessageFromUser] =
-    useAppStore(
-      useShallow((state) => [
-        state.senTyping,
-        state.setSenTyping,
-        state.userId,
-        state.loading,
-        state.setMessageFromUser,
-      ]),
-    );
   const online = useOnlineStatus();
   const { t } = useTranslation();
 
-  const handleSubmit = async (messageFromUser) => {
-    if (messageFromUser.trim().length === 0) return;
+  const handleSubmit = async (messageFromUser, type = "text") => {
+    if (type === "text" && messageFromUser.trim().length === 0) return;
     if (senTyping || loading) return;
 
     const { sleep } = await import("../lib/generateTime");
@@ -37,6 +42,7 @@ export const useSubmitGroq = () => {
     );
 
     const chatFromUser = {
+      type,
       position: "right",
       time: new Date().getTime(),
       message: messageFromUser,
@@ -44,8 +50,13 @@ export const useSubmitGroq = () => {
     setMessageFromUser("");
 
     setChats([...getChats(), chatFromUser]);
+    if (type === "audio") {
+      chatFromUser.downloadUrl = messageFromUser.downloadUrl;
+      chatFromUser.message = messageFromUser.text;
+    }
 
     const chatFromAi = {
+      type: "text",
       position: "left",
       time: null,
       message: null,
@@ -54,18 +65,8 @@ export const useSubmitGroq = () => {
     if (online) {
       await sleep(1000);
       setSenTyping(true);
-      let systemInstruction = "";
-      if (languageLabel === "English") {
-        systemInstruction = "Please answer me in English language";
-      }
-      if (languageLabel === "Indonesia") {
-        systemInstruction = "Please answer me in Indonesian language";
-      }
-      const reply = await getGroqReply(
-        chatFromUser.message,
-        systemInstruction,
-        model,
-      );
+      setGroqFetchProses("start");
+      const reply = await getGroqReply(chatFromUser.message, model);
       chatFromAi.time = new Date().getTime();
       chatFromAi.message = reply;
       // comment this when firebase is error
@@ -79,6 +80,7 @@ export const useSubmitGroq = () => {
     setSenTyping(false);
     await sleep(500);
     setChats([...getChats(), chatFromAi]);
+    setGroqFetchProses("end");
   };
 
   return handleSubmit;

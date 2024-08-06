@@ -13,6 +13,7 @@ const CodeBlock = lazy(() => import("./CodeBlock"));
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import { Skeleton } from "../../../components/ui/skeleton";
+import AudioChat from "@/components/composable/AudioChat";
 
 const ChatBubble = ({ chat }) => {
   // hooks
@@ -56,8 +57,8 @@ const ChatBubble = ({ chat }) => {
       <div
         className={`${chatBubbleStyle} ${
           chat.position === "left"
-            ? "message message-left select-none"
-            : "message message-right select-none"
+            ? `message message-left ${chat.type === "audio" ? "flex min-w-[300px] max-w-[300px] flex-col" : ""}`
+            : `message message-right ${chat.type === "audio" ? "flex min-w-[300px] max-w-[300px] flex-col" : ""}`
         }`}
       >
         <Suspense
@@ -65,6 +66,7 @@ const ChatBubble = ({ chat }) => {
             <Skeleton className="h-[36px] min-w-[50vh] bg-opacity-0 dark:bg-opacity-0"></Skeleton>
           }
         >
+          {chat.type === "audio" && <AudioChat chat={chat} />}
           <Markdown
             className="overflow-x-auto text-wrap"
             remarkPlugins={[remarkGfm]}

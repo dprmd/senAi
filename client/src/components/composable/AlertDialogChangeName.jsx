@@ -16,10 +16,7 @@ import { Input } from "../ui/input";
 import { toast } from "../ui/use-toast";
 import { Toaster } from "../ui/toaster";
 
-const AlertDialogChangeName = ({
-  changeNameInputDialog,
-  setChangeNameInputDialog,
-}) => {
+const AlertDialogChangeName = ({ open, setOpen }) => {
   // hooks
   const [userId] = useAppStore(useShallow((state) => [state.userId]));
   const [name, setName, oldName, setOldName] = useSettingsStore(
@@ -35,23 +32,25 @@ const AlertDialogChangeName = ({
   const handleSaveName = async (e) => {
     e.preventDefault();
     const { updateName } = await import("../../controller/CRUDFirestore");
+    // if the newName is same with the old name, then do not change to server, just close the dialog
     if (name === oldName) {
-      setChangeNameInputDialog(false);
+      setOpen(false);
     } else if (name.length === 0) {
       toast({
         description: t("name_empty"),
       });
     } else {
+      // if the new name is same, then save change to server
       updateName(userId, name);
       setOldName(name);
-      setChangeNameInputDialog(false);
+      setOpen(false);
     }
   };
 
   return (
     <>
       <Toaster />
-      <AlertDialog open={changeNameInputDialog}>
+      <AlertDialog open={open}>
         <AlertDialogContent className="top-[100%] w-full translate-y-[-100%] rounded-none sm:top-[50%] sm:translate-y-[-50%]">
           <form onSubmit={handleSaveName}>
             <AlertDialogHeader>
@@ -76,7 +75,7 @@ const AlertDialogChangeName = ({
               <AlertDialogCancel
                 onClick={() => {
                   setName(oldName);
-                  setChangeNameInputDialog(false);
+                  setOpen(false);
                 }}
               >
                 {t("cancel")}

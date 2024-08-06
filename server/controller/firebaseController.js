@@ -8,11 +8,12 @@ import {
   getDoc,
   updateDoc,
   arrayUnion,
-  getDocs,
-  collection,
 } from "firebase/firestore";
+import { getStorage, ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import { v4 } from "uuid";
 import { comparePassword } from "../lib/utils.js";
+import fs from "fs";
+import path from "path";
 
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
@@ -27,6 +28,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const firestore = getFirestore(app);
+const storage = getStorage();
 
 export const addNewUserToFirestore = async (req, res) => {
   const { deviceName, lastSeen } = req.body;
@@ -53,6 +55,7 @@ export const addNewUserToFirestore = async (req, res) => {
     });
     res.status(201).json({ status: 201, newUserId });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ status: 500, error });
   }
 };
@@ -72,6 +75,7 @@ export const getAllChatsFromFirestore = async (req, res) => {
       });
     }
   } catch (error) {
+    console.log(error);
     res.status(500).json({ status: 500, error });
   }
 };
@@ -99,6 +103,7 @@ export const addNewChatsToFirestore = async (req, res) => {
       });
     }
   } catch (error) {
+    console.log(error);
     res.status(500).json({ status: 500, error });
   }
 };
@@ -112,6 +117,7 @@ export const deleteAllChatsInFirestore = async (req, res) => {
     });
     res.status(202).json({ status: 202, message: "Delete All Chats" });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ status: 500, error });
   }
 };
@@ -128,6 +134,7 @@ export const deleteSomeChatsInFirestore = async (req, res) => {
       .status(201)
       .json({ status: 202, message: "Delete Some Chats You Selected" });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ status: 500, error });
   }
 };
@@ -147,6 +154,7 @@ export const getName = async (req, res) => {
       });
     }
   } catch (error) {
+    console.log(error);
     res.status(500).json({ status: 500, error });
   }
 };
@@ -171,6 +179,7 @@ export const updateName = async (req, res) => {
       });
     }
   } catch (error) {
+    console.log(error);
     res.status(500).json({ status: 500, error });
   }
 };
@@ -185,6 +194,7 @@ export const uploadSeenHistory = async (req, res) => {
     });
     res.status(201).json({ status: 201, message: "Seen History Updated" });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ status: 500, error });
   }
 };
@@ -210,6 +220,7 @@ export const getPermissionToDeleteAllData = async (req, res) => {
       });
     }
   } catch (error) {
+    console.log(error);
     res.status(500).json({ status: 500, error });
   }
 };
@@ -268,6 +279,29 @@ export const deleteAllDataInFirestore = async (req, res) => {
       });
     }
   } catch (error) {
+    console.log(error);
     res.status(500).json({ status: 500, error });
+  }
+};
+
+export const addNewChatVoiceToFireStorage = async (req, res) => {
+  const file = req.file;
+  try {
+    const metadata = {
+      contentType: file.mimetype,
+    };
+
+    const filePath = path.join(file.path);
+    const fileStream = fs.readFileSync(filePath);
+
+    const uniqueFileName = v4() + path.extname(file.originalname);
+    const voiceRef = ref(storage, "voices/" + uniqueFileName);
+    const uploadTask = await uploadBytes(voiceRef, fileStream, metadata);
+    const downloadURL = await getDownloadURL(uploadTask.ref);
+    // fs.unlink(filePath);
+    res.status(201).json({ status: 201, downloadURL });
+  } catch (error) {
+    console.log(error);
+    return { status: 500, error };
   }
 };

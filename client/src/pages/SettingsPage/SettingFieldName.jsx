@@ -11,13 +11,14 @@ const SettingFieldName = () => {
   const { t } = useTranslation();
 
   // state
-  const [changeNameInputDialog, setChangeNameInputDialog] = useState(false);
+  const [changeNameInputDialogOpen, setChangeNameInputDialogOpen] =
+    useState(false);
 
   return (
     <div>
       <AlertDialogChangeName
-        changeNameInputDialog={changeNameInputDialog}
-        setChangeNameInputDialog={setChangeNameInputDialog}
+        open={changeNameInputDialogOpen}
+        setOpen={setChangeNameInputDialogOpen}
       />
       <SettingField
         iconName="Person"
@@ -25,7 +26,7 @@ const SettingFieldName = () => {
         value={oldName}
         description={t("name_desc")}
         onClick={() => {
-          setChangeNameInputDialog(true);
+          setChangeNameInputDialogOpen(true);
         }}
       />
     </div>

@@ -28,7 +28,7 @@ export const getGroqModels = async () => {
   }
 };
 
-export const getGroqReply = async (message, systemInstruction, model) => {
+export const getGroqReply = async (message, model) => {
   const getApiKeyIndex = localStorage.getItem("senAi-user");
   const apiKeyIndex = getApiKeyIndex ? getApiKeyIndex : 0;
 
@@ -40,7 +40,6 @@ export const getGroqReply = async (message, systemInstruction, model) => {
     body: JSON.stringify({
       apiKeyIndex,
       message,
-      systemInstruction,
       model,
     }),
   });
@@ -60,13 +59,12 @@ export const getGroqTranscription = async (formData) => {
     body: formData,
   });
 
-  const transcriptionText = await req.json();
-  console.log(transcriptionText);
-  if (transcriptionText.status === 200) {
-    return transcriptionText.text;
+  const transcription = await req.json();
+  // transcription contains {status, texx}
+  if (transcription.status === 200) {
+    return transcription.text;
   }
-  if (transcriptionText.status === 500) {
-    console.log(transcriptionText);
-    return transcriptionText.error;
+  if (transcription.status === 500) {
+    return transcription.error;
   }
 };

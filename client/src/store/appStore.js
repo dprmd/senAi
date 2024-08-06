@@ -16,4 +16,6 @@ export const useAppStore = create((set) => ({
   setShowPP: (showPP) => set({ showPP }),
   userId: localStorage.getItem("senAi-userId"),
   setUserId: (userId) => set({ userId }),
+  groqFetchProses: "",
+  setGroqFetchProses: (groqFetchProses) => set({ groqFetchProses }),
 }));

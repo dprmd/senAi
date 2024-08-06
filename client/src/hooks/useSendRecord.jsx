@@ -84,13 +84,16 @@ export const useSendRecord = (audioPlaybackRef, seekBar) => {
     formData.append(
       "jsonData",
       JSON.stringify({
-        userId,
         apiKeyIndex: localStorage.getItem("senAi-user"),
       }),
     );
     const { getGroqTranscription } = await import("@/controller/groq");
-    const transcription = await getGroqTranscription(formData);
-    handleSubmit(transcription);
+    const { addNewVoiceChatToFireStorage } = await import(
+      "@/controller/CRUDFirestore"
+    );
+    const transcriptionText = await getGroqTranscription(formData);
+    const downloadUrl = await addNewVoiceChatToFireStorage(formData);
+    handleSubmit({ text: transcriptionText, downloadUrl }, "audio");
     setSendProgress(false);
   };
 

@@ -9,6 +9,7 @@ import {
   firestoreDeleteSomeChatsEndPoint,
   firestoreGetPermissionToDeleteAllDataEndPoint,
   firestoreDeleteAllDataEndPoint,
+  firestoreAddNewVoiceChatEndPoint,
 } from "./serverSource";
 import { fetchJson } from "../lib/myUtils";
 
@@ -223,5 +224,21 @@ export const deleteAllDataInFirestore = async (
     return message;
   } else {
     console.log(deleteAllData);
+  }
+};
+
+export const addNewVoiceChatToFireStorage = async (formData) => {
+  const req = await fetch(firestoreAddNewVoiceChatEndPoint, {
+    method: "POST",
+    body: formData,
+  });
+
+  const uploadTask = await req.json();
+  console.log(uploadTask);
+  if (uploadTask.status === 201) {
+    return uploadTask.downloadURL;
+  }
+  if (uploadTask.status === 500) {
+    return uploadTask.error;
   }
 };

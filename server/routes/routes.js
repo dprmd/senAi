@@ -15,15 +15,15 @@ import {
   deleteSomeChatsInFirestore,
   getPermissionToDeleteAllData,
   deleteAllDataInFirestore,
+  addNewChatVoiceToFireStorage,
 } from "../controller/firebaseController.js";
 import multer from "multer";
-import path from "path";
 import fs from "fs";
 
 export const router = Router();
 
 export const pathUpload =
-  process.env.NODE_ENV === "production" ? "/tmp/records" : "records";
+  process.env.NODE_ENV === "production" ? "/tmp/media" : "media";
 
 // Set up multer for file storage
 const storage = multer.diskStorage({
@@ -59,4 +59,9 @@ router.post(
   "/getGroqTranscription",
   upload.single("audio"),
   getGroqTranscription
+);
+router.post(
+  "/addNewVoiceChat",
+  upload.single("audio"),
+  addNewChatVoiceToFireStorage
 );

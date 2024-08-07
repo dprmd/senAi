@@ -238,7 +238,6 @@ export const addNewVoiceChatToFireStorage = async (formData) => {
   });
 
   const uploadTask = await req.json();
-  console.log(uploadTask);
   if (uploadTask.status === 201) {
     return uploadTask;
   }

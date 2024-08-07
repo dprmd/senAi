@@ -119,7 +119,7 @@ export const deleteAllChatsInFirestore = async (req, res) => {
     await updateDoc(chatsRef, {
       chats: [],
     });
-    chats.map((chat) => {
+    chats.forEach((chat) => {
       if (chat.type === "audio") {
         const audioVoiceRef = ref(storage, `voices/${chat.audioFileName}`);
         deleteObject(audioVoiceRef)
@@ -156,7 +156,7 @@ export const deleteSomeChatsInFirestore = async (req, res) => {
     const chatsRef = doc(firestore, "chats", userId); await updateDoc(chatsRef, {
       chats: someChatsNew,
     });
-    someChatsDeleted.map((chat) => {
+    someChatsDeleted.forEach((chat) => {
       if (chat.type === "audio") {
         const audioVoiceRef = ref(storage, `voices/${chat.audioFileName}`);
         deleteObject(audioVoiceRef)

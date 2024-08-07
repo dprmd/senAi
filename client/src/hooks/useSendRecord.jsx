@@ -12,14 +12,16 @@ export const useSendRecord = (audioPlaybackRef, seekBar) => {
     setIsRecording,
     setIsRecordingStart,
     setHaveRecord,
-    setSendProgress,
+    setTranscriptionProgress,
+    setGettingUrlProgress,
     setIsPlayRecord,
   ] = useRecordStore(
     useShallow((state) => [
       state.setIsRecording,
       state.setIsRecordingStart,
       state.setHaveRecord,
-      state.setSendProgress,
+      state.setTranscriptionProgress,
+      state.setGettingUrlProgress,
       state.setIsPlayRecord,
     ]),
   );
@@ -78,7 +80,7 @@ export const useSendRecord = (audioPlaybackRef, seekBar) => {
     setIsPlayRecord(false);
     setIsRecording(false);
     setHaveRecord(false);
-    setSendProgress(true);
+    setTranscriptionProgress(true);
     const formData = new FormData();
     formData.append("audio", audioBlobRef.current, `${userId}-recording.webm`);
     formData.append(
@@ -92,9 +94,15 @@ export const useSendRecord = (audioPlaybackRef, seekBar) => {
       "@/controller/CRUDFirestore"
     );
     const transcriptionText = await getGroqTranscription(formData);
-    const downloadUrl = await addNewVoiceChatToFireStorage(formData);
-    handleSubmit({ text: transcriptionText, downloadUrl }, "audio");
-    setSendProgress(false);
+    setTranscriptionProgress(false);
+    setGettingUrlProgress(true);
+    const { downloadUrl, audioFileName } =
+      await addNewVoiceChatToFireStorage(formData);
+    setGettingUrlProgress(false);
+    handleSubmit(
+      { text: transcriptionText, downloadUrl, audioFileName },
+      "audio",
+    );
   };
 
   const handlePlayRecordResult = () => {

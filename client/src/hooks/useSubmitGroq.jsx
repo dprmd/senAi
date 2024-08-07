@@ -51,8 +51,9 @@ export const useSubmitGroq = () => {
 
     setChats([...getChats(), chatFromUser]);
     if (type === "audio") {
-      chatFromUser.downloadUrl = messageFromUser.downloadUrl;
       chatFromUser.message = messageFromUser.text;
+      chatFromUser.downloadUrl = messageFromUser.downloadUrl;
+      chatFromUser.audioFileName = messageFromUser.audioFileName;
     }
 
     const chatFromAi = {

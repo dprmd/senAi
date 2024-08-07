@@ -52,12 +52,12 @@ const ScrollToBottom = () => {
       <div ref={targetRef} className="mb-[60px]"></div>
       {isVisible && (
         <button
-          className="fixed bottom-[70px] right-4 z-10 w-max rounded-full bg-[#F0F2F5] p-2 shadow-sm shadow-slate-600 dark:bg-[#202C33] dark:shadow-sm dark:shadow-slate-500"
+          className="fixed bottom-[70px] right-4 z-10 w-max rounded-full bg-[#F0F2F5] p-1 shadow-sm shadow-slate-600 dark:bg-[#202C33] dark:shadow-sm dark:shadow-slate-500"
           onClick={handleScrollToBottom}
         >
           <DynamicSvgComponent
             name="DoubleArrowDown"
-            className="h-5 w-5 text-slate-900 dark:text-slate-100"
+            className="h-4 w-4 text-slate-900 dark:text-slate-100"
           />
         </button>
       )}

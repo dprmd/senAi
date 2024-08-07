@@ -50,13 +50,9 @@ pnpm run dev
 #### feat
 
 - can send images with captions
-- can send voice messages
 - use langchain for conversational chat bots
 - can change profile photos and chat wallpapers on the settings page
-- add scroll to bottom
 
 #### bugs
 
 - bug when holding chat and scrolling at the same time on the mobile platform
-- improve image tag
-- handle unlimited scroll with intersection observer api

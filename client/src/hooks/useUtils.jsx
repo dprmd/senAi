@@ -45,7 +45,7 @@ export const useLongPressChat = ({ chat, holding, setHolding }) => {
     if (isHolding && !stillHold) {
       setStillHold(true);
       setFirstTimeHold(true);
-      setHoldChats([...holdChats, { time: chat.time, message: chat.message }]);
+      setHoldChats([...holdChats, chat]);
       setHolding(true);
     }
     isHolding = false;
@@ -76,10 +76,7 @@ export const useLongPressChat = ({ chat, holding, setHolding }) => {
       }
       if (!holding) {
         setHolding(true);
-        setHoldChats([
-          ...holdChats,
-          { time: chat.time, message: chat.message },
-        ]);
+        setHoldChats([...holdChats, chat]);
       }
       setFirstTimeHold(false);
     }
@@ -97,20 +94,21 @@ export const useDeleteSomeChats = () => {
   const clearHoldChats = useClearHoldChats();
 
   const handleDeleteSomeChats = async () => {
-    let deletedSelectedChats = chats.slice();
+    let filteredSelectedChats = chats.slice();
+
     for (let i = 0; i < holdChats.length; i++) {
-      let tempDeletedSelectedChats = deletedSelectedChats.filter(
+      let tempFilteredSelectedChats = filteredSelectedChats.filter(
         (chat) => chat.time !== holdChats[i].time,
       );
-      deletedSelectedChats = tempDeletedSelectedChats;
+      filteredSelectedChats = tempFilteredSelectedChats;
     }
 
     const { deleteSomeChatsInFirestore } = await import(
       "@/controller/CRUDFirestore"
     );
 
-    deleteSomeChatsInFirestore(userId, deletedSelectedChats);
-    setChats(deletedSelectedChats);
+    deleteSomeChatsInFirestore(userId, filteredSelectedChats, holdChats);
+    setChats(filteredSelectedChats);
     clearHoldChats();
   };
 
@@ -120,14 +118,16 @@ export const useDeleteSomeChats = () => {
 export const useDeleteAllChats = () => {
   const online = useOnlineStatus();
   const [userId] = useAppStore(useShallow((state) => [state.userId]));
-  const [setChats] = useChatsStore(useShallow((state) => [state.setChats]));
+  const [chats, setChats] = useChatsStore(
+    useShallow((state) => [state.chats, state.setChats]),
+  );
 
   const deleteAllChats = async () => {
     const { deleteAllChatsInFirestore } = await import(
       "@/controller/CRUDFirestore"
     );
     if (online) {
-      deleteAllChatsInFirestore(userId);
+      deleteAllChatsInFirestore(userId, chats);
     }
     setChats([]);
   };

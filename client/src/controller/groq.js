@@ -23,8 +23,6 @@ export const getGroqModels = async () => {
   if (models.status === 200) {
     const modelsList = filterModels(models.models);
     return modelsList;
-  } else {
-    console.log(models);
   }
 };
 
@@ -48,7 +46,6 @@ export const getGroqReply = async (message, model) => {
     return replyUserMessage.reply;
   }
   if (replyUserMessage.status === 500) {
-    console.log(replyUserMessage);
     return replyUserMessage.error.error.error.message;
   }
 };
@@ -60,7 +57,6 @@ export const getGroqTranscription = async (formData) => {
   });
 
   const transcription = await req.json();
-  // transcription contains {status, texx}
   if (transcription.status === 200) {
     return transcription.text;
   }

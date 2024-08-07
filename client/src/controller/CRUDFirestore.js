@@ -93,13 +93,13 @@ export const addNewChatsToFirestore = async (
   }
 };
 
-export const deleteAllChatsInFirestore = async (userId) => {
+export const deleteAllChatsInFirestore = async (userId, chats) => {
   const deletedAllChats = await fetchJson(firestoreDeleteAllChatsEndPoint, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ userId }),
+    body: JSON.stringify({ userId, chats }),
   });
 
   if (deletedAllChats.status === 202) {
@@ -109,13 +109,17 @@ export const deleteAllChatsInFirestore = async (userId) => {
   }
 };
 
-export const deleteSomeChatsInFirestore = async (userId, someChats) => {
+export const deleteSomeChatsInFirestore = async (
+  userId,
+  someChatsNew,
+  someChatsDeleted,
+) => {
   const deletedSomeChats = await fetchJson(firestoreDeleteSomeChatsEndPoint, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ userId, someChats }),
+    body: JSON.stringify({ userId, someChatsNew, someChatsDeleted }),
   });
 
   if (deletedSomeChats.status === 202) {
@@ -236,7 +240,7 @@ export const addNewVoiceChatToFireStorage = async (formData) => {
   const uploadTask = await req.json();
   console.log(uploadTask);
   if (uploadTask.status === 201) {
-    return uploadTask.downloadURL;
+    return uploadTask;
   }
   if (uploadTask.status === 500) {
     return uploadTask.error;

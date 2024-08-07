@@ -1,4 +1,6 @@
 {
+  "404_page": "Tidak Terdapat Halaman Apapun di sini",
+  "go_back": "Kembali",
   "save": "Simpan",
   "cancel": "Batal",
   "continue": "Lanjutkan",
@@ -63,5 +65,7 @@
   "microphone_allow_false": "Tidak dapat mengakses mikrofon, Harap periksa izin Anda",
   "see_dependencies": "Lihat Dependencies",
   "senai_dependencies": "Sen Ai dibuat dengan",
-  "made_with": "dibuat dengan sepenuh hati"
+  "made_with": "dibuat dengan sepenuh hati",
+  "loading_transcription": "Memuat Transkripsi",
+  "getting_url_progress": "Mendapatkan URL Audio"
 }

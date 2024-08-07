@@ -9,7 +9,7 @@ import {
   updateDoc,
   arrayUnion,
 } from "firebase/firestore";
-import { getStorage, ref, getDownloadURL, uploadBytes } from "firebase/storage";
+import { getStorage, ref, getDownloadURL, uploadBytes, deleteObject } from "firebase/storage";
 import { v4 } from "uuid";
 import { comparePassword } from "../lib/utils.js";
 import fs from "fs";
@@ -61,6 +61,7 @@ export const addNewUserToFirestore = async (req, res) => {
 };
 
 export const getAllChatsFromFirestore = async (req, res) => {
+  // get userId from client / front end
   const { userId } = req.body;
   const chatsRef = doc(firestore, "chats", userId);
   try {
@@ -109,13 +110,38 @@ export const addNewChatsToFirestore = async (req, res) => {
 };
 
 export const deleteAllChatsInFirestore = async (req, res) => {
-  const { userId } = req.body;
+  const { userId, chats } = req.body;
+  let deleteAllChatsVoice = [];
+
   try {
+    // reset array chats equal to delete chats
     const chatsRef = doc(firestore, "chats", userId);
     await updateDoc(chatsRef, {
       chats: [],
     });
-    res.status(202).json({ status: 202, message: "Delete All Chats" });
+    chats.map((chat) => {
+      if (chat.type === "audio") {
+        const audioVoiceRef = ref(storage, `voices/${chat.audioFileName}`);
+        deleteObject(audioVoiceRef)
+          .then(() => {
+            deleteAllChatsVoice.push({
+              audioFileName: chat.audioFileName,
+              deleted: true,
+            });
+          }).catch((error) => {
+            deleteAllChatsVoice.push({
+              audioFileName: chat.audioFileName,
+              deleted: false,
+            })
+            console.log(error)
+          })
+      }
+    });
+    res.status(202).json({
+      status: 202,
+      message: "Delete All Chats",
+      deletedVoices: deleteAllChatsVoice,
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({ status: 500, error });
@@ -123,16 +149,37 @@ export const deleteAllChatsInFirestore = async (req, res) => {
 };
 
 export const deleteSomeChatsInFirestore = async (req, res) => {
-  const { userId, someChats } = req.body;
+  const { userId, someChatsNew, someChatsDeleted } = req.body;
+  let deleteSomeChatsVoice = [];
 
   try {
-    const chatsRef = doc(firestore, "chats", userId);
-    await updateDoc(chatsRef, {
-      chats: someChats,
+    const chatsRef = doc(firestore, "chats", userId); await updateDoc(chatsRef, {
+      chats: someChatsNew,
     });
-    res
-      .status(201)
-      .json({ status: 202, message: "Delete Some Chats You Selected" });
+    someChatsDeleted.map((chat) => {
+      if (chat.type === "audio") {
+        const audioVoiceRef = ref(storage, `voices/${chat.audioFileName}`);
+        deleteObject(audioVoiceRef)
+          .then(() => {
+            deleteSomeChatsVoice.push({
+              audioFileName: chat.audioFileName,
+              deleted: true,
+            });
+          })
+          .catch((error) => {
+            deleteSomeChatsVoice.push({
+              audioFileName: chat.audioFileName,
+              deleted: false,
+            });
+            console.log(error)
+          });
+      }
+    });
+    res.status(201).json({
+      status: 202,
+      message: "Delete Some Chats You Selected",
+      deletedVoices: deleteSomeChatsVoice,
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({ status: 500, error });
@@ -297,9 +344,13 @@ export const addNewChatVoiceToFireStorage = async (req, res) => {
     const uniqueFileName = v4() + path.extname(file.originalname);
     const voiceRef = ref(storage, "voices/" + uniqueFileName);
     const uploadTask = await uploadBytes(voiceRef, fileStream, metadata);
-    const downloadURL = await getDownloadURL(uploadTask.ref);
-    // fs.unlink(filePath);
-    res.status(201).json({ status: 201, downloadURL });
+    const downloadUrl = await getDownloadURL(uploadTask.ref);
+    fs.unlink(filePath, (err) => {
+      if (err) throw new Error(err);
+    });
+    res
+      .status(201)
+      .json({ status: 201, audioFileName: uniqueFileName, downloadUrl });
   } catch (error) {
     console.log(error);
     return { status: 500, error };

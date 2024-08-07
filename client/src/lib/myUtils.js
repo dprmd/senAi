@@ -84,6 +84,7 @@ export const getDeviceName = () => {
   return device;
 };
 
+// Copy to clipboard utility, just pass the text :)
 export const copyToClipboard = (text) => {
   const textarea = document.createElement("textarea");
   textarea.value = text;
@@ -94,6 +95,7 @@ export const copyToClipboard = (text) => {
   document.body.removeChild(textarea);
 };
 
+// fetch data to server utility
 export const fetchJson = async (endPoint, options) => {
   try {
     const request = await fetch(endPoint, options);
@@ -107,6 +109,7 @@ export const fetchJson = async (endPoint, options) => {
   }
 };
 
+// lets filter models list from groq :)
 export const filterModels = (models) => {
   let modelsWithOwned = [];
   let owned = [];

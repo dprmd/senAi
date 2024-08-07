@@ -1,4 +1,6 @@
 {
+  "404_page": "There isn't a Page here.",
+  "go_back": "Go Back",
   "save": "Save",
   "cancel": "Cancel",
   "continue": "Continue",
@@ -63,5 +65,7 @@
   "microphone_allow_false": "Could not access microphone, Please check your permission",
   "see_dependencies": "See Dependencies",
   "senai_dependencies": "Sen Ai built on",
-  "made_with": "made with all my heart"
+  "made_with": "made with all my heart",
+  "loading_transcription": "Loading Transcription",
+  "getting_url_progress": "Getting Audio URL"
 }

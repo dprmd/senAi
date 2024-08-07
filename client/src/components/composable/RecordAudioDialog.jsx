@@ -16,7 +16,8 @@ const RecordAudioDialog = () => {
     isRecording,
     setIsRecording,
     isRecordingStart,
-    sendProgress,
+    transcriptionProgress,
+    gettingUrlProgress,
     haveRecord,
     isPlayRecord,
   ] = useRecordStore(
@@ -24,7 +25,8 @@ const RecordAudioDialog = () => {
       state.isRecording,
       state.setIsRecording,
       state.isRecordingStart,
-      state.sendProgress,
+      state.transcriptionProgress,
+      state.gettingUrlProgress,
       state.haveRecord,
       state.isPlayRecord,
     ]),
@@ -47,7 +49,10 @@ const RecordAudioDialog = () => {
   return (
     <>
       <Toaster />
-      {sendProgress && <Loading message="Loading Transcription" />}
+      {transcriptionProgress && (
+        <Loading message={t("loading_transcription")} />
+      )}
+      {gettingUrlProgress && <Loading message={t("getting_url_progress")} />}
       <AlertDialogNormal
         openState={isRecording}
         setOpenState={setIsRecording}
@@ -57,7 +62,7 @@ const RecordAudioDialog = () => {
         handleCancel={handleCancel}
         // Dynamic Action "Start" if not record yet,
         // "done" when recording,
-        // and "send" when record file is ready, to send to the express server
+        // and "send" when record the file is ready, to send to the express server
         customAction={
           isRecordingStart
             ? [

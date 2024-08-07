@@ -9,6 +9,9 @@ export const useRecordStore = create((set) => ({
   setIsRecordingStart: (isRecordingStart) => set({ isRecordingStart }),
   haveRecord: false,
   setHaveRecord: (haveRecord) => set({ haveRecord }),
-  sendProgress: false,
-  setSendProgress: (sendProgress) => set({ sendProgress }),
+  transcriptionProgress: false,
+  setTranscriptionProgress: (transcriptionProgress) =>
+    set({ transcriptionProgress }),
+  gettingUrlProgress: false,
+  setGettingUrlProgress: (gettingUrlProgress) => set({ gettingUrlProgress }),
 }));

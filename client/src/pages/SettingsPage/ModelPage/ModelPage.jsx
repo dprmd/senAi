@@ -42,7 +42,7 @@ const SettingsModelPage = () => {
       // comment this when firebase is error
       setSettingModelComponentDidFetch(true);
     }
-  }, []);
+  }, [settingModelComponentDidFetch]);
 
   return (
     <motion.div

@@ -105,7 +105,7 @@ export const fetchJson = async (endPoint, options) => {
     }
     return response;
   } catch (error) {
-    alert("An error occured", error);
+    console.log(`An error occured`, error);
   }
 };
 

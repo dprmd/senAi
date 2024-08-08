@@ -77,7 +77,7 @@ const SettingsPage = () => {
     return () => {
       document.removeEventListener("keydown", whenEscClicked);
     };
-  }, []);
+  }, [settingsComponentDidFetch, settingModelComponentDidFetch]);
 
   return (
     <motion.div

@@ -8,12 +8,29 @@ import SettingsModelPage from "@/pages/SettingsPage/ModelPage/ModelPage";
 import SettingsOtherPage from "@/pages/SettingsPage/OtherPage/OtherPage";
 import SettingsOtherDeleteAllData from "@/pages/SettingsPage/OtherPage/DeleteAllDataPage/DeleteAllDataPage";
 import DependenciesPage from "./SettingsPage/OtherPage/DependenciesPage/DependenciesPage";
+import useOnlineStatus from "@/hooks/useOnlineStatus";
+import { useEffect } from "react";
+import { toast } from "@/components/ui/use-toast";
+import { useTranslation } from "react-i18next";
+import { Toaster } from "@/components/ui/toaster";
 
 const AnimatedComponent = () => {
   const location = useLocation();
+  const online = useOnlineStatus();
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    if (!online) {
+      toast({
+        description: t("error_offline"),
+        duration: 2000,
+      });
+    }
+  }, [online]);
 
   return (
     <AnimatePresence>
+      <Toaster />
       <Routes location={location} key={location.pathname}>
         <Route path="*" element={<NotFoundPage />} />
         <Route path="/" element={<SenAiPage />} />

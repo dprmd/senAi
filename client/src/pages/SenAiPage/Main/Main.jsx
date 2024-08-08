@@ -40,7 +40,7 @@ const Main = () => {
     return () => {
       document.removeEventListener("keydown", handleEscClick);
     };
-  }, []);
+  }, [bodyComponentDidFetch]);
 
   useEffect(() => {
     const windowHeight = window.innerHeight;

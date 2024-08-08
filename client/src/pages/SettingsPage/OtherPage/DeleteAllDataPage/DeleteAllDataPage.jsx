@@ -23,7 +23,9 @@ import { Toaster } from "@/components/ui/toaster";
 
 const SettingOtherDeleteAllData = () => {
   // hooks
-  const [setChats] = useChatsStore(useShallow((state) => [state.setChats]));
+  const [setChats, setChatsMemory] = useChatsStore(
+    useShallow((state) => [state.setChats, state.setChatsMemory]),
+  );
   const [userId] = useAppStore(useShallow((state) => [state.userId]));
   const { t } = useTranslation();
 
@@ -67,6 +69,7 @@ const SettingOtherDeleteAllData = () => {
     )
       return;
     setIsDeleting(true);
+    setChatsMemory([]);
     if (option.withChats) {
       setChats([]);
     }

@@ -166,10 +166,13 @@ export const deleteAllChatsInFirestore = async (req, res) => {
   let deleteAllChatsVoice = [];
 
   try {
-    // reset array chats equal to delete chats
     const chatsRef = doc(firestore, "chats", userId);
+    const chatsMemoryRef = doc(firestore, "chatsMemory", userId);
     await updateDoc(chatsRef, {
       chats: [],
+    });
+    await updateDoc(chatsMemoryRef, {
+      chatsMemory: [],
     });
     chats.forEach((chat) => {
       if (chat.type === "audio") {
@@ -192,7 +195,7 @@ export const deleteAllChatsInFirestore = async (req, res) => {
     });
     res.status(202).json({
       status: 202,
-      message: "Delete All Chats",
+      message: "Delete All Chats And Its Memories",
       deletedVoices: deleteAllChatsVoice,
     });
   } catch (error) {
@@ -203,12 +206,20 @@ export const deleteAllChatsInFirestore = async (req, res) => {
 
 export const deleteSomeChatsInFirestore = async (req, res) => {
   const { userId, someChatsNew, someChatsDeleted } = req.body;
-  let deleteSomeChatsVoice = [];
+  const deleteSomeChatsVoice = [];
 
   try {
     const chatsRef = doc(firestore, "chats", userId);
+    const chatsMemoryRef = doc(firestore, "chatsMemory", userId);
+    const chatsMemoryNew = someChatsNew.map((chat) => ({
+      role: chat.position === "right" ? "user" : "assistant",
+      content: chat.messag,
+    }));
     await updateDoc(chatsRef, {
       chats: someChatsNew,
+    });
+    await updateDoc(chatsMemoryRef, {
+      chatsMemory: chatsMemoryNew,
     });
     someChatsDeleted.forEach((chat) => {
       if (chat.type === "audio") {

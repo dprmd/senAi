@@ -86,8 +86,8 @@ export const useLongPressChat = ({ chat, holding, setHolding }) => {
 };
 
 export const useDeleteSomeChats = () => {
-  const [chats, setChats] = useChatsStore(
-    useShallow((state) => [state.chats, state.setChats]),
+  const [chats, setChats, setChatsMemory] = useChatsStore(
+    useShallow((state) => [state.chats, state.setChats, state.setChatsMemory]),
   );
   const [userId] = useAppStore(useShallow((state) => [state.userId]));
   const [holdChats] = useChatsStore(useShallow((state) => [state.holdChats]));
@@ -102,6 +102,12 @@ export const useDeleteSomeChats = () => {
       );
       filteredSelectedChats = tempFilteredSelectedChats;
     }
+
+    const chatsMemoryNew = filteredSelectedChats.map((chat) => ({
+      role: chat.position === "right" ? "user" : "assistant",
+      content: chat.message,
+    }));
+    setChatsMemory(chatsMemoryNew);
 
     const { deleteSomeChatsInFirestore } = await import(
       "@/controller/CRUDFirestore"

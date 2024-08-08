@@ -82,7 +82,6 @@ const SettingFieldLanguage = () => {
               key={languageIndex.locale}
             >
               <RadioGroupItem
-                aria-label="uha"
                 value={languageIndex.locale}
                 id={`senAi_user-${languageIndex.locale}`}
               />

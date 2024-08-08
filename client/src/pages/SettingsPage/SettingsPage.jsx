@@ -11,6 +11,7 @@ import SettingFieldName from "./SettingFieldName";
 import SettingField from "./SettingsField";
 import SettingsTop from "../../components/composable/SettingsTop";
 import SettingFieldLanguage from "./SettingFieldLanguage";
+import SettingFieldBotLanguagePreferences from "./SettingFieldBotLanguagePreferences";
 
 const SettingsPage = () => {
   // hooks
@@ -107,6 +108,8 @@ const SettingsPage = () => {
         <SettingFieldModel />
         {/* Language */}
         <SettingFieldLanguage />
+        {/* Bot Language */}
+        <SettingFieldBotLanguagePreferences />
         {/* More Settings */}
         <SettingField
           iconName="ThreeDots"

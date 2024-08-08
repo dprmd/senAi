@@ -1,6 +1,10 @@
 import { create } from "zustand";
 
 export const useSettingsStore = create((set) => ({
+  botLanguage: localStorage.getItem("senAi-botLanguage")
+    ? localStorage.getItem("senAi-botLanguage")
+    : "Auto",
+  setBotLanguage: (botLanguage) => set({ botLanguage }),
   language: localStorage.getItem("senAi-language")
     ? localStorage.getItem("senAi-language")
     : "en",

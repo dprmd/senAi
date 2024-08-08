@@ -4,6 +4,10 @@ import { useAppStore } from "../store/appStore";
 import { useChatsStore } from "@/store/useChatsStore";
 import { useSettingsStore } from "@/store/useSettingsStore";
 import useOnlineStatus from "./useOnlineStatus";
+import { useInstruction } from "./useUtils";
+import { sleep } from "../lib/generateTime";
+import { getGroqReply } from "@/controller/groq";
+import { addNewChatsToFirestore } from "../controller/CRUDFirestore";
 
 export const useSubmitGroq = () => {
   // hooks
@@ -30,16 +34,11 @@ export const useSubmitGroq = () => {
   );
   const online = useOnlineStatus();
   const { t } = useTranslation();
+  const instruction = useInstruction();
 
   const handleSubmit = async (messageFromUser, type = "text") => {
     if (type === "text" && messageFromUser.trim().length === 0) return;
     if (senTyping || loading) return;
-
-    const { sleep } = await import("../lib/generateTime");
-    const { getGroqReply } = await import("../controller/groq");
-    const { addNewChatsToFirestore } = await import(
-      "../controller/CRUDFirestore"
-    );
 
     const chatFromUser = {
       type,
@@ -67,7 +66,11 @@ export const useSubmitGroq = () => {
       await sleep(1000);
       setSenTyping(true);
       setGroqFetchProses("start");
-      const reply = await getGroqReply(chatFromUser.message, model);
+      const reply = await getGroqReply(
+        chatFromUser.message,
+        model,
+        instruction,
+      );
       chatFromAi.time = new Date().getTime();
       chatFromAi.message = reply;
       // comment this when firebase is error

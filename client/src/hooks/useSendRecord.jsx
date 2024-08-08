@@ -5,6 +5,8 @@ import { useSubmitGroq } from "./useSubmitGroq";
 import { toast } from "../components/ui/use-toast";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { getGroqTranscription } from "@/controller/groq";
+import { addNewVoiceChatToFireStorage } from "@/controller/CRUDFirestore";
 
 export const useSendRecord = (audioPlaybackRef, seekBar) => {
   // hooks
@@ -89,10 +91,7 @@ export const useSendRecord = (audioPlaybackRef, seekBar) => {
         apiKeyIndex: localStorage.getItem("senAi-user"),
       }),
     );
-    const { getGroqTranscription } = await import("@/controller/groq");
-    const { addNewVoiceChatToFireStorage } = await import(
-      "@/controller/CRUDFirestore"
-    );
+
     const transcriptionText = await getGroqTranscription(formData);
     setTranscriptionProgress(false);
     setGettingUrlProgress(true);

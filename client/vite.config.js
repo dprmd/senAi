@@ -36,16 +36,16 @@ export default defineConfig({
       manifest: {
         name: "SenAi",
         short_name: "SenAi",
-        description: "Sen Ai, she is polontong",
+        description: "Ai ChatBot",
         theme_color: "#ffffff",
         icons: [
           {
-            src: "android-chrome-192x192.png",
+            src: "img/android-chrome-192x192.png",
             sizes: "192x192",
             type: "image/png",
           },
           {
-            src: "android-chrome-512x512.png",
+            src: "img/android-chrome-512x512.png",
             sizes: "512x512",
             type: "image/png",
           },

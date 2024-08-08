@@ -6,6 +6,7 @@ export const groqGetModelsEndPoint = `${serverSource}/getGroqModels`;
 export const groqGetTranscriptionEndPoint = `${serverSource}/getGroqTranscription`;
 export const firestoreAddNewUserEndPoint = `${serverSource}/addNewUser`;
 export const firestoreGetAllChatsEndPoint = `${serverSource}/getAllChats`;
+export const firestoreGetAllChatsMemoryEndPoint = `${serverSource}/getAllChatsMemory`;
 export const firestoreAddNewChatsEndPoint = `${serverSource}/addNewChats`;
 export const firestoreDeleteAllChatsEndPoint = `${serverSource}/deleteAllChats`;
 export const firestoreDeleteSomeChatsEndPoint = `${serverSource}/deleteSomeChats`;

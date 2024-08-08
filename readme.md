@@ -50,7 +50,6 @@ pnpm run dev
 #### feat
 
 - can send images with captions
-- use langchain for conversational chat bots
 - can change profile photos and chat wallpapers on the settings page
 
 #### bugs

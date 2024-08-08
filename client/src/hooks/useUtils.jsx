@@ -143,26 +143,29 @@ export const useSenAiPageFetch = () => {
       state.setLoadingMessages,
     ]),
   );
-  const [setChats] = useChatsStore(useShallow((state) => [state.setChats]));
+  const [setChats, setChatsMemory] = useChatsStore(
+    useShallow((state) => [state.setChats, state.setChatsMemory]),
+  );
 
   const senAiPageFetch = async () => {
     try {
       const { addNewUserToFirestoreIfNotExists, uploadSeenHistory } =
         await import("@/controller/CRUDFirestore");
-      const { getAllChatsFromFirestore } = await import(
-        "../controller/CRUDFirestore"
-      );
+      const { getAllChatsFromFirestore, getAllChatsMemoryFromFirestore } =
+        await import("../controller/CRUDFirestore");
 
       const generatedUserId = await addNewUserToFirestoreIfNotExists();
       localStorage.setItem("senAi-userId", generatedUserId);
       setUserId(generatedUserId);
 
-      const [chats] = await Promise.all([
+      const [chats, chatsMemory] = await Promise.all([
         getAllChatsFromFirestore(generatedUserId),
+        getAllChatsMemoryFromFirestore(generatedUserId),
         uploadSeenHistory(generatedUserId),
       ]);
 
       setChats(chats);
+      setChatsMemory(chatsMemory);
       setLoadingMessages(false);
     } catch (error) {
       console.log("An error occured : ", error);
@@ -217,7 +220,7 @@ export const useInstruction = () => {
     instruction = "Please Answer Me In English Language";
   }
   if (botLanguage === "Indonesia") {
-    instruction = "Please Answer Me In Indonesian Language";
+    instruction = "Please Answer Me In Informal Indonesian Language";
   }
 
   return instruction;

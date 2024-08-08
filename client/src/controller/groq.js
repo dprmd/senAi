@@ -26,7 +26,12 @@ export const getGroqModels = async () => {
   }
 };
 
-export const getGroqReply = async (message, model, systemInstruction) => {
+export const getGroqReply = async (
+  message,
+  model,
+  systemInstruction,
+  conversation,
+) => {
   const getApiKeyIndex = localStorage.getItem("senAi-user");
   const apiKeyIndex = getApiKeyIndex ? getApiKeyIndex : 0;
 
@@ -40,6 +45,7 @@ export const getGroqReply = async (message, model, systemInstruction) => {
       message,
       model,
       systemInstruction,
+      conversation,
     }),
   });
 

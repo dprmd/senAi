@@ -11,8 +11,13 @@ import { addNewChatsToFirestore } from "../controller/CRUDFirestore";
 
 export const useSubmitGroq = () => {
   // hooks
-  const [setChats, getChats] = useChatsStore(
-    useShallow((state) => [state.setChats, state.getChats]),
+  const [setChats, getChats, setChatsMemory, getChatsMemory] = useChatsStore(
+    useShallow((state) => [
+      state.setChats,
+      state.getChats,
+      state.setChatsMemory,
+      state.getChatsMemory,
+    ]),
   );
   const [model] = useSettingsStore(useShallow((state) => [state.model]));
   const [
@@ -66,13 +71,35 @@ export const useSubmitGroq = () => {
       await sleep(1000);
       setSenTyping(true);
       setGroqFetchProses("start");
+      // save to chats memory
+      setChatsMemory([
+        ...getChatsMemory(),
+        {
+          time: chatFromUser.time,
+          role: "user",
+          content: chatFromUser.message,
+        },
+      ]);
+
       const reply = await getGroqReply(
         chatFromUser.message,
         model,
         instruction,
+        getChatsMemory(),
       );
       chatFromAi.time = new Date().getTime();
       chatFromAi.message = reply;
+
+      // save to chats memory
+      setChatsMemory([
+        ...getChatsMemory(),
+        {
+          time: chatFromAi.time,
+          role: "assistant",
+          content: chatFromAi.message,
+        },
+      ]);
+
       // comment this when firebase is error
       addNewChatsToFirestore(userId, chatFromUser, chatFromAi);
       // comment this when firebase is error

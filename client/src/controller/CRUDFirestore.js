@@ -10,6 +10,7 @@ import {
   firestoreGetPermissionToDeleteAllDataEndPoint,
   firestoreDeleteAllDataEndPoint,
   firestoreAddNewVoiceChatEndPoint,
+  firestoreGetAllChatsMemoryEndPoint,
 } from "./serverSource";
 import { fetchJson } from "../lib/myUtils";
 
@@ -60,6 +61,28 @@ export const getAllChatsFromFirestore = async (userId) => {
     return await getAllChatsFromFirestore(newUserId);
   } else {
     console.log(chats);
+  }
+};
+
+export const getAllChatsMemoryFromFirestore = async (userId) => {
+  const chatsMemory = await fetchJson(firestoreGetAllChatsMemoryEndPoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ userId }),
+  });
+
+  if (chatsMemory.status === 200) {
+    return await chatsMemory.chatsMemory;
+  }
+  if (chatsMemory.status === 404) {
+    localStorage.removeItem("senAi-userId");
+    const newUserId = await addNewUserToFirestoreIfNotExists();
+    localStorage.setItem("senAi-userId", newUserId);
+    return await getAllChatsFromFirestore(newUserId);
+  } else {
+    console.log(chatsMemory);
   }
 };
 

@@ -6,8 +6,10 @@ import fs from "fs";
 
 export const getGroqReply = async (req, res) => {
   const apiKeys = process.env.GROQ_API_KEYS.split(",");
-  const { apiKeyIndex, message, model, systemInstruction } = req.body;
+  const { apiKeyIndex, message, model, systemInstruction, conversation } =
+    req.body;
   const apiKey = apiKeys[Number(apiKeyIndex)];
+  const conversationMemory = conversation.map(({ time, ...rest }) => rest);
 
   const groq = new Groq({ apiKey });
 
@@ -15,6 +17,7 @@ export const getGroqReply = async (req, res) => {
     const requestToGroq = async (message, model) => {
       const reply = await groq.chat.completions.create({
         messages: [
+          ...conversationMemory,
           {
             role: "system",
             content: systemInstruction,

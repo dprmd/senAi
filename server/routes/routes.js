@@ -7,6 +7,7 @@ import {
 import {
   addNewUserToFirestore,
   getAllChatsFromFirestore,
+  getAllChatsMemoryFromFirestore,
   addNewChatsToFirestore,
   deleteAllChatsInFirestore,
   uploadSeenHistory,
@@ -47,6 +48,7 @@ router.post("/getGroqReply", getGroqReply);
 router.post("/getGroqModels", getGroqModels);
 router.post("/addNewUser", addNewUserToFirestore);
 router.post("/getAllChats", getAllChatsFromFirestore);
+router.post("/getAllChatsMemory", getAllChatsMemoryFromFirestore);
 router.post("/addNewChats", addNewChatsToFirestore);
 router.delete("/deleteAllChats", deleteAllChatsInFirestore);
 router.delete("/deleteSomeChats", deleteSomeChatsInFirestore);

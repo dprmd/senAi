@@ -7,6 +7,11 @@ export const setFirstTimeHold = (value) => {
 };
 
 export const useChatsStore = create((set, get) => ({
+  chatsMemory: [],
+  setChatsMemory: (chatsMemory) => set({ chatsMemory }),
+  getChatsMemory: () => {
+    return get().chatsMemory;
+  },
   chats: [],
   setChats: (chats) => set({ chats }),
   getChats: () => {

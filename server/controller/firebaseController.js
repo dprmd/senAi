@@ -9,7 +9,13 @@ import {
   updateDoc,
   arrayUnion,
 } from "firebase/firestore";
-import { getStorage, ref, getDownloadURL, uploadBytes, deleteObject } from "firebase/storage";
+import {
+  getStorage,
+  ref,
+  getDownloadURL,
+  uploadBytes,
+  deleteObject,
+} from "firebase/storage";
 import { v4 } from "uuid";
 import { comparePassword } from "../lib/utils.js";
 import fs from "fs";
@@ -53,6 +59,11 @@ export const addNewUserToFirestore = async (req, res) => {
       owned: newUserId,
       backupChats: [],
     });
+    // create chatsMemory document in chatsMemory collection
+    await setDoc(doc(firestore, "chatsMemory", newUserId), {
+      owned: newUserId,
+      chatsMemory: [],
+    });
     res.status(201).json({ status: 201, newUserId });
   } catch (error) {
     console.log(error);
@@ -61,14 +72,35 @@ export const addNewUserToFirestore = async (req, res) => {
 };
 
 export const getAllChatsFromFirestore = async (req, res) => {
-  // get userId from client / front end
   const { userId } = req.body;
   const chatsRef = doc(firestore, "chats", userId);
   try {
-    const userSnap = await getDoc(chatsRef);
+    const chatsSnap = await getDoc(chatsRef);
 
-    if (userSnap.exists()) {
-      res.status(200).json({ status: 200, chats: userSnap.data().chats });
+    if (chatsSnap.exists()) {
+      res.status(200).json({ status: 200, chats: chatsSnap.data().chats });
+    } else {
+      res.status(404).json({
+        status: 404,
+        message: `No Such Document Match With ${userId}`,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ status: 500, error });
+  }
+};
+
+export const getAllChatsMemoryFromFirestore = async (req, res) => {
+  const { userId } = req.body;
+  const chatsMemoryRef = doc(firestore, "chatsMemory", userId);
+  try {
+    const chatsMemorySnap = await getDoc(chatsMemoryRef);
+
+    if (chatsMemorySnap.exists()) {
+      res
+        .status(200)
+        .json({ status: 200, chatsMemory: chatsMemorySnap.data().chatsMemory });
     } else {
       res.status(404).json({
         status: 404,
@@ -85,16 +117,36 @@ export const addNewChatsToFirestore = async (req, res) => {
   const { userId, newChatFromUser, newChatFromAi } = req.body;
   const chatsRef = doc(firestore, "chats", userId);
   const backupChatsRef = doc(firestore, "backupChats", userId);
+  const chatsMemoryRef = doc(firestore, "chatsMemory", userId);
   try {
     const chatsSnap = await getDoc(chatsRef);
     const backupChatsSnap = await getDoc(backupChatsRef);
+    const chatsMemorySnap = await getDoc(chatsMemoryRef);
 
-    if (chatsSnap.exists() && backupChatsSnap.exists()) {
+    if (
+      chatsSnap.exists() &&
+      backupChatsSnap.exists() &&
+      chatsMemorySnap.exists()
+    ) {
       await updateDoc(chatsRef, {
         chats: arrayUnion(newChatFromUser, newChatFromAi),
       });
       await updateDoc(backupChatsRef, {
         backupChats: arrayUnion(newChatFromUser, newChatFromAi),
+      });
+      await updateDoc(chatsMemoryRef, {
+        chatsMemory: arrayUnion(
+          {
+            time: newChatFromUser.time,
+            role: "user",
+            content: newChatFromUser.message,
+          },
+          {
+            time: newChatFromAi.time,
+            role: "assistant",
+            content: newChatFromAi.message,
+          }
+        ),
       });
       res.status(201).json({ status: 201, message: "Chats added" });
     } else {
@@ -128,13 +180,14 @@ export const deleteAllChatsInFirestore = async (req, res) => {
               audioFileName: chat.audioFileName,
               deleted: true,
             });
-          }).catch((error) => {
+          })
+          .catch((error) => {
             deleteAllChatsVoice.push({
               audioFileName: chat.audioFileName,
               deleted: false,
-            })
-            console.log(error)
-          })
+            });
+            console.log(error);
+          });
       }
     });
     res.status(202).json({
@@ -153,7 +206,8 @@ export const deleteSomeChatsInFirestore = async (req, res) => {
   let deleteSomeChatsVoice = [];
 
   try {
-    const chatsRef = doc(firestore, "chats", userId); await updateDoc(chatsRef, {
+    const chatsRef = doc(firestore, "chats", userId);
+    await updateDoc(chatsRef, {
       chats: someChatsNew,
     });
     someChatsDeleted.forEach((chat) => {
@@ -171,7 +225,7 @@ export const deleteSomeChatsInFirestore = async (req, res) => {
               audioFileName: chat.audioFileName,
               deleted: false,
             });
-            console.log(error)
+            console.log(error);
           });
       }
     });
@@ -278,11 +332,13 @@ export const deleteAllDataInFirestore = async (req, res) => {
   const userRef = doc(firestore, "users", userId);
   const chatsRef = doc(firestore, "chats", userId);
   const backupChatsRef = doc(firestore, "backupChats", userId);
+  const chatsMemoryRef = doc(firestore, "chatsMemory", userId);
   try {
     const passwordSnap = await getDoc(passwordRef);
     const userSnap = await getDoc(userRef);
     const chatsSnap = await getDoc(chatsRef);
     const backupChatsSnap = await getDoc(backupChatsRef);
+    const chatsMemorySnap = await getDoc(chatsMemoryRef);
 
     if (passwordSnap.exists()) {
       const encryptedPassword = passwordSnap.data().passwordDeleteAllData;
@@ -291,7 +347,8 @@ export const deleteAllDataInFirestore = async (req, res) => {
         if (
           userSnap.exists() &&
           chatsSnap.exists() &&
-          backupChatsSnap.exists()
+          backupChatsSnap.exists() &&
+          chatsMemorySnap.exists()
         ) {
           if (option.withLastSeenHistory) {
             await updateDoc(userRef, { lastSeen: "", seenHistory: [] });
@@ -302,6 +359,7 @@ export const deleteAllDataInFirestore = async (req, res) => {
           if (option.withBackupChats) {
             await updateDoc(backupChatsRef, { backupChats: [] });
           }
+          await updateDoc(chatsMemoryRef, { chatsMemory: [] });
           res.status(202).json({
             status: 202,
             whichDelete: {

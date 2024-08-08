@@ -1,0 +1,1 @@
+import{m as a}from"./pnpm-micromark-util-character@2.1.0--CuZ8VJ3N.js";function p(n,t,i,u){const m=u?u-1:Number.POSITIVE_INFINITY;let f=0;return o;function o(r){return a(r)?(n.enter(i),e(r)):t(r)}function e(r){return a(r)&&f++<m?(n.consume(r),e):(n.exit(i),t(r))}}export{p as f};

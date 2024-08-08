@@ -1,0 +1,1 @@
+import{r as e}from"./pnpm-react@18.3.1--FUz9cRTN.js";const r=()=>{const[t,i]=e.useState(navigator.onLine);return e.useEffect(()=>{const n=()=>{i(navigator.onLine)};return window.addEventListener("online",n),window.addEventListener("offline",n),()=>{window.removeEventListener("online",n),window.removeEventListener("offline",n)}},[]),t};export{r as u};

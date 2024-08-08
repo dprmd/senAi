@@ -1,0 +1,1 @@
+import{r as s}from"./pnpm-react@18.3.1--FUz9cRTN.js";function c(o,t){typeof o=="function"?o(t):o!=null&&(o.current=t)}function e(...o){return t=>o.forEach(n=>c(n,t))}function i(...o){return s.useCallback(e(...o),o)}export{e as c,i as u};

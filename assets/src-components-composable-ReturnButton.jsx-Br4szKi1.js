@@ -1,0 +1,1 @@
+import{j as t}from"./pnpm-react@18.3.1--FUz9cRTN.js";import{A as e}from"./pnpm-lucide-react@0.412.0_react@18.3.1--BJNNq4L6.js";const o=({...a})=>t.jsx("button",{className:"rounded-full px-3 py-2 active:bg-slate-200 dark:active:bg-slate-600","aria-label":"back to previous page",...a,children:t.jsx(e,{className:"h-5 w-5 text-slate-900 dark:text-slate-300"})});export{o as R};

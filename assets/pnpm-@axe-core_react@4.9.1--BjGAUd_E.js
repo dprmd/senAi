@@ -1,0 +1,1 @@
+import"./pnpm-axe-core@4.9.1--wjnWIQXQ.js";import"./pnpm-requestidlecallback@0.3.0--UwM9azSe.js";var e={serious:"#d93251",minor:"#d24700",text:"black"},r={serious:"#ffb3b3",minor:"#ffd500",text:"white"};window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;

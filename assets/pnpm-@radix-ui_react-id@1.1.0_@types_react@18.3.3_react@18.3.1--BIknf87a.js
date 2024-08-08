@@ -1,0 +1,1 @@
+import{r as o,a as s}from"./pnpm-react@18.3.1--FUz9cRTN.js";import{u}from"./pnpm-@radix-ui_react-use-layout-effect@1.1.0_@types_react@18.3.3_react@18.3.1--DOamorVR.js";var i=s.useId||(()=>{}),c=0;function f(r){const[t,a]=o.useState(i());return u(()=>{a(e=>e??String(c++))},[r]),t?`radix-${t}`:""}export{f as u};

@@ -1,0 +1,1 @@
+import{j as t}from"./pnpm-react@18.3.1--FUz9cRTN.js";import{c as a}from"./src-lib-utils.js-B6V21jIF.js";function m({className:e,...s}){return t.jsx("div",{className:a("animate-pulse rounded-md bg-slate-400 dark:bg-slate-600",e),...s})}export{m as S};

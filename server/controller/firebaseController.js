@@ -145,7 +145,7 @@ export const addNewChatsToFirestore = async (req, res) => {
             time: newChatFromAi.time,
             role: "assistant",
             content: newChatFromAi.message,
-          }
+          },
         ),
       });
       res.status(201).json({ status: 201, message: "Chats added" });
@@ -168,12 +168,18 @@ export const deleteAllChatsInFirestore = async (req, res) => {
   try {
     const chatsRef = doc(firestore, "chats", userId);
     const chatsMemoryRef = doc(firestore, "chatsMemory", userId);
+
+    // delete all chats === replace with empty array
     await updateDoc(chatsRef, {
       chats: [],
     });
+
+    // delete all memory chats === replace with empty array
     await updateDoc(chatsMemoryRef, {
       chatsMemory: [],
     });
+
+    // Delete all voices whose names are listed in chats
     chats.forEach((chat) => {
       if (chat.type === "audio") {
         const audioVoiceRef = ref(storage, `voices/${chat.audioFileName}`);
@@ -213,7 +219,7 @@ export const deleteSomeChatsInFirestore = async (req, res) => {
     const chatsMemoryRef = doc(firestore, "chatsMemory", userId);
     const chatsMemoryNew = someChatsNew.map((chat) => ({
       role: chat.position === "right" ? "user" : "assistant",
-      content: chat.messag,
+      content: chat.message,
     }));
     await updateDoc(chatsRef, {
       chats: someChatsNew,

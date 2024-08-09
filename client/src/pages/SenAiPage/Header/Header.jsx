@@ -11,7 +11,7 @@ const SecondNavbarTop = lazy(
 );
 
 const Header = () => {
-  // hooks
+  // zustand hooks
   const [stillHold] = useChatsStore(useShallow((state) => [state.stillHold]));
 
   return (

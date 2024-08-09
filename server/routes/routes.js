@@ -60,10 +60,10 @@ router.delete("/deleteAllData", deleteAllDataInFirestore);
 router.post(
   "/getGroqTranscription",
   upload.single("audio"),
-  getGroqTranscription
+  getGroqTranscription,
 );
 router.post(
   "/addNewVoiceChat",
   upload.single("audio"),
-  addNewChatVoiceToFireStorage
+  addNewChatVoiceToFireStorage,
 );

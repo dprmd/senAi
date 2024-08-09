@@ -124,8 +124,8 @@ export const useDeleteSomeChats = () => {
 export const useDeleteAllChats = () => {
   const online = useOnlineStatus();
   const [userId] = useAppStore(useShallow((state) => [state.userId]));
-  const [chats, setChats] = useChatsStore(
-    useShallow((state) => [state.chats, state.setChats]),
+  const [chats, setChats, setChatsMemory] = useChatsStore(
+    useShallow((state) => [state.chats, state.setChats, state.setChatsMemory]),
   );
 
   const deleteAllChats = async () => {
@@ -136,6 +136,7 @@ export const useDeleteAllChats = () => {
       deleteAllChatsInFirestore(userId, chats);
     }
     setChats([]);
+    setChatsMemory([]);
   };
 
   return deleteAllChats;
@@ -155,23 +156,27 @@ export const useSenAiPageFetch = () => {
 
   const senAiPageFetch = async () => {
     try {
-      const { addNewUserToFirestoreIfNotExists, uploadSeenHistory } =
-        await import("@/controller/CRUDFirestore");
-      const { getAllChatsFromFirestore, getAllChatsMemoryFromFirestore } =
-        await import("../controller/CRUDFirestore");
+      const {
+        addNewUserToFirestoreIfNotExists,
+        uploadSeenHistory,
+        getAllChatsFromFirestore,
+        getAllChatsMemoryFromFirestore,
+      } = await import("@/controller/CRUDFirestore");
 
-      const generatedUserId = await addNewUserToFirestoreIfNotExists();
-      localStorage.setItem("senAi-userId", generatedUserId);
-      setUserId(generatedUserId);
+      const checkUserId = await addNewUserToFirestoreIfNotExists();
 
-      const [chats, chatsMemory] = await Promise.all([
-        getAllChatsFromFirestore(generatedUserId),
-        getAllChatsMemoryFromFirestore(generatedUserId),
-        uploadSeenHistory(generatedUserId),
+      const [gettedChats, gettedChatsMemory] = await Promise.all([
+        getAllChatsFromFirestore(checkUserId),
+        getAllChatsMemoryFromFirestore(checkUserId),
+        uploadSeenHistory(checkUserId),
       ]);
 
+      const { chats, newUserId } = gettedChats;
+
+      localStorage.setItem("senAi-userId", newUserId);
+      setUserId(newUserId);
       setChats(chats);
-      setChatsMemory(chatsMemory);
+      setChatsMemory(gettedChatsMemory);
       setLoadingMessages(false);
     } catch (error) {
       console.log("An error occured : ", error);

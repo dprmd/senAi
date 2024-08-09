@@ -126,3 +126,14 @@ export const filterModels = (models) => {
   });
   return modelsWithOwned;
 };
+
+export const resetLocalStorage = () => {
+  localStorage.removeItem("senAi-theme");
+  localStorage.removeItem("senAi-userId");
+  localStorage.removeItem("senAi-user");
+  localStorage.removeItem("senAi-model");
+  localStorage.removeItem("senAi-language");
+  localStorage.removeItem("senAi-languageLabel");
+  localStorage.removeItem("senAi-botLanguage");
+  localStorage.removeItem("senAi-enterIsSend");
+};

@@ -18,11 +18,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const MainNavbarTop = () => {
-  // hooks
+  // zustand hooks
   const [chats] = useChatsStore(useShallow((state) => [state.chats]));
   const [darkMode] = useSettingsStore(useShallow((state) => [state.darkMode]));
-  const navigate = useNavigate();
+
+  // third party hooks
   const { t } = useTranslation();
+  const navigate = useNavigate();
+
+  // custom hooks
   const handleSwitchTheme = useSwitchTheme();
   const handleDeleteAllChats = useDeleteAllChats();
 

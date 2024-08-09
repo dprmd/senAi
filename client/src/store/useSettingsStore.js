@@ -1,17 +1,18 @@
 import { create } from "zustand";
+import defaultState from "./defaultState.json";
 
 export const useSettingsStore = create((set) => ({
   botLanguage: localStorage.getItem("senAi-botLanguage")
     ? localStorage.getItem("senAi-botLanguage")
-    : "Auto",
+    : defaultState.botLanguage,
   setBotLanguage: (botLanguage) => set({ botLanguage }),
   language: localStorage.getItem("senAi-language")
     ? localStorage.getItem("senAi-language")
-    : "en",
+    : defaultState.language,
   setLanguage: (language) => set({ language }),
   languageLabel: localStorage.getItem("senAi-languageLabel")
     ? localStorage.getItem("senAi-languageLabel")
-    : "English",
+    : defaultState.languageLabel,
   setLanguageLabel: (languageLabel) => set({ languageLabel }),
   user: localStorage.getItem("senAi-user")
     ? localStorage.getItem("senAi-user")
@@ -19,7 +20,7 @@ export const useSettingsStore = create((set) => ({
   setUser: (user) => set({ user }),
   enterIsSend: localStorage.getItem("senAi-enterIsSend")
     ? localStorage.getItem("senAi-enterIsSend")
-    : "no",
+    : defaultState.enterIsSend,
   setEnterIsSend: (enterIsSend) => set({ enterIsSend }),
   currentModels: [],
   setCurrentModels: (currentModels) => set({ currentModels }),
@@ -35,7 +36,7 @@ export const useSettingsStore = create((set) => ({
   setOldName: (oldName) => set({ oldName }),
   model: localStorage.getItem("senAi-model")
     ? localStorage.getItem("senAi-model")
-    : "gemma2-9b-it",
+    : defaultState.model,
   setModel: (model) => set({ model }),
   darkMode: localStorage.getItem("senAi-theme") === "dark" ? true : false,
   setDarkMode: (darkMode) => set({ darkMode }),

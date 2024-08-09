@@ -12,13 +12,14 @@ import {
   firestoreAddNewVoiceChatEndPoint,
   firestoreGetAllChatsMemoryEndPoint,
 } from "./serverSource";
-import { fetchJson } from "../lib/myUtils";
+import { fetchJson, resetLocalStorage } from "../lib/myUtils";
 
 export const addNewUserToFirestoreIfNotExists = async () => {
   if (localStorage.getItem("senAi-userId")) {
     const userIdFromLocalStorage = localStorage.getItem("senAi-userId");
     return userIdFromLocalStorage;
   } else {
+    resetLocalStorage();
     const { getDeviceName } = await import("../lib/myUtils");
     const { generateTimeNow } = await import("../lib/generateTime");
 
@@ -52,7 +53,7 @@ export const getAllChatsFromFirestore = async (userId) => {
   });
 
   if (chats.status === 200) {
-    return await chats.chats;
+    return { chats: chats.chats, newUserId: userId };
   }
   if (chats.status === 404) {
     localStorage.removeItem("senAi-userId");
@@ -74,13 +75,7 @@ export const getAllChatsMemoryFromFirestore = async (userId) => {
   });
 
   if (chatsMemory.status === 200) {
-    return await chatsMemory.chatsMemory;
-  }
-  if (chatsMemory.status === 404) {
-    localStorage.removeItem("senAi-userId");
-    const newUserId = await addNewUserToFirestoreIfNotExists();
-    localStorage.setItem("senAi-userId", newUserId);
-    return await getAllChatsFromFirestore(newUserId);
+    return chatsMemory.chatsMemory;
   } else {
     console.log(chatsMemory);
   }
@@ -162,10 +157,14 @@ export const getName = async (userId) => {
   });
 
   if (gettedName.status === 200) {
-    return gettedName.name;
+    return { name: gettedName.name, userId: userId };
+    s;
   }
   if (gettedName.status === 404) {
-    return "Unknown";
+    localStorage.removeItem("senAi-userId");
+    const newUserId = await addNewUserToFirestoreIfNotExists();
+    localStorage.setItem("senAi-userId", newUserId);
+    return await getName(newUserId);
   } else {
     console.log(gettedName);
   }
@@ -184,7 +183,10 @@ export const updateName = async (userId, newName) => {
     return updatedName;
   }
   if (updatedName.status === 404) {
-    console.log(updatedName);
+    localStorage.removeItem("senAi-userId");
+    const newUserId = await addNewUserToFirestoreIfNotExists();
+    localStorage.setItem("senAi-userId", newUserId);
+    return await updateName(newUserId, newName);
   } else {
     console.log(updatedName);
   }

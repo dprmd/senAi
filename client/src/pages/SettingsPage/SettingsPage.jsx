@@ -52,13 +52,14 @@ const SettingsPage = () => {
         "../../controller/CRUDFirestore"
       );
 
-      const generatedUserId = await addNewUserToFirestoreIfNotExists();
-      localStorage.setItem("senAi-userId", generatedUserId);
-      setUserId(generatedUserId);
+      const checkUserId = await addNewUserToFirestoreIfNotExists();
 
-      const gettedName = await getName(generatedUserId);
-      setOldName(gettedName);
-      setName(gettedName);
+      const gettedName = await getName(checkUserId);
+      const { name, userId } = gettedName;
+      localStorage.setItem("senAi-userId", userId);
+      setUserId(userId);
+      setOldName(name);
+      setName(name);
     };
 
     const whenEscClicked = (e) => {

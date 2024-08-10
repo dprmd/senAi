@@ -1,1 +1,0 @@
-import{j as r}from"./pnpm-react@18.3.1--FUz9cRTN.js";import{H as o}from"./src-pages-SenAiPage-Header-Header.jsx-C5GdLXXP.js";import{M as s}from"./src-pages-SenAiPage-Main-Main.jsx-9KGL3JUG.js";import{F as t}from"./src-pages-SenAiPage-Footer-Footer.jsx-ilckGzfb.js";const n=()=>r.jsxs(r.Fragment,{children:[r.jsx(o,{}),r.jsx(s,{}),r.jsx(t,{})]});export{n as S};

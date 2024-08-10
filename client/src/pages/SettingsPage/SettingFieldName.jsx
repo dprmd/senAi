@@ -6,8 +6,10 @@ import SettingField from "./SettingsField";
 import AlertDialogChangeName from "../../components/composable/AlertDialogChangeName";
 
 const SettingFieldName = () => {
-  // hooks
+  // zustand
   const [oldName] = useSettingsStore(useShallow((state) => [state.oldName]));
+
+  // hooks
   const { t } = useTranslation();
 
   // state

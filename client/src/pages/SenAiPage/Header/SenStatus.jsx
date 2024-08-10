@@ -69,10 +69,6 @@ const SenStatus = () => {
                 </span>
               </li>
               <li>
-                <span className={upperStyle}>{t("senAi_personality")}</span>
-                <span className={lowerStyle}>Polontong</span>
-              </li>
-              <li>
                 <span className={upperStyle}>{t("senAi_ai_source")}</span>
                 <span className={lowerStyle}>Groq Ai</span>
               </li>

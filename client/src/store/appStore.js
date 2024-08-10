@@ -18,4 +18,6 @@ export const useAppStore = create((set) => ({
   setUserId: (userId) => set({ userId }),
   groqFetchProses: "wait",
   setGroqFetchProses: (groqFetchProses) => set({ groqFetchProses }),
+  isCaptureCamera: false,
+  setIsCaptureCamera: (isCaptureCamera) => set({ isCaptureCamera }),
 }));

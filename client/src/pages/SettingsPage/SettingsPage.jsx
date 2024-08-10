@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useAppStore } from "../../store/appStore";
 import { useSettingsStore } from "@/store/useSettingsStore";
 import { motion } from "framer-motion";
+import SettingFieldImage from "./SettingFieldImage";
 import SettingFieldUser from "./SettingFieldUser";
 import SettingFieldModel from "./SettingFieldModel";
 import SettingFieldName from "./SettingFieldName";
@@ -14,7 +15,7 @@ import SettingFieldLanguage from "./SettingFieldLanguage";
 import SettingFieldBotLanguagePreferences from "./SettingFieldBotLanguagePreferences";
 
 const SettingsPage = () => {
-  // hooks
+  // zustand
   const [setUserId] = useAppStore(useShallow((state) => [state.setUserId]));
   const [
     setName,
@@ -35,6 +36,8 @@ const SettingsPage = () => {
       state.setCurrentModels,
     ]),
   );
+
+  // hooks
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -52,14 +55,13 @@ const SettingsPage = () => {
         "../../controller/CRUDFirestore"
       );
 
-      const checkUserId = await addNewUserToFirestoreIfNotExists();
+      const getUserId = await addNewUserToFirestoreIfNotExists();
+      setUserId(getUserId);
+      localStorage.setItem("senAi-userId", getUserId);
 
-      const gettedName = await getName(checkUserId);
-      const { name, userId } = gettedName;
-      localStorage.setItem("senAi-userId", userId);
-      setUserId(userId);
-      setOldName(name);
-      setName(name);
+      const gettedName = await getName(getUserId);
+      setOldName(gettedName);
+      setName(gettedName);
     };
 
     const whenEscClicked = (e) => {
@@ -90,17 +92,8 @@ const SettingsPage = () => {
     >
       <SettingsTop title={t("settings")} urlBack="/" />
       <main className="mx-auto mt-1 flex min-h-screen flex-col sm:w-[80%] lg:w-[40%]">
-        {/* images */}
-        <div className="flex items-center justify-center py-5">
-          <div className="max-h-[150px] min-h-[150px] min-w-[150px] max-w-[150px] overflow-hidden rounded-full">
-            <img
-              src="img/sen.jpg"
-              className="z-0 h-full"
-              alt="sen ai"
-              loading="lazy"
-            />
-          </div>
-        </div>
+        {/*Image*/}
+        <SettingFieldImage />
         {/* Name */}
         <SettingFieldName />
         {/* User */}

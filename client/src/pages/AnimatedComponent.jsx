@@ -15,6 +15,7 @@ import { useTranslation } from "react-i18next";
 import { Toaster } from "@/components/ui/toaster";
 
 const AnimatedComponent = () => {
+  // hooks
   const location = useLocation();
   const online = useOnlineStatus();
   const { t } = useTranslation();

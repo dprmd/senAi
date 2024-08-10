@@ -109,24 +109,6 @@ export const fetchJson = async (endPoint, options) => {
   }
 };
 
-// lets filter models list from groq :)
-export const filterModels = (models) => {
-  let modelsWithOwned = [];
-  let owned = [];
-  models.forEach((model) => {
-    if (!owned.includes(model.owned_by)) {
-      owned.push(model.owned_by);
-    }
-  });
-  owned.forEach((owned) => {
-    modelsWithOwned.push({
-      owned: owned,
-      models: models.filter((item) => item.owned_by === owned),
-    });
-  });
-  return modelsWithOwned;
-};
-
 export const resetLocalStorage = () => {
   localStorage.removeItem("senAi-theme");
   localStorage.removeItem("senAi-userId");
@@ -136,4 +118,21 @@ export const resetLocalStorage = () => {
   localStorage.removeItem("senAi-languageLabel");
   localStorage.removeItem("senAi-botLanguage");
   localStorage.removeItem("senAi-enterIsSend");
+};
+
+export const getDeviceType = () => {
+  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+  if (/android/i.test(userAgent)) {
+    return "Android";
+  }
+  if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+    return "iOS";
+  }
+  if (
+    /Macintosh|MacIntel|MacPPC|Mac68K/.test(userAgent) &&
+    !/iPad|iPhone|iPod/.test(userAgent)
+  ) {
+    return "Mac";
+  }
+  return "Desktop";
 };

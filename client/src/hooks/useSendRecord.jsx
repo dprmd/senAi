@@ -67,7 +67,8 @@ export const useSendRecord = (audioPlaybackRef, seekBar) => {
       console.log(err);
       toast({
         description: t("microphone_allow_false"),
-        duration: 2000,
+        variant: "destructive",
+        duration: 3000,
       });
     }
   };

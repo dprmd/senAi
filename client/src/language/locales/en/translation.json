@@ -67,9 +67,12 @@
   "senAi_cant_receive_message": "Sen can't receive your message if you're offline",
   "click_to_start_record": "Press Start then Speak",
   "microphone_allow_false": "Could not access microphone, Please check your permission",
+  "camera_allow_false": "Could not access microphone, Please check your permission",
   "see_dependencies": "See Dependencies",
   "senai_dependencies": "Sen Ai built on",
   "made_with": "made with all my heart",
   "loading_transcription": "Loading Transcription",
-  "getting_url_progress": "Getting Audio URL"
+  "getting_url_progress": "Getting Audio URL",
+  "profile_photo": "Profile Photo",
+  "image_format_wrong": "Please Select a PNG or JPG file"
 }

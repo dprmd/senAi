@@ -68,7 +68,7 @@ const ChatBubble = ({ chat }) => {
         >
           {chat.type === "audio" && <AudioChat chat={chat} />}
           <Markdown
-            className="overflow-x-auto text-wrap"
+            className={`overflow-x-auto text-wrap ${chat.type === "audio" ? "px-4" : ""}`}
             remarkPlugins={[remarkGfm]}
             rehypePlugins={[rehypeRaw]}
             components={{

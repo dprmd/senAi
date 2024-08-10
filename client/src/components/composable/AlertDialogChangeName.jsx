@@ -2,6 +2,7 @@ import { useShallow } from "zustand/react/shallow";
 import { useTranslation } from "react-i18next";
 import { useAppStore } from "@/store/appStore";
 import { useSettingsStore } from "@/store/useSettingsStore";
+// shadcn ui
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,7 +18,7 @@ import { toast } from "../ui/use-toast";
 import { Toaster } from "../ui/toaster";
 
 const AlertDialogChangeName = ({ open, setOpen }) => {
-  // hooks
+  // zustand
   const [userId] = useAppStore(useShallow((state) => [state.userId]));
   const [name, setName, oldName, setOldName] = useSettingsStore(
     useShallow((state) => [
@@ -27,20 +28,23 @@ const AlertDialogChangeName = ({ open, setOpen }) => {
       state.setOldName,
     ]),
   );
+
+  // hooks
   const { t } = useTranslation();
 
+  // callback
   const handleSaveName = async (e) => {
     e.preventDefault();
     const { updateName } = await import("../../controller/CRUDFirestore");
-    // if the newName is same with the old name, then do not change to server, just close the dialog
     if (name === oldName) {
       setOpen(false);
     } else if (name.length === 0) {
       toast({
         description: t("name_empty"),
+        variant: "destructive",
+        duration: 3000,
       });
     } else {
-      // if the new name is same, then save change to server
       updateName(userId, name);
       setOldName(name);
       setOpen(false);
@@ -49,7 +53,10 @@ const AlertDialogChangeName = ({ open, setOpen }) => {
 
   return (
     <>
+      {/* toaster untuk toast notifikasi */}
       <Toaster />
+
+      {/* alert dialog untuk mengubah nama */}
       <AlertDialog open={open}>
         <AlertDialogContent className="top-[100%] w-full translate-y-[-100%] rounded-none sm:top-[50%] sm:translate-y-[-50%]">
           <form onSubmit={handleSaveName}>

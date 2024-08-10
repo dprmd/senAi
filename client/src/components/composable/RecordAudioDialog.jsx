@@ -10,8 +10,7 @@ import { useTranslation } from "react-i18next";
 import { Mic } from "lucide-react";
 
 const RecordAudioDialog = () => {
-  // hooks
-  const { t } = useTranslation();
+  // zustand
   const [
     isRecording,
     setIsRecording,
@@ -31,6 +30,9 @@ const RecordAudioDialog = () => {
       state.isPlayRecord,
     ]),
   );
+
+  // hooks
+  const { t } = useTranslation();
 
   // media recorder ref
   const audioPlaybackRef = useRef(null);
@@ -92,6 +94,7 @@ const RecordAudioDialog = () => {
             <div className="rounded-full bg-green-500 p-2 text-slate-800 dark:bg-green-600 dark:text-slate-200">
               <Mic className="h-10 w-10" />
             </div>
+
             {/* The circle animation when Recording */}
             <div className="mt-6 flex">
               {isRecordingStart ? (
@@ -110,7 +113,7 @@ const RecordAudioDialog = () => {
                 // the playback component when record is finish
                 <div className="h-6 text-slate-800 dark:text-slate-200">
                   {haveRecord ? (
-                    <div id="audioPlayer">
+                    <div>
                       <audio
                         ref={audioPlaybackRef}
                         onTimeUpdate={handleTimeUpdateRecordResult}

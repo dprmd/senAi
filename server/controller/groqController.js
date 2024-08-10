@@ -2,6 +2,7 @@ import Groq from "groq-sdk";
 import { config } from "dotenv";
 import { modelDescription } from "./modelDescription.js";
 config();
+import { filterModels } from "../lib/utils.js";
 import fs from "fs";
 
 export const getGroqReply = async (req, res) => {
@@ -86,7 +87,8 @@ export const getGroqModels = async (req, res) => {
 
       return theModel;
     });
-    res.status(200).json({ status: 200, models: groqModelsDetails });
+    const filteredModels = filterModels(groqModelsDetails);
+    res.status(200).json({ status: 200, models: filteredModels });
   } catch (error) {
     console.log(error);
     res.status(500).json({ status: 500, error: error });

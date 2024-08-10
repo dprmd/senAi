@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { useAppStore } from "../store/appStore";
 import { useChatsStore } from "../store/useChatsStore";
 import { firstTimeHold, setFirstTimeHold } from "../store/useChatsStore";
 import useOnlineStatus from "./useOnlineStatus";
 import { useSettingsStore } from "@/store/useSettingsStore";
+import { getDeviceType } from "@/lib/myUtils";
 
 export const useClearHoldChats = () => {
   const [setHoldChats, stillHold, setStillHold, setTriggerClearHolding] =
@@ -163,19 +165,17 @@ export const useSenAiPageFetch = () => {
         getAllChatsMemoryFromFirestore,
       } = await import("@/controller/CRUDFirestore");
 
-      const checkUserId = await addNewUserToFirestoreIfNotExists();
+      const getUserId = await addNewUserToFirestoreIfNotExists();
+      localStorage.setItem("senAi-userId", getUserId);
+      setUserId(getUserId);
 
       const [gettedChats, gettedChatsMemory] = await Promise.all([
-        getAllChatsFromFirestore(checkUserId),
-        getAllChatsMemoryFromFirestore(checkUserId),
-        uploadSeenHistory(checkUserId),
+        getAllChatsFromFirestore(getUserId),
+        getAllChatsMemoryFromFirestore(getUserId),
+        uploadSeenHistory(getUserId),
       ]);
 
-      const { chats, newUserId } = gettedChats;
-
-      localStorage.setItem("senAi-userId", newUserId);
-      setUserId(newUserId);
-      setChats(chats);
+      setChats(gettedChats);
       setChatsMemory(gettedChatsMemory);
       setLoadingMessages(false);
     } catch (error) {
@@ -235,4 +235,11 @@ export const useInstruction = () => {
   }
 
   return instruction;
+};
+
+export const useMobileDeviceType = () => {
+  const deviceType = getDeviceType();
+  const [isMobile] = useState(deviceType === "Android" || deviceType === "IOS");
+
+  return isMobile;
 };

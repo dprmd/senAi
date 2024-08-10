@@ -35,6 +35,7 @@ const SettingOtherDeleteAllData = () => {
     withChats: false,
     withBackupChats: false,
     withLastSeenHistory: false,
+    withDestroyAllCollections: false,
   });
   const maxLengthSecurityCode = 6;
   const [securityCode, setSecurityCode] = useState("");
@@ -65,13 +66,14 @@ const SettingOtherDeleteAllData = () => {
     if (
       !option.withChats &&
       !option.withBackupChats &&
-      !option.withLastSeenHistory
+      !option.withLastSeenHistory &&
+      !option.withDestroyAllCollections
     )
       return;
     setIsDeleting(true);
-    setChatsMemory([]);
-    if (option.withChats) {
+    if (option.withChats && option.withBackupChats) {
       setChats([]);
+      setChatsMemory([]);
     }
     setDeleteAllDataDialog(false);
     const { deleteAllDataInFirestore } = await import(
@@ -82,12 +84,16 @@ const SettingOtherDeleteAllData = () => {
       securityCode,
       option,
     );
+
+    // reset all state
     setSecurityCode("");
     setOption({
       withChats: false,
       withBackupChats: false,
       withLastSeenHistory: false,
     });
+
+    // tell user
     toast({
       title: t("deleted_all_data"),
       description: message,
@@ -203,6 +209,7 @@ const SettingOtherDeleteAllData = () => {
             withChats: false,
             withBackupChats: false,
             withLastSeenHistory: false,
+            withDestroyAllCollections: false,
           });
         }}
         handleContinue={handleDeleteAllData}
@@ -250,6 +257,23 @@ const SettingOtherDeleteAllData = () => {
             />
             <Label htmlFor="lastSeenHistory" className="cursor-pointer">
               Last Seen History
+            </Label>
+          </div>
+
+          {/* With All Collections */}
+          <div className="flex items-center gap-x-3">
+            <Checkbox
+              id="allCollections"
+              checked={option.withDestroyAllCollections}
+              onCheckedChange={(e) => {
+                setOption((state) => ({
+                  ...state,
+                  withDestroyAllCollections: e,
+                }));
+              }}
+            />
+            <Label htmlFor="allCollections" className="cursor-pointer">
+              All Collections
             </Label>
           </div>
         </div>

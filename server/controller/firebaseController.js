@@ -8,6 +8,11 @@ import {
   getDoc,
   updateDoc,
   arrayUnion,
+  getDocs,
+  collection,
+  query,
+  limit,
+  writeBatch,
 } from "firebase/firestore";
 import {
   getStorage,
@@ -20,6 +25,8 @@ import { v4 } from "uuid";
 import { comparePassword } from "../lib/utils.js";
 import fs from "fs";
 import path from "path";
+
+const MY_COLLECTION = ["users", "chats", "backupChats", "chatsMemory"];
 
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
@@ -36,31 +43,53 @@ const app = initializeApp(firebaseConfig);
 const firestore = getFirestore(app);
 const storage = getStorage();
 
+export const checkAUser = async (req, res) => {
+  const { userId } = req.body;
+  const userRef = doc(firestore, "users", userId);
+  try {
+    const userSnap = await getDoc(userRef);
+
+    if (userSnap.exists()) {
+      res.status(200).json({ status: 200, userExist: true });
+    } else {
+      res.status(404).json({
+        status: 404,
+        message: `No Such Document Match With ${userId}`,
+        exist: false,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ status: 500, error });
+  }
+};
+
 export const addNewUserToFirestore = async (req, res) => {
-  const { deviceName, lastSeen } = req.body;
+  const { deviceName, deviceType, lastSeen } = req.body;
   const newUserId = v4();
-  const userRef = doc(firestore, "users", newUserId);
+
   try {
     // create default document in users collection
-    await setDoc(doc(firestore, "users", newUserId), {
+    setDoc(doc(firestore, "users", newUserId), {
       userId: newUserId,
       name: "Unknown",
       deviceName,
+      deviceType,
       lastSeen,
       seenHistory: [],
     });
     // create chats document in chats collection
-    await setDoc(doc(firestore, "chats", newUserId), {
+    setDoc(doc(firestore, "chats", newUserId), {
       owned: newUserId,
       chats: [],
     });
     // create backupChats document in backupChats collection
-    await setDoc(doc(firestore, "backupChats", newUserId), {
+    setDoc(doc(firestore, "backupChats", newUserId), {
       owned: newUserId,
       backupChats: [],
     });
     // create chatsMemory document in chatsMemory collection
-    await setDoc(doc(firestore, "chatsMemory", newUserId), {
+    setDoc(doc(firestore, "chatsMemory", newUserId), {
       owned: newUserId,
       chatsMemory: [],
     });
@@ -128,13 +157,13 @@ export const addNewChatsToFirestore = async (req, res) => {
       backupChatsSnap.exists() &&
       chatsMemorySnap.exists()
     ) {
-      await updateDoc(chatsRef, {
+      updateDoc(chatsRef, {
         chats: arrayUnion(newChatFromUser, newChatFromAi),
       });
-      await updateDoc(backupChatsRef, {
+      updateDoc(backupChatsRef, {
         backupChats: arrayUnion(newChatFromUser, newChatFromAi),
       });
-      await updateDoc(chatsMemoryRef, {
+      updateDoc(chatsMemoryRef, {
         chatsMemory: arrayUnion(
           {
             time: newChatFromUser.time,
@@ -170,12 +199,12 @@ export const deleteAllChatsInFirestore = async (req, res) => {
     const chatsMemoryRef = doc(firestore, "chatsMemory", userId);
 
     // delete all chats === replace with empty array
-    await updateDoc(chatsRef, {
+    updateDoc(chatsRef, {
       chats: [],
     });
 
     // delete all memory chats === replace with empty array
-    await updateDoc(chatsMemoryRef, {
+    updateDoc(chatsMemoryRef, {
       chatsMemory: [],
     });
 
@@ -221,10 +250,10 @@ export const deleteSomeChatsInFirestore = async (req, res) => {
       role: chat.position === "right" ? "user" : "assistant",
       content: chat.message,
     }));
-    await updateDoc(chatsRef, {
+    updateDoc(chatsRef, {
       chats: someChatsNew,
     });
-    await updateDoc(chatsMemoryRef, {
+    updateDoc(chatsMemoryRef, {
       chatsMemory: chatsMemoryNew,
     });
     someChatsDeleted.forEach((chat) => {
@@ -284,7 +313,7 @@ export const updateName = async (req, res) => {
     const userSnap = await getDoc(userRef);
 
     if (userSnap.exists()) {
-      await updateDoc(userRef, {
+      updateDoc(userRef, {
         name: newName,
       });
       res
@@ -306,7 +335,7 @@ export const uploadSeenHistory = async (req, res) => {
   const { userId, lastSeen } = req.body;
   const userRef = doc(firestore, "users", userId);
   try {
-    await updateDoc(userRef, {
+    updateDoc(userRef, {
       lastSeen,
       seenHistory: arrayUnion(lastSeen),
     });
@@ -327,9 +356,9 @@ export const getPermissionToDeleteAllData = async (req, res) => {
       const encryptedPassword = passwordSnap.data().passwordDeleteAllData;
       const compareResult = comparePassword(securityCode, encryptedPassword);
       if (compareResult) {
-        res.status(202).json({ status: 202, allow: true });
+        res.status(202).json({ status: 202, permits: true });
       } else {
-        res.status(405).json({ status: 405, allow: false });
+        res.status(405).json({ status: 405, permits: false });
       }
     } else {
       res.status(404).json({
@@ -368,21 +397,38 @@ export const deleteAllDataInFirestore = async (req, res) => {
           chatsMemorySnap.exists()
         ) {
           if (option.withLastSeenHistory) {
-            await updateDoc(userRef, { lastSeen: "", seenHistory: [] });
+            updateDoc(userRef, { lastSeen: "", seenHistory: [] });
+            updateDoc(chatsMemoryRef, { chatsMemory: [] });
           }
           if (option.withChats) {
-            await updateDoc(chatsRef, { chats: [] });
+            updateDoc(chatsRef, { chats: [] });
+            updateDoc(chatsMemoryRef, { chatsMemory: [] });
           }
           if (option.withBackupChats) {
-            await updateDoc(backupChatsRef, { backupChats: [] });
+            updateDoc(backupChatsRef, { backupChats: [] });
           }
-          await updateDoc(chatsMemoryRef, { chatsMemory: [] });
+          if (option.withDestroyAllCollections) {
+            MY_COLLECTION.forEach((collectionName) => {
+              const batchSize = 100; // Sesuaikan ukuran batch sesuai kebutuhan
+              deleteCollection(collectionName, batchSize)
+                .then(() => {
+                  console.log(`Collection ${collectionName} Has Deleted`);
+                })
+                .catch((error) => {
+                  console.error(
+                    `Fail to delete ${collectionName} Collection`,
+                    error,
+                  );
+                });
+            });
+          }
           res.status(202).json({
             status: 202,
             whichDelete: {
               chats: option.withChats,
               backupChats: option.withBackupChats,
               lastSeenHistory: option.withLastSeenHistory,
+              allCollections: option.withDestroyAllCollections,
             },
           });
         } else {
@@ -421,7 +467,7 @@ export const addNewChatVoiceToFireStorage = async (req, res) => {
     const uploadTask = await uploadBytes(voiceRef, fileStream, metadata);
     const downloadUrl = await getDownloadURL(uploadTask.ref);
     fs.unlink(filePath, (err) => {
-      if (err) throw new Error(err);
+      console.log(err);
     });
     res
       .status(201)
@@ -430,4 +476,26 @@ export const addNewChatVoiceToFireStorage = async (req, res) => {
     console.log(error);
     return { status: 500, error };
   }
+};
+
+const deleteCollection = async (collectionPath, batchSize) => {
+  const colRef = collection(firestore, collectionPath);
+  const q = query(colRef, limit(batchSize));
+
+  const snapshot = await getDocs(q);
+  const batchSizeCount = snapshot.size;
+
+  if (batchSizeCount === 0) {
+    console.log(`Collection ${collectionPath} is empty`);
+    return;
+  }
+
+  const batch = writeBatch(firestore);
+
+  snapshot.docs.forEach((doc) => {
+    batch.delete(doc.ref);
+  });
+
+  await batch.commit();
+  await deleteCollection(collectionPath, batchSize);
 };

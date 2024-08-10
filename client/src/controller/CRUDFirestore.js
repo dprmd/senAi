@@ -11,19 +11,43 @@ import {
   firestoreDeleteAllDataEndPoint,
   firestoreAddNewVoiceChatEndPoint,
   firestoreGetAllChatsMemoryEndPoint,
+  firestoreCheckAUser,
 } from "./serverSource";
 import { fetchJson, resetLocalStorage } from "../lib/myUtils";
+
+const checkAUser = async (userId) => {
+  const req = await fetchJson(firestoreCheckAUser, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ userId }),
+  });
+
+  if (req.status === 200 || req.status === 404) {
+    return req.userExist;
+  } else {
+    console.log(req);
+  }
+};
 
 export const addNewUserToFirestoreIfNotExists = async () => {
   if (localStorage.getItem("senAi-userId")) {
     const userIdFromLocalStorage = localStorage.getItem("senAi-userId");
-    return userIdFromLocalStorage;
+    const letsCheckTheUserId = await checkAUser(userIdFromLocalStorage);
+    if (letsCheckTheUserId) {
+      return userIdFromLocalStorage;
+    } else {
+      localStorage.removeItem("senAi-userId");
+      return addNewUserToFirestoreIfNotExists();
+    }
   } else {
     resetLocalStorage();
-    const { getDeviceName } = await import("../lib/myUtils");
+    const { getDeviceName, getDeviceType } = await import("../lib/myUtils");
     const { generateTimeNow } = await import("../lib/generateTime");
 
     const deviceName = getDeviceName();
+    const deviceType = getDeviceType();
     const { day, monthName, year, hour, minute, second } = generateTimeNow();
     const lastSeen = `${day} ${monthName} ${year} , ${hour}:${minute}:${second}`;
 
@@ -32,7 +56,7 @@ export const addNewUserToFirestoreIfNotExists = async () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ deviceName, lastSeen }),
+      body: JSON.stringify({ deviceName, deviceType, lastSeen }),
     });
 
     if (createdNewUserId.status === 201) {
@@ -53,12 +77,9 @@ export const getAllChatsFromFirestore = async (userId) => {
   });
 
   if (chats.status === 200) {
-    return { chats: chats.chats, newUserId: userId };
-  }
-  if (chats.status === 404) {
-    localStorage.removeItem("senAi-userId");
+    return chats.chats;
+  } else if (chats.status === 404) {
     const newUserId = await addNewUserToFirestoreIfNotExists();
-    localStorage.setItem("senAi-userId", newUserId);
     return await getAllChatsFromFirestore(newUserId);
   } else {
     console.log(chats);
@@ -76,6 +97,9 @@ export const getAllChatsMemoryFromFirestore = async (userId) => {
 
   if (chatsMemory.status === 200) {
     return chatsMemory.chatsMemory;
+  } else if (chatsMemory.status === 404) {
+    const newUserId = await addNewUserToFirestoreIfNotExists();
+    return getAllChatsMemoryFromFirestore(newUserId);
   } else {
     console.log(chatsMemory);
   }
@@ -96,11 +120,8 @@ export const addNewChatsToFirestore = async (
 
   if (savedChats.status === 201) {
     return;
-  }
-  if (savedChats.status === 404) {
-    localStorage.removeItem("senAi-userId");
-    const newUserId = await addNewUserToFirestoreIfNotExists();
-    localStorage.setItem("senAi-userId", newUserId);
+  } else if (savedChats.status === 404) {
+    const newUserId = addNewUserToFirestoreIfNotExists();
     return await addNewChatsToFirestore(
       newUserId,
       newChatFromUser,
@@ -157,13 +178,9 @@ export const getName = async (userId) => {
   });
 
   if (gettedName.status === 200) {
-    return { name: gettedName.name, userId: userId };
-    s;
-  }
-  if (gettedName.status === 404) {
-    localStorage.removeItem("senAi-userId");
+    return gettedName.name;
+  } else if (gettedName.status === 404) {
     const newUserId = await addNewUserToFirestoreIfNotExists();
-    localStorage.setItem("senAi-userId", newUserId);
     return await getName(newUserId);
   } else {
     console.log(gettedName);
@@ -181,11 +198,8 @@ export const updateName = async (userId, newName) => {
 
   if (updatedName.status === 202) {
     return updatedName;
-  }
-  if (updatedName.status === 404) {
-    localStorage.removeItem("senAi-userId");
+  } else if (updatedName.status === 404) {
     const newUserId = await addNewUserToFirestoreIfNotExists();
-    localStorage.setItem("senAi-userId", newUserId);
     return await updateName(newUserId, newName);
   } else {
     console.log(updatedName);
@@ -228,7 +242,9 @@ export const getPermissionToDeleteAllData = async (securityCode) => {
   );
 
   if (getPermission.status === 202 || getPermission.status === 405) {
-    return getPermission.allow;
+    return getPermission.permits;
+  } else if (getPermission.status === 404) {
+    alert("Error : Password Collection Not Exist");
   } else {
     console.log(getPermission);
   }
@@ -248,8 +264,9 @@ export const deleteAllDataInFirestore = async (
   });
 
   if (deleteAllData.status === 202) {
-    const { chats, backupChats, lastSeenHistory } = deleteAllData.whichDelete;
-    const message = `${chats ? "chats ," : ""} ${backupChats ? "backup chats" : ""} ${lastSeenHistory ? "and last seen history" : ""}`;
+    const { chats, backupChats, lastSeenHistory, allCollections } =
+      deleteAllData.whichDelete;
+    const message = `${chats ? "chats ," : ""} ${backupChats ? "backup chats" : ""} ${allCollections ? "all collections" : ""} ${lastSeenHistory ? "and last seen history" : ""}`;
     return message;
   } else {
     console.log(deleteAllData);
@@ -265,8 +282,7 @@ export const addNewVoiceChatToFireStorage = async (formData) => {
   const uploadTask = await req.json();
   if (uploadTask.status === 201) {
     return uploadTask;
-  }
-  if (uploadTask.status === 500) {
+  } else {
     return uploadTask.error;
   }
 };

@@ -17,6 +17,7 @@ import {
   getPermissionToDeleteAllData,
   deleteAllDataInFirestore,
   addNewChatVoiceToFireStorage,
+  checkAUser,
 } from "../controller/firebaseController.js";
 import multer from "multer";
 import fs from "fs";
@@ -46,6 +47,7 @@ if (!fs.existsSync(pathUpload)) {
 
 router.post("/getGroqReply", getGroqReply);
 router.post("/getGroqModels", getGroqModels);
+router.post("/checkAUser", checkAUser);
 router.post("/addNewUser", addNewUserToFirestore);
 router.post("/getAllChats", getAllChatsFromFirestore);
 router.post("/getAllChatsMemory", getAllChatsMemoryFromFirestore);

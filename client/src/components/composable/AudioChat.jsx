@@ -3,10 +3,12 @@ import DynamicSvgComponent from "../svg/DynamicSvg";
 import { useRef } from "react";
 
 const AudioChat = ({ chat }) => {
+  // state and ref
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef(null);
   const seekBar = useRef(null);
 
+  // callback
   const handleClick = () => {
     if (isPlaying) {
       audioRef.current.pause();
@@ -32,7 +34,7 @@ const AudioChat = ({ chat }) => {
   };
 
   return (
-    <div className="flex items-center gap-x-2 p-2">
+    <div className="flex items-center gap-x-2 px-2 pt-2">
       <audio
         src={chat.downloadUrl}
         ref={audioRef}
@@ -42,7 +44,7 @@ const AudioChat = ({ chat }) => {
         <track kind="captions" />
       </audio>
       <img src="img/sen.jpg" alt="sen" className="h-11 w-11 rounded-full"></img>
-      <div className="flex flex-1 items-center">
+      <div className="flex flex-1 items-center gap-x-2">
         {isPlaying ? (
           <button onClick={handleClick}>
             <DynamicSvgComponent name="Pause" className="h-7 w-7" />

@@ -1,7 +1,6 @@
 import { useRef } from "react";
 import AlertDialogNormal from "@/components/composable/AlertDialogNormal";
 import Loading from "@/components/composable/Loading";
-import { Toaster } from "@/components/ui/toaster";
 import { useSendRecord } from "@/hooks/useSendRecord";
 import DynamicSvgComponent from "@/components/svg/DynamicSvg";
 import { useRecordStore } from "@/store/useRecordStore";
@@ -50,7 +49,6 @@ const RecordAudioDialog = () => {
 
   return (
     <>
-      <Toaster />
       {transcriptionProgress && (
         <Loading message={t("loading_transcription")} />
       )}

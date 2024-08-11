@@ -73,6 +73,7 @@ export const addNewUserToFirestore = async (req, res) => {
     setDoc(doc(firestore, "users", newUserId), {
       userId: newUserId,
       name: "Unknown",
+      PPUrl: "img/haku.jpeg",
       deviceName,
       deviceType,
       lastSeen,
@@ -286,14 +287,18 @@ export const deleteSomeChatsInFirestore = async (req, res) => {
   }
 };
 
-export const getName = async (req, res) => {
+export const getNameAndProfilePhotoUrl = async (req, res) => {
   const { userId } = req.body;
   const userRef = doc(firestore, "users", userId);
   try {
     const userSnap = await getDoc(userRef);
 
     if (userSnap.exists()) {
-      res.status(200).json({ status: 200, name: userSnap.data().name });
+      res.status(200).json({
+        status: 200,
+        name: userSnap.data().name,
+        PPUrl: userSnap.data().PPUrl,
+      });
     } else {
       res.status(404).json({
         status: 404,
@@ -498,4 +503,54 @@ const deleteCollection = async (collectionPath, batchSize) => {
 
   await batch.commit();
   await deleteCollection(collectionPath, batchSize);
+};
+
+export const updateProfilePhoto = async (req, res) => {
+  const file = req.file;
+  try {
+    const metadata = {
+      contentType: file.mimetype,
+    };
+
+    const filePath = path.join(file.path);
+    const fileStream = fs.readFileSync(filePath);
+
+    const uniqueFileName = v4() + path.extname(file.originalname);
+    const imageRef = ref(storage, "images/" + uniqueFileName);
+    const uploadTask = await uploadBytes(imageRef, fileStream, metadata);
+    const downloadUrl = await getDownloadURL(uploadTask.ref);
+    fs.unlink(filePath, (err) => {
+      console.log(err);
+    });
+    res
+      .status(201)
+      .json({ status: 201, PPFileName: uniqueFileName, newPPUrl: downloadUrl });
+  } catch (error) {
+    console.log(error);
+    return { status: 500, error };
+  }
+};
+
+export const updatePPUrl = async (req, res) => {
+  const { userId, newPPUrl } = req.body;
+
+  const userRef = doc(firestore, "users", userId);
+  try {
+    const userSnap = await getDoc(userRef);
+
+    if (userSnap.exists()) {
+      updateDoc(userRef, {
+        PPUrl: newPPUrl,
+      });
+      res.status(202).json({ status: 202, message: `Updated Profile Photo` });
+    } else {
+      res.status(404).json({
+        status: 404,
+        message: `No Such Document Match With ${userId}`,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ status: 500, error });
+  }
 };

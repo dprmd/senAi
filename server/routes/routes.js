@@ -11,13 +11,15 @@ import {
   addNewChatsToFirestore,
   deleteAllChatsInFirestore,
   uploadSeenHistory,
-  getName,
   updateName,
   deleteSomeChatsInFirestore,
   getPermissionToDeleteAllData,
   deleteAllDataInFirestore,
   addNewChatVoiceToFireStorage,
   checkAUser,
+  getNameAndProfilePhotoUrl,
+  updateProfilePhoto,
+  updatePPUrl,
 } from "../controller/firebaseController.js";
 import multer from "multer";
 import fs from "fs";
@@ -54,7 +56,7 @@ router.post("/getAllChatsMemory", getAllChatsMemoryFromFirestore);
 router.post("/addNewChats", addNewChatsToFirestore);
 router.delete("/deleteAllChats", deleteAllChatsInFirestore);
 router.delete("/deleteSomeChats", deleteSomeChatsInFirestore);
-router.post("/getName", getName);
+router.post("/getNameAndPPUrl", getNameAndProfilePhotoUrl);
 router.post("/updateName", updateName);
 router.patch("/uploadSeenHistory", uploadSeenHistory);
 router.delete("/getPermissionToDeleteAllData", getPermissionToDeleteAllData);
@@ -69,3 +71,5 @@ router.post(
   upload.single("audio"),
   addNewChatVoiceToFireStorage,
 );
+router.post("/updateProfilePhoto", upload.single("image"), updateProfilePhoto);
+router.patch("/updatePPUrl", updatePPUrl);

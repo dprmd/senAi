@@ -2,6 +2,12 @@ import { create } from "zustand";
 import defaultState from "./defaultState.json";
 
 export const useSettingsStore = create((set) => ({
+  profilePhotoUrl: "",
+  setProfilePhotoUrl: (profilePhotoUrl) => set({ profilePhotoUrl }),
+  imageFile: "",
+  setImageFile: (imageFile) => set({ imageFile }),
+  haveSelectImageFile: false,
+  setHaveSelectImageFile: (haveSelectImageFile) => set({ haveSelectImageFile }),
   botLanguage: localStorage.getItem("senAi-botLanguage")
     ? localStorage.getItem("senAi-botLanguage")
     : defaultState.botLanguage,

@@ -1,8 +1,15 @@
 import { useState } from "react";
 import DynamicSvgComponent from "../svg/DynamicSvg";
 import { useRef } from "react";
+import { useSettingsStore } from "@/store/useSettingsStore";
+import { useShallow } from "zustand/react/shallow";
 
 const AudioChat = ({ chat }) => {
+  // zustand
+  const [profilePhotoUrl] = useSettingsStore(
+    useShallow((state) => [state.profilePhotoUrl]),
+  );
+
   // state and ref
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef(null);
@@ -43,7 +50,11 @@ const AudioChat = ({ chat }) => {
       >
         <track kind="captions" />
       </audio>
-      <img src="img/sen.jpg" alt="sen" className="h-11 w-11 rounded-full"></img>
+      <img
+        src={profilePhotoUrl}
+        alt="sen"
+        className="h-11 w-11 rounded-full"
+      ></img>
       <div className="flex flex-1 items-center gap-x-2">
         {isPlaying ? (
           <button onClick={handleClick}>

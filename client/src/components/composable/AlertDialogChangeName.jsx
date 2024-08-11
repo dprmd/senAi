@@ -15,7 +15,6 @@ import {
 } from "../ui/alert-dialog";
 import { Input } from "../ui/input";
 import { toast } from "../ui/use-toast";
-import { Toaster } from "../ui/toaster";
 
 const AlertDialogChangeName = ({ open, setOpen }) => {
   // zustand
@@ -53,9 +52,6 @@ const AlertDialogChangeName = ({ open, setOpen }) => {
 
   return (
     <>
-      {/* toaster untuk toast notifikasi */}
-      <Toaster />
-
       {/* alert dialog untuk mengubah nama */}
       <AlertDialog open={open}>
         <AlertDialogContent className="top-[100%] w-full translate-y-[-100%] rounded-none sm:top-[50%] sm:translate-y-[-50%]">

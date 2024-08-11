@@ -3,7 +3,6 @@ import {
   firestoreGetAllChatsEndPoint,
   firestoreAddNewUserEndPoint,
   firestoreDeleteAllChatsEndPoint,
-  firestoreGetNameEndPoint,
   firestoreUpdateNameEndPoint,
   firestoreUploadSeenHistoryEndPoint,
   firestoreDeleteSomeChatsEndPoint,
@@ -12,6 +11,9 @@ import {
   firestoreAddNewVoiceChatEndPoint,
   firestoreGetAllChatsMemoryEndPoint,
   firestoreCheckAUser,
+  firestoreGetNameAndPPUrlEndPoint,
+  firestoreUpdateProfilePhotoEndPoint,
+  firestoreUpdatePPUrlEndPoint,
 } from "./serverSource";
 import { fetchJson, resetLocalStorage } from "../lib/myUtils";
 
@@ -168,8 +170,8 @@ export const deleteSomeChatsInFirestore = async (
   }
 };
 
-export const getName = async (userId) => {
-  const gettedName = await fetchJson(firestoreGetNameEndPoint, {
+export const getNameAndPPUrl = async (userId) => {
+  const gettedData = await fetchJson(firestoreGetNameAndPPUrlEndPoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -177,13 +179,13 @@ export const getName = async (userId) => {
     body: JSON.stringify({ userId }),
   });
 
-  if (gettedName.status === 200) {
-    return gettedName.name;
-  } else if (gettedName.status === 404) {
+  if (gettedData.status === 200) {
+    return gettedData;
+  } else if (gettedData.status === 404) {
     const newUserId = await addNewUserToFirestoreIfNotExists();
-    return await getName(newUserId);
+    return await getNameAndPPUrl(newUserId);
   } else {
-    console.log(gettedName);
+    console.log(gettedData);
   }
 };
 
@@ -274,15 +276,47 @@ export const deleteAllDataInFirestore = async (
 };
 
 export const addNewVoiceChatToFireStorage = async (formData) => {
-  const req = await fetch(firestoreAddNewVoiceChatEndPoint, {
+  const uploadTask = await fetchJson(firestoreAddNewVoiceChatEndPoint, {
     method: "POST",
     body: formData,
   });
 
-  const uploadTask = await req.json();
   if (uploadTask.status === 201) {
     return uploadTask;
   } else {
     return uploadTask.error;
+  }
+};
+
+export const updateProfilePhoto = async (formData) => {
+  const updatedProfilePhoto = await fetchJson(
+    firestoreUpdateProfilePhotoEndPoint,
+    {
+      method: "POST",
+      body: formData,
+    },
+  );
+
+  if (updatedProfilePhoto.status === 201) {
+    return updatedProfilePhoto.newPPUrl;
+  } else {
+    console.log(updatedProfilePhoto);
+  }
+};
+
+export const updatePPUrlInFirestore = async (userId, newPPUrl) => {
+  const updatePPUrl = await fetchJson(firestoreUpdatePPUrlEndPoint, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ userId, newPPUrl }),
+  });
+
+  if (updatePPUrl.status === 202) {
+    return true;
+  } else {
+    console.log(updatePPUrl);
+    return false;
   }
 };

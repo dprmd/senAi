@@ -3,6 +3,7 @@ import { useMobileDeviceType } from "@/hooks/useUtils";
 import { useTranslation } from "react-i18next";
 import DynamicSvgComponent from "@/components/svg/DynamicSvg";
 import { toast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
 // shadcn ui
 import {
   AlertDialog,
@@ -12,10 +13,22 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "../../components/ui/alert-dialog";
+import { useSettingsStore } from "@/store/useSettingsStore";
+import { useShallow } from "zustand/react/shallow";
 
 const SettingFieldImage = () => {
+  // zustand
+  const [setImageFile, setHaveSelectImageFile, profilePhotoUrl] =
+    useSettingsStore(
+      useShallow((state) => [
+        state.setImageFile,
+        state.setHaveSelectImageFile,
+        state.profilePhotoUrl,
+      ]),
+    );
   // hooks
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const isMobile = useMobileDeviceType();
 
   // state dan ref
@@ -26,7 +39,7 @@ const SettingFieldImage = () => {
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
   const [openFilePicker, setOpenFilePicker] = useState(false);
-  const [openPreviewSmall, setOpenPreviewSmall] = useState(false);
+  const [openPhotoPreviewSmall, setOpenPhotoPreviewSmall] = useState(false);
 
   // callback
   const handleCameraClick = async () => {
@@ -40,16 +53,20 @@ const SettingFieldImage = () => {
   const handleCameraChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      const imageURL = URL.createObjectURL(file);
-      console.log("Image URL:", imageURL);
+      setImageFile(file);
+      setHaveSelectImageFile(true);
+      setOpenFilePicker(false);
+      navigate("/settings/cropImage");
     }
   };
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file && (file.type === "image/png" || file.type === "image/jpeg")) {
-      const imageURL = URL.createObjectURL(file);
-      console.log("Image URL:", imageURL);
+      setImageFile(file);
+      setHaveSelectImageFile(true);
+      setOpenFilePicker(false);
+      navigate("/settings/cropImage");
     } else {
       toast({
         description: t("image_format_wrong"),
@@ -64,12 +81,12 @@ const SettingFieldImage = () => {
       <div className="flex items-center justify-center py-5">
         <div className="relative rounded-full">
           <img
-            src="img/haku.jpeg"
+            src={profilePhotoUrl}
             className="z-0 h-full max-h-[150px] min-h-[150px] min-w-[150px] max-w-[150px] rounded-full"
-            alt="sen ai"
+            alt=""
             loading="lazy"
             onClick={() => {
-              setOpenPreviewSmall(true);
+              setOpenPhotoPreviewSmall(true);
             }}
             aria-hidden={true}
           />
@@ -158,17 +175,22 @@ const SettingFieldImage = () => {
       </AlertDialog>
 
       {/* Profile Photo Preview Small */}
-      <AlertDialog open={openPreviewSmall}>
+      <AlertDialog open={openPhotoPreviewSmall}>
         <AlertDialogContent
-          className="rounded-none rounded-b-xl p-0 dark:bg-slate-800"
+          className="h-[300px] w-[300px] rounded-none p-0"
           onClickOverlay={() => {
-            setOpenPreviewSmall(false);
+            setOpenPhotoPreviewSmall(false);
           }}
         >
           <AlertDialogHeader>
             <AlertDialogDescription>
-              <img src="img/haku.jpeg" alt="haku" />
-              <div className="flex h-[48px] w-full items-center justify-center py-2">
+              <img
+                src={profilePhotoUrl}
+                alt=""
+                className="h-[300px] w-[300px]"
+                loading="lazy"
+              />
+              <div className="flex h-[48px] w-full items-center justify-center rounded-b-xl bg-slate-100 py-2 dark:bg-slate-800">
                 {isLove ? (
                   <button
                     onClick={() => {

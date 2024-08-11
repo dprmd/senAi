@@ -4,6 +4,7 @@ import { useShallow } from "zustand/react/shallow";
 import { useTranslation } from "react-i18next";
 import { useSettingsStore } from "@/store/useSettingsStore";
 import AnimatedComponent from "./pages/AnimatedComponent";
+import "react-image-crop/dist/ReactCrop.css";
 import "@/App.css";
 
 const App = () => {

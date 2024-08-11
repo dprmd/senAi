@@ -19,7 +19,6 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/components/ui/use-toast";
-import { Toaster } from "@/components/ui/toaster";
 
 const SettingOtherDeleteAllData = () => {
   // hooks
@@ -112,7 +111,6 @@ const SettingOtherDeleteAllData = () => {
 
   return (
     <>
-      <Toaster />
       <motion.div
         className="bg-[#FFFFFF] text-slate-900 dark:bg-[#0B141A] dark:text-slate-100"
         initial={{ opacity: 0, transition: { duration: 0.2 } }}

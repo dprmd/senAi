@@ -20,6 +20,7 @@ const SettingsPage = () => {
   const [
     setName,
     setOldName,
+    setProfilePhotoUrl,
     settingsComponentDidFetch,
     setSettingsComponentDidFetch,
     settingModelComponentDidFetch,
@@ -29,6 +30,7 @@ const SettingsPage = () => {
     useShallow((state) => [
       state.setName,
       state.setOldName,
+      state.setProfilePhotoUrl,
       state.settingsComponentDidFetch,
       state.setSettingsComponentDidFetch,
       state.settingModelComponentDidFetch,
@@ -51,17 +53,17 @@ const SettingsPage = () => {
         });
       }
 
-      const { addNewUserToFirestoreIfNotExists, getName } = await import(
-        "../../controller/CRUDFirestore"
-      );
+      const { addNewUserToFirestoreIfNotExists, getNameAndPPUrl } =
+        await import("../../controller/CRUDFirestore");
 
       const getUserId = await addNewUserToFirestoreIfNotExists();
       setUserId(getUserId);
       localStorage.setItem("senAi-userId", getUserId);
 
-      const gettedName = await getName(getUserId);
-      setOldName(gettedName);
-      setName(gettedName);
+      const { name, PPUrl } = await getNameAndPPUrl(getUserId);
+      setOldName(name);
+      setName(name);
+      setProfilePhotoUrl(PPUrl);
     };
 
     const whenEscClicked = (e) => {

@@ -74,5 +74,10 @@
   "loading_transcription": "Loading Transcription",
   "getting_url_progress": "Getting Audio URL",
   "profile_photo": "Profile Photo",
-  "image_format_wrong": "Please Select a PNG or JPG file"
+  "image_format_wrong": "Please Select a PNG or JPG file",
+  "image_too_small": "Image must be at least 300 x 300 pixel",
+  "no_2d_context": "Your browser does not have 2d Context",
+  "update_pp_success": "Update Profile Photo Success",
+  "update_pp_failed": "Update Profile Photo Failed",
+  "upload_pp": "Mengupload Photo"
 }

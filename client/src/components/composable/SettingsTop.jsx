@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 
-const SettingsTop = ({ title, urlBack }) => {
+const SettingsTop = ({ title, urlBack, ...props }) => {
   // hooks
   const navigate = useNavigate();
 
@@ -13,6 +13,7 @@ const SettingsTop = ({ title, urlBack }) => {
         onClick={() => {
           navigate(urlBack);
         }}
+        {...props}
       >
         <ArrowLeft className="h-5 w-5 text-slate-900 dark:text-slate-300" />
       </button>

@@ -51,12 +51,7 @@ cd server
 pnpm run dev
 ```
 
-### bugs to be fixed and fitur to be added
-
-#### feat
-
-- can send images with captions
-- can change profile photos and chat wallpapers on the settings page
+### bugs to be fixed later 🗿🗿🗿
 
 #### bugs
 

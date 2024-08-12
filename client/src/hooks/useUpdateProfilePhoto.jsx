@@ -8,9 +8,14 @@ import { useShallow } from "zustand/react/shallow";
 export const useUpdateProfilePhoto = () => {
   // zustand
   const [userId] = useAppStore(useShallow((state) => [state.userId]));
-  const [setProfilePhotoUrl] = useSettingsStore(
-    useShallow((state) => [state.setProfilePhotoUrl]),
-  );
+  const [setProfilePhotoUrl, setCustomProfilePhotoUrl, setCustomPPFileName] =
+    useSettingsStore(
+      useShallow((state) => [
+        state.setProfilePhotoUrl,
+        state.setCustomProfilePhotoUrl,
+        state.setCustomPPFileName,
+      ]),
+    );
 
   // hooks
   const { t } = useTranslation();
@@ -24,14 +29,22 @@ export const useUpdateProfilePhoto = () => {
       const { updateProfilePhoto, updatePPUrlInFirestore } = await import(
         "@/controller/CRUDFirestore"
       );
-      const newPPUrl = await updateProfilePhoto(formData);
-      const successUpdatePPUrl = await updatePPUrlInFirestore(userId, newPPUrl);
-      setProfilePhotoUrl(newPPUrl);
+      const { PPFileName, newPPUrl } = await updateProfilePhoto(formData);
+      const successUpdatePPUrl = await updatePPUrlInFirestore(
+        userId,
+        newPPUrl,
+        PPFileName,
+        true,
+        "",
+      );
       if (successUpdatePPUrl) {
         toast({
           description: t("update_pp_success"),
           duration: 3000,
         });
+        setProfilePhotoUrl(newPPUrl);
+        setCustomProfilePhotoUrl(true);
+        setCustomPPFileName(PPFileName);
       } else {
         toast({
           description: t("update_pp_failed"),

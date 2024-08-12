@@ -15,23 +15,41 @@ import {
 } from "../../components/ui/alert-dialog";
 import { useSettingsStore } from "@/store/useSettingsStore";
 import { useShallow } from "zustand/react/shallow";
+import AlertDialogNormal from "@/components/composable/AlertDialogNormal";
+import { useAppStore } from "@/store/appStore";
 
 const SettingFieldImage = () => {
   // zustand
-  const [setImageFile, setHaveSelectImageFile, profilePhotoUrl] =
-    useSettingsStore(
-      useShallow((state) => [
-        state.setImageFile,
-        state.setHaveSelectImageFile,
-        state.profilePhotoUrl,
-      ]),
-    );
+  const [
+    setImageFile,
+    setHaveSelectImageFile,
+    profilePhotoUrl,
+    setProfilePhotoUrl,
+    customProfilePhotoUrl,
+    setCustomProfilePhotoUrl,
+    customPPFileName,
+    setCustomPPFileName,
+  ] = useSettingsStore(
+    useShallow((state) => [
+      state.setImageFile,
+      state.setHaveSelectImageFile,
+      state.profilePhotoUrl,
+      state.setProfilePhotoUrl,
+      state.customProfilePhotoUrl,
+      state.setCustomProfilePhotoUrl,
+      state.customPPFileName,
+      state.setCustomPPFileName,
+    ]),
+  );
+  const [userId] = useAppStore(useShallow((state) => [state.userId]));
+
   // hooks
   const { t } = useTranslation();
   const navigate = useNavigate();
   const isMobile = useMobileDeviceType();
 
   // state dan ref
+  const [openDeletePPDialog, setOpenDeletePPDialog] = useState(false);
   const getLove = localStorage.getItem("senAi-love")
     ? localStorage.getItem("senAi-love")
     : "no";
@@ -76,14 +94,40 @@ const SettingFieldImage = () => {
     }
   };
 
+  const handleLoveImage = () => {
+    if (isLove) {
+      localStorage.setItem("senAi-love", "no");
+    } else {
+      localStorage.setItem("senAi-love", "yes");
+    }
+    setIsLove((prev) => !prev);
+  };
+
+  const handleDeletePP = async () => {
+    // ubah customPPUrl di firestore menjadi false
+    const { updatePPUrlInFirestore } = await import(
+      "@/controller/CRUDFirestore"
+    );
+    await updatePPUrlInFirestore(
+      userId,
+      "img/haku.jpeg",
+      false,
+      customPPFileName,
+    );
+    setCustomProfilePhotoUrl(false);
+    setCustomPPFileName("");
+    setOpenPhotoPreviewSmall(false);
+    setProfilePhotoUrl("img/haku.jpeg");
+  };
+
   return (
     <>
       <div className="flex items-center justify-center py-5">
         <div className="relative rounded-full">
           <img
             src={profilePhotoUrl}
-            className="z-0 h-full max-h-[150px] min-h-[150px] min-w-[150px] max-w-[150px] rounded-full"
-            alt=""
+            className="h-full max-h-[150px] min-h-[150px] min-w-[150px] max-w-[150px] rounded-full"
+            alt="Profile Photo"
             loading="lazy"
             onClick={() => {
               setOpenPhotoPreviewSmall(true);
@@ -174,6 +218,21 @@ const SettingFieldImage = () => {
         </AlertDialogContent>
       </AlertDialog>
 
+      {/* Delete Profile Photo */}
+      <AlertDialogNormal
+        openState={openDeletePPDialog}
+        setOpenState={setOpenDeletePPDialog}
+        showTitle={false}
+        showDescription={true}
+        description={t("delete_pp")}
+        centerDescription={true}
+        showCancel={true}
+        cancelTitle={t("cancel")}
+        showContinue={true}
+        continueTitle={t("continue")}
+        handleContinue={handleDeletePP}
+      />
+
       {/* Profile Photo Preview Small */}
       <AlertDialog open={openPhotoPreviewSmall}>
         <AlertDialogContent
@@ -190,37 +249,37 @@ const SettingFieldImage = () => {
                 className="h-[300px] w-[300px]"
                 loading="lazy"
               />
-              <div className="flex h-[48px] w-full items-center justify-center rounded-b-xl bg-slate-100 py-2 dark:bg-slate-800">
+              <div className="flex w-full items-center justify-center gap-x-4 rounded-b-xl bg-slate-100 py-2 dark:bg-slate-800">
                 {isLove ? (
                   <button
-                    onClick={() => {
-                      if (isLove) {
-                        localStorage.setItem("senAi-love", "no");
-                      } else {
-                        localStorage.setItem("senAi-love", "yes");
-                      }
-                      setIsLove((prev) => !prev);
-                    }}
+                    onClick={handleLoveImage}
+                    className="inline-block min-h-8 min-w-8"
                   >
                     <DynamicSvgComponent
                       name="HeartFill"
-                      className="h-8 w-8 animate-small-to-big text-green-400 dark:text-green-600"
+                      className="h-6 w-6 animate-small-to-big text-green-400 dark:text-green-600"
                     />
                   </button>
                 ) : (
                   <button
-                    onClick={() => {
-                      if (isLove) {
-                        localStorage.setItem("senAi-love", "no");
-                      } else {
-                        localStorage.setItem("senAi-love", "yes");
-                      }
-                      setIsLove((prev) => !prev);
-                    }}
+                    onClick={handleLoveImage}
+                    className="inline-block min-h-8 min-w-8"
                   >
                     <DynamicSvgComponent
                       name="Heart"
-                      className="h-8 w-8 animate-small-to-big text-green-400 dark:text-green-600"
+                      className="h-6 w-6 animate-small-to-big text-green-400 dark:text-green-600"
+                    />
+                  </button>
+                )}
+                {customProfilePhotoUrl && (
+                  <button
+                    onClick={() => {
+                      setOpenDeletePPDialog(true);
+                    }}
+                  >
+                    <DynamicSvgComponent
+                      name="Trash3"
+                      className="h-6 w-6 animate-small-to-big text-green-400 dark:text-green-600"
                     />
                   </button>
                 )}

@@ -298,19 +298,31 @@ export const updateProfilePhoto = async (formData) => {
   );
 
   if (updatedProfilePhoto.status === 201) {
-    return updatedProfilePhoto.newPPUrl;
+    return updatedProfilePhoto;
   } else {
     console.log(updatedProfilePhoto);
   }
 };
 
-export const updatePPUrlInFirestore = async (userId, newPPUrl) => {
+export const updatePPUrlInFirestore = async (
+  userId,
+  newPPUrl,
+  newPPFileName,
+  customPPUrl,
+  oldPPUrl,
+) => {
   const updatePPUrl = await fetchJson(firestoreUpdatePPUrlEndPoint, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ userId, newPPUrl }),
+    body: JSON.stringify({
+      userId,
+      newPPUrl,
+      newPPFileName,
+      customPPUrl,
+      oldPPUrl,
+    }),
   });
 
   if (updatePPUrl.status === 202) {

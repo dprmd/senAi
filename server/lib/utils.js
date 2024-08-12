@@ -21,3 +21,20 @@ export const filterModels = (models) => {
   });
   return modelsWithOwned;
 };
+
+export const printOutput = (title, input, output) => {
+  console.log(`\n${title}`);
+  console.log("\nInput : {");
+  for (const [key, value] of Object.entries(input)) {
+    console.log(`  ${key} : ${JSON.stringify(value, null, 2)},`);
+  }
+  console.log("}");
+  console.log("Output : {");
+  for (const [key, value] of Object.entries(output)) {
+    console.log(`  ${key} : ${JSON.stringify(value, null, 2)},`);
+  }
+  console.log("}");
+  console.log(
+    "\n================================================================================",
+  );
+};

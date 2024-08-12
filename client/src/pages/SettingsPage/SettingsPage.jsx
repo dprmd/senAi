@@ -26,6 +26,8 @@ const SettingsPage = () => {
     settingModelComponentDidFetch,
     setSettingModelComponentDidFetch,
     setCurrentModels,
+    setCustomProfilePhotoUrl,
+    setCustomPPFileName,
   ] = useSettingsStore(
     useShallow((state) => [
       state.setName,
@@ -36,6 +38,8 @@ const SettingsPage = () => {
       state.settingModelComponentDidFetch,
       state.setSettingModelComponentDidFetch,
       state.setCurrentModels,
+      state.setCustomProfilePhotoUrl,
+      state.setCustomPPFileName,
     ]),
   );
 
@@ -60,10 +64,13 @@ const SettingsPage = () => {
       setUserId(getUserId);
       localStorage.setItem("senAi-userId", getUserId);
 
-      const { name, PPUrl } = await getNameAndPPUrl(getUserId);
+      const { name, PPUrl, customPPUrl, PPFileName } =
+        await getNameAndPPUrl(getUserId);
       setOldName(name);
       setName(name);
       setProfilePhotoUrl(PPUrl);
+      setCustomProfilePhotoUrl(customPPUrl);
+      setCustomPPFileName(PPFileName);
     };
 
     const whenEscClicked = (e) => {

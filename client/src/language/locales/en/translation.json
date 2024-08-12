@@ -79,5 +79,6 @@
   "no_2d_context": "Your browser does not have 2d Context",
   "update_pp_success": "Update Profile Photo Success",
   "update_pp_failed": "Update Profile Photo Failed",
-  "upload_pp": "Mengupload Photo"
+  "upload_pp": "Mengupload Photo",
+  "delete_pp": "remove profile photo ?"
 }

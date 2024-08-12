@@ -79,5 +79,6 @@
   "no_2d_context": "Browsermu Tidak Memiliki 2d Context",
   "update_pp_success": "Foto Profile Di Update",
   "update_pp_failed": "Gagal Mengupdate Foto Profile",
-  "upload_pp": "Uploading"
+  "upload_pp": "Uploading",
+  "delete_pp": "Hapus foto profile ?"
 }

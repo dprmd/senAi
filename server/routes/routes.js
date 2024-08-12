@@ -4,25 +4,31 @@ import {
   getGroqModels,
   getGroqTranscription,
 } from "../controller/groqController.js";
-import {
-  addNewUserToFirestore,
-  getAllChatsFromFirestore,
-  getAllChatsMemoryFromFirestore,
-  addNewChatsToFirestore,
-  deleteAllChatsInFirestore,
-  uploadSeenHistory,
-  updateName,
-  deleteSomeChatsInFirestore,
-  getPermissionToDeleteAllData,
-  deleteAllDataInFirestore,
-  addNewChatVoiceToFireStorage,
-  checkAUser,
-  getNameAndProfilePhotoUrl,
-  updateProfilePhoto,
-  updatePPUrl,
-} from "../controller/firebaseController.js";
 import multer from "multer";
 import fs from "fs";
+import {
+  deleteAllChatsInFirestore,
+  deleteAllDataInFirestore,
+  deleteSomeChatsInFirestore,
+} from "../controller/firebaseControllerDelete.js";
+import {
+  checkAUser,
+  getAllChatsFromFirestore,
+  getAllChatsMemoryFromFirestore,
+  getNameAndProfilePhotoUrl,
+  getPermissionToDeleteAllData,
+} from "../controller/firebaseControllerGet.js";
+import {
+  addNewChatsToFirestore,
+  addNewChatVoiceToFireStorage,
+  addNewUserToFirestore,
+  uploadSeenHistory,
+} from "../controller/firebaseController.js";
+import {
+  updateName,
+  updatePPUrl,
+  updateProfilePhoto,
+} from "../controller/firebaseControllerUpdate.js";
 
 export const router = Router();
 

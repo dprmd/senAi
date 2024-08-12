@@ -2,6 +2,11 @@ import { create } from "zustand";
 import defaultState from "./defaultState.json";
 
 export const useSettingsStore = create((set) => ({
+  customPPFileName: "",
+  setCustomPPFileName: (customPPFileName) => set({ customPPFileName }),
+  customProfilePhotoUrl: false,
+  setCustomProfilePhotoUrl: (customProfilePhotoUrl) =>
+    set({ customProfilePhotoUrl }),
   profilePhotoUrl: "",
   setProfilePhotoUrl: (profilePhotoUrl) => set({ profilePhotoUrl }),
   imageFile: "",

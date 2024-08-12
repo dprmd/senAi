@@ -10,13 +10,10 @@ import ReactCrop, {
 import { motion } from "framer-motion";
 import { toast } from "../ui/use-toast";
 import { useTranslation } from "react-i18next";
-import DynamicSvgComponent from "../svg/DynamicSvg";
 import { useUpdateProfilePhoto } from "@/hooks/useUpdateProfilePhoto";
 
 const ASPECT_RATIO = 1;
 const MIN_DIMENSION = 150;
-let CURRENT_ROTATE_STEP = 0;
-let CURRENT_ROTATE_DEG = 90;
 
 const setCanvasPreview = (image, canvas, crop, t) => {
   const ctx = canvas.getContext("2d");
@@ -149,43 +146,6 @@ const ImageCropper = () => {
     };
   }, []);
 
-  const rotateImage = () => {
-    switch (CURRENT_ROTATE_STEP) {
-      case 0:
-        imageRef.current.style.rotate = `-${CURRENT_ROTATE_DEG}deg`;
-        imageContainerRef.current.style.height = "300px";
-        imageContainerRef.current.style.minHeight = "300px";
-        imageContainerRef.current.style.maxHeight = "300px";
-        CURRENT_ROTATE_DEG += 90;
-        CURRENT_ROTATE_STEP = 1;
-        break;
-      case 1:
-        imageRef.current.style.rotate = `-${CURRENT_ROTATE_DEG}deg`;
-        imageContainerRef.current.style.height = "450px";
-        imageContainerRef.current.style.minHeight = "450px";
-        imageContainerRef.current.style.maxHeight = "450px";
-        CURRENT_ROTATE_DEG += 90;
-        CURRENT_ROTATE_STEP = 2;
-        break;
-      case 2:
-        imageRef.current.style.rotate = `-${CURRENT_ROTATE_DEG}deg`;
-        imageContainerRef.current.style.height = "300px";
-        imageContainerRef.current.style.minHeight = "300px";
-        imageContainerRef.current.style.maxHeight = "300px";
-        CURRENT_ROTATE_DEG += 90;
-        CURRENT_ROTATE_STEP = 3;
-        break;
-      case 3:
-        imageRef.current.style.rotate = `-${CURRENT_ROTATE_DEG}deg`;
-        imageContainerRef.current.style.height = "450px";
-        imageContainerRef.current.style.minHeight = "450px";
-        imageContainerRef.current.style.maxHeight = "450px";
-        CURRENT_ROTATE_DEG += 90;
-        CURRENT_ROTATE_STEP = 0;
-        break;
-    }
-  };
-
   return (
     <motion.div
       className="min-w-screen no-scrollbar z-30 flex min-h-screen flex-col items-center justify-center bg-white dark:bg-black"
@@ -228,15 +188,6 @@ const ImageCropper = () => {
         </button>
         <button
           className="mx-4 my-2 inline-block rounded-md px-4 py-2 active:bg-slate-200 dark:active:bg-slate-800"
-          onClick={rotateImage}
-        >
-          <DynamicSvgComponent
-            name="ArrowCounterClockwise"
-            className="h-8 w-8"
-          />
-        </button>
-        <button
-          className="mx-4 my-2 inline-block rounded-md px-4 py-2 active:bg-slate-200 dark:active:bg-slate-800"
           onClick={() => {
             setCanvasPreview(
               imageRef.current,
@@ -247,7 +198,6 @@ const ImageCropper = () => {
                 imageRef.current.height,
               ),
               t,
-              -(CURRENT_ROTATE_DEG - 90),
             );
             updateProfilePhoto(canvasRef.current);
           }}

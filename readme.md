@@ -1,5 +1,11 @@
 ## Sen Ai
 
+### Dev Chance
+- clean code : 1%
+- maintainability : 0.1%
+- security : 0.06%
+- the important thing is to work 😂
+
 sen ai is a chatbot that uses various models provided by **groq ai**, the front end is made with **react js**, the backend is made with **express js**, and the database uses **firebase**
 
 you can see live production at https://dprmd.github.io/senAi

@@ -17,6 +17,8 @@ import { useSettingsStore } from "@/store/useSettingsStore";
 import { useShallow } from "zustand/react/shallow";
 import AlertDialogNormal from "@/components/composable/AlertDialogNormal";
 import { useAppStore } from "@/store/appStore";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useEffect } from "react";
 
 const SettingFieldImage = () => {
   // zustand
@@ -58,6 +60,7 @@ const SettingFieldImage = () => {
   const cameraInputRef = useRef(null);
   const [openFilePicker, setOpenFilePicker] = useState(false);
   const [openPhotoPreviewSmall, setOpenPhotoPreviewSmall] = useState(false);
+  const [isLoadPP, setIsLoadPP] = useState(false);
 
   // callback
   const handleCameraClick = async () => {
@@ -111,8 +114,9 @@ const SettingFieldImage = () => {
     await updatePPUrlInFirestore(
       userId,
       "img/haku.jpeg",
-      false,
       customPPFileName,
+      "",
+      false,
     );
     setCustomProfilePhotoUrl(false);
     setCustomPPFileName("");
@@ -120,20 +124,37 @@ const SettingFieldImage = () => {
     setProfilePhotoUrl("img/haku.jpeg");
   };
 
+  useEffect(() => {
+    const imageElement = new Image();
+    imageElement.src = profilePhotoUrl;
+
+    imageElement.addEventListener("load", () => {
+      setIsLoadPP(true);
+    });
+
+    return () => {
+      imageElement.removeEventListener("load", () => {});
+    };
+  });
+
   return (
     <>
       <div className="flex items-center justify-center py-5">
         <div className="relative rounded-full">
-          <img
-            src={profilePhotoUrl}
-            className="h-full max-h-[150px] min-h-[150px] min-w-[150px] max-w-[150px] rounded-full"
-            alt="Profile Photo"
-            loading="lazy"
-            onClick={() => {
-              setOpenPhotoPreviewSmall(true);
-            }}
-            aria-hidden={true}
-          />
+          {isLoadPP ? (
+            <img
+              src={profilePhotoUrl}
+              className="h-full max-h-[150px] min-h-[150px] min-w-[150px] max-w-[150px] rounded-full"
+              alt="Profile Photo"
+              loading="lazy"
+              onClick={() => {
+                setOpenPhotoPreviewSmall(true);
+              }}
+              aria-hidden={true}
+            />
+          ) : (
+            <Skeleton className="h-full max-h-[150px] min-h-[150px] min-w-[150px] max-w-[150px] rounded-full" />
+          )}
           <button
             className="absolute bottom-4 right-0 rounded-full bg-green-600 p-2 dark:bg-green-400"
             onClick={() => {

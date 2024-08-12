@@ -17,6 +17,7 @@ import {
   getAllChatsMemoryFromFirestore,
   getNameAndProfilePhotoUrl,
   getPermissionToDeleteAllData,
+  getPPUrlFromFirestore,
 } from "../controller/firebaseControllerGet.js";
 import {
   addNewChatsToFirestore,
@@ -79,3 +80,4 @@ router.post(
 );
 router.post("/updateProfilePhoto", upload.single("image"), updateProfilePhoto);
 router.patch("/updatePPUrl", updatePPUrl);
+router.post("/getPPUrl", getPPUrlFromFirestore);

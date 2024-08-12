@@ -118,6 +118,7 @@ export const resetLocalStorage = () => {
   localStorage.removeItem("senAi-languageLabel");
   localStorage.removeItem("senAi-botLanguage");
   localStorage.removeItem("senAi-enterIsSend");
+  localStorage.removeItem("senAi-love");
 };
 
 export const getDeviceType = () => {

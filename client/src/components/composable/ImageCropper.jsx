@@ -78,6 +78,7 @@ const ImageCropper = () => {
   const canvasRef = useRef(null);
   const [crop, setCrop] = useState();
   const [imageUrl, setImageUrl] = useState("");
+  const [beingUpdateProfilePhoto, setBeingUpdateProfilePhoto] = useState(false);
 
   // callback
   const onImageLoad = (e) => {
@@ -148,7 +149,7 @@ const ImageCropper = () => {
 
   return (
     <motion.div
-      className="min-w-screen no-scrollbar z-30 flex min-h-screen flex-col items-center justify-center bg-white dark:bg-black"
+      className="min-w-screen no-scrollbar z-30 flex min-h-screen flex-col items-center justify-start bg-white dark:bg-black"
       initial={{ opacity: 0, transition: { duration: 0.2 } }}
       animate={{ opacity: 1, transition: { duration: 0.2 } }}
       exit={{ opacity: 0, transition: { duration: 0.2 } }}
@@ -189,17 +190,20 @@ const ImageCropper = () => {
         <button
           className="mx-4 my-2 inline-block rounded-md px-4 py-2 active:bg-slate-200 dark:active:bg-slate-800"
           onClick={() => {
-            setCanvasPreview(
-              imageRef.current,
-              canvasRef.current,
-              convertToPixelCrop(
-                crop,
-                imageRef.current.width,
-                imageRef.current.height,
-              ),
-              t,
-            );
-            updateProfilePhoto(canvasRef.current);
+            if (!beingUpdateProfilePhoto) {
+              setCanvasPreview(
+                imageRef.current,
+                canvasRef.current,
+                convertToPixelCrop(
+                  crop,
+                  imageRef.current.width,
+                  imageRef.current.height,
+                ),
+                t,
+              );
+              updateProfilePhoto(canvasRef.current);
+            }
+            setBeingUpdateProfilePhoto(true);
           }}
         >
           {t("done")}

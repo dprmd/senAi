@@ -155,6 +155,14 @@ export const useSenAiPageFetch = () => {
   const [setChats, setChatsMemory] = useChatsStore(
     useShallow((state) => [state.setChats, state.setChatsMemory]),
   );
+  const [setCustomPPFileName, setCustomProfilePhotoUrl, setProfilePhotoUrl] =
+    useSettingsStore(
+      useShallow((state) => [
+        state.setCustomPPFileName,
+        state.setCustomProfilePhotoUrl,
+        state.setProfilePhotoUrl,
+      ]),
+    );
 
   const senAiPageFetch = async () => {
     try {
@@ -163,17 +171,26 @@ export const useSenAiPageFetch = () => {
         uploadSeenHistory,
         getAllChatsFromFirestore,
         getAllChatsMemoryFromFirestore,
+        getPPUrl,
       } = await import("@/controller/CRUDFirestore");
 
       const getUserId = await addNewUserToFirestoreIfNotExists();
       localStorage.setItem("senAi-userId", getUserId);
       setUserId(getUserId);
 
-      const [gettedChats, gettedChatsMemory] = await Promise.all([
-        getAllChatsFromFirestore(getUserId),
-        getAllChatsMemoryFromFirestore(getUserId),
-        uploadSeenHistory(getUserId),
-      ]);
+      const [gettedChats, gettedChatsMemory, PPInformation] = await Promise.all(
+        [
+          getAllChatsFromFirestore(getUserId),
+          getAllChatsMemoryFromFirestore(getUserId),
+          getPPUrl(getUserId),
+          uploadSeenHistory(getUserId),
+        ],
+      );
+
+      const { customPPUrl, PPUrl, PPFileName } = PPInformation;
+      setCustomProfilePhotoUrl(customPPUrl);
+      setProfilePhotoUrl(PPUrl);
+      setCustomPPFileName(PPFileName);
 
       setChats(gettedChats);
       setChatsMemory(gettedChatsMemory);

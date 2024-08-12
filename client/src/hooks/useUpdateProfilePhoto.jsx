@@ -8,14 +8,19 @@ import { useShallow } from "zustand/react/shallow";
 export const useUpdateProfilePhoto = () => {
   // zustand
   const [userId] = useAppStore(useShallow((state) => [state.userId]));
-  const [setProfilePhotoUrl, setCustomProfilePhotoUrl, setCustomPPFileName] =
-    useSettingsStore(
-      useShallow((state) => [
-        state.setProfilePhotoUrl,
-        state.setCustomProfilePhotoUrl,
-        state.setCustomPPFileName,
-      ]),
-    );
+  const [
+    setProfilePhotoUrl,
+    setCustomProfilePhotoUrl,
+    setCustomPPFileName,
+    customPPFileName,
+  ] = useSettingsStore(
+    useShallow((state) => [
+      state.setProfilePhotoUrl,
+      state.setCustomProfilePhotoUrl,
+      state.setCustomPPFileName,
+      state.customPPFileName,
+    ]),
+  );
 
   // hooks
   const { t } = useTranslation();
@@ -34,8 +39,8 @@ export const useUpdateProfilePhoto = () => {
         userId,
         newPPUrl,
         PPFileName,
+        customPPFileName,
         true,
-        "",
       );
       if (successUpdatePPUrl) {
         toast({

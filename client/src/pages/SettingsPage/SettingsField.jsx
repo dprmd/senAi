@@ -29,7 +29,10 @@ const SettingField = ({
           </div>
           {!disablePencil && (
             <div>
-              <i className="bi bi-pencil fill-current text-sm font-bold text-green-700 dark:text-green-500"></i>
+              <DynamicSvgComponent
+                name="Pencil"
+                className="h-4 w-4 font-bold text-green-700 dark:text-green-500"
+              />
             </div>
           )}
         </div>

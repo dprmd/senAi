@@ -3,6 +3,8 @@ import DynamicSvgComponent from "../svg/DynamicSvg";
 import { useRef } from "react";
 import { useSettingsStore } from "@/store/useSettingsStore";
 import { useShallow } from "zustand/react/shallow";
+import { useEffect } from "react";
+import { Skeleton } from "../ui/skeleton";
 
 const AudioChat = ({ chat }) => {
   // zustand
@@ -11,6 +13,7 @@ const AudioChat = ({ chat }) => {
   );
 
   // state and ref
+  const [isLoadPP, setIsLoadPP] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef(null);
   const seekBar = useRef(null);
@@ -40,8 +43,21 @@ const AudioChat = ({ chat }) => {
     audioRef.current.currentTime = time;
   };
 
+  useEffect(() => {
+    const imageElement = new Image();
+    imageElement.src = profilePhotoUrl;
+
+    imageElement.addEventListener("load", () => {
+      setIsLoadPP(true);
+    });
+
+    return () => {
+      imageElement.removeEventListener("load", () => {});
+    };
+  });
+
   return (
-    <div className="flex items-center gap-x-2 px-2 pt-2">
+    <div className="flex items-center gap-x-2 pt-2">
       <audio
         src={chat.downloadUrl}
         ref={audioRef}
@@ -50,11 +66,15 @@ const AudioChat = ({ chat }) => {
       >
         <track kind="captions" />
       </audio>
-      <img
-        src={profilePhotoUrl}
-        alt="sen"
-        className="h-11 w-11 rounded-full"
-      ></img>
+      {isLoadPP ? (
+        <img
+          src={profilePhotoUrl}
+          alt="sen"
+          className="h-11 w-11 rounded-full"
+        />
+      ) : (
+        <Skeleton className="h-11 w-11 rounded-full" />
+      )}
       <div className="flex flex-1 items-center gap-x-2">
         {isPlaying ? (
           <button onClick={handleClick}>

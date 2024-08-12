@@ -14,6 +14,7 @@ import {
   firestoreGetNameAndPPUrlEndPoint,
   firestoreUpdateProfilePhotoEndPoint,
   firestoreUpdatePPUrlEndPoint,
+  firestoreGetPPUrlEndPoint,
 } from "./serverSource";
 import { fetchJson, resetLocalStorage } from "../lib/myUtils";
 
@@ -308,8 +309,8 @@ export const updatePPUrlInFirestore = async (
   userId,
   newPPUrl,
   newPPFileName,
+  oldPPFileName,
   customPPUrl,
-  oldPPUrl,
 ) => {
   const updatePPUrl = await fetchJson(firestoreUpdatePPUrlEndPoint, {
     method: "PATCH",
@@ -320,8 +321,8 @@ export const updatePPUrlInFirestore = async (
       userId,
       newPPUrl,
       newPPFileName,
+      oldPPFileName,
       customPPUrl,
-      oldPPUrl,
     }),
   });
 
@@ -330,5 +331,24 @@ export const updatePPUrlInFirestore = async (
   } else {
     console.log(updatePPUrl);
     return false;
+  }
+};
+
+export const getPPUrl = async (userId) => {
+  const gettedData = await fetchJson(firestoreGetPPUrlEndPoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ userId }),
+  });
+
+  if (gettedData.status === 200) {
+    return gettedData;
+  } else if (gettedData.status === 404) {
+    const newUserId = await addNewUserToFirestoreIfNotExists();
+    return await getPPUrl(newUserId);
+  } else {
+    console.log(gettedData);
   }
 };

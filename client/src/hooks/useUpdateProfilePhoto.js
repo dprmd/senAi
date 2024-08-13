@@ -38,6 +38,7 @@ export const useUpdateProfilePhoto = () => {
     if (fileSize < maxSize) {
       return file;
     } else {
+      setLoadingCompressImage(true)
       const options = {
         maxSizeMB: 1,
         maxWidthOrHeight: 1024,
@@ -68,6 +69,7 @@ export const useUpdateProfilePhoto = () => {
         console.log(error);
       }
 
+      setLoadingCompressImage(false);
       return tempFile;
     }
   };
@@ -76,10 +78,8 @@ export const useUpdateProfilePhoto = () => {
     canvasElement.toBlob(async (blob) => {
       const formData = new FormData();
 
-      // compress image before upload
-      setLoadingCompressImage(true);
+      // compress image if too large, before upload
       const compressedBlob = await limitFileSize(blob);
-      setLoadingCompressImage(false);
 
       formData.append(
         "image",

@@ -98,7 +98,7 @@ export const addNewChatsToFirestore = async (req, res) => {
             time: newChatFromAi.time,
             role: "assistant",
             content: newChatFromAi.message,
-          }
+          },
         ),
       });
 
@@ -206,7 +206,7 @@ export const addNewChatVoiceToFireStorage = async (req, res) => {
     // proses file
     const { uniqueFileName, downloadUrl } = await addFileToFirebaseStorage(
       file,
-      "voices"
+      "voices",
     );
 
     // kebutuhan logging

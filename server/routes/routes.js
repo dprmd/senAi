@@ -70,14 +70,14 @@ router.post("/getGroqReply", getGroqReply);
 router.post(
   "/getGroqTranscription",
   upload.single("audio"),
-  getGroqTranscription
+  getGroqTranscription,
 );
 router.post("/addNewUser", addNewUserToFirestore);
 router.post("/addNewChats", addNewChatsToFirestore);
 router.post(
   "/addNewVoiceChat",
   upload.single("audio"),
-  addNewChatVoiceToFireStorage
+  addNewChatVoiceToFireStorage,
 );
 router.post("/uploadSeenHistory", uploadSeenHistory);
 

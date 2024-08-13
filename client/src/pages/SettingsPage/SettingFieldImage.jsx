@@ -1,6 +1,7 @@
 import DynamicSvgComponent from "@/components/svg/DynamicSvg";
 import { toast } from "@/components/ui/use-toast";
 import { useMobileDeviceType } from "@/hooks/useUtils";
+import { useAppStore } from "@/store/appStore";
 import { useSettingsStore } from "@/store/useSettingsStore";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -41,6 +42,7 @@ const SettingFieldImage = () => {
       state.setCustomPPFileName,
     ]),
   );
+  const [userId] = useAppStore(useShallow((state) => [state.userId]));
 
   // hooks
   const { t } = useTranslation();
@@ -105,22 +107,30 @@ const SettingFieldImage = () => {
 
   const handleDeletePP = async () => {
     // delete PP
-    const { deletePPInFireStorage } = await import(
+    const { deletePPInFireStorage, updatePPUrlInFirestore } = await import(
       "@/controller/CRUDFirestore"
     );
     await deletePPInFireStorage(customPPFileName);
+    const successUpdatePPUrl = await updatePPUrlInFirestore(
+      userId,
+      "img/haku.jpeg",
+      "",
+      false,
+    );
 
     // reset state
-    setCustomProfilePhotoUrl(false);
-    setCustomPPFileName("");
-    setOpenPhotoPreviewSmall(false);
-    setProfilePhotoUrl("img/haku.jpeg");
-    localStorage.setItem("senAi-love", "no");
-    setIsLove(false);
-    toast({
-      description: t("deleted_pp"),
-      duration: 3000,
-    });
+    if (successUpdatePPUrl) {
+      setCustomProfilePhotoUrl(false);
+      setCustomPPFileName("");
+      setOpenPhotoPreviewSmall(false);
+      setProfilePhotoUrl("img/haku.jpeg");
+      localStorage.setItem("senAi-love", "no");
+      setIsLove(false);
+      toast({
+        description: t("deleted_pp"),
+        duration: 3000,
+      });
+    }
   };
 
   useEffect(() => {
@@ -134,7 +144,7 @@ const SettingFieldImage = () => {
     return () => {
       imageElement.removeEventListener("load", () => {});
     };
-  });
+  }, []);
 
   return (
     <>

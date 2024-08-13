@@ -38,7 +38,7 @@ export const useUpdateProfilePhoto = () => {
     if (fileSize < maxSize) {
       return file;
     } else {
-      setLoadingCompressImage(true)
+      setLoadingCompressImage(true);
       const options = {
         maxSizeMB: 1,
         maxWidthOrHeight: 1024,

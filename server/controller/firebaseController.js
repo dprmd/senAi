@@ -14,7 +14,7 @@ export const addNewUserToFirestore = async (req, res) => {
 
   try {
     // buat document default di collection users
-    setDoc(doc(firestore, "users", newUserId), {
+    await setDoc(doc(firestore, "users", newUserId), {
       userId: newUserId,
       name: "Unknown",
       customPPUrl: false,
@@ -27,19 +27,19 @@ export const addNewUserToFirestore = async (req, res) => {
     });
 
     // buat document default di collection chats
-    setDoc(doc(firestore, "chats", newUserId), {
+    await setDoc(doc(firestore, "chats", newUserId), {
       owned: newUserId,
       chats: [],
     });
 
     // buat document default di collection backupChats
-    setDoc(doc(firestore, "backupChats", newUserId), {
+    await setDoc(doc(firestore, "backupChats", newUserId), {
       owned: newUserId,
       backupChats: [],
     });
 
     // buat document default di collection chatsMemory
-    setDoc(doc(firestore, "chatsMemory", newUserId), {
+    await setDoc(doc(firestore, "chatsMemory", newUserId), {
       owned: newUserId,
       chatsMemory: [],
     });
@@ -98,7 +98,7 @@ export const addNewChatsToFirestore = async (req, res) => {
             time: newChatFromAi.time,
             role: "assistant",
             content: newChatFromAi.message,
-          },
+          }
         ),
       });
 
@@ -206,7 +206,7 @@ export const addNewChatVoiceToFireStorage = async (req, res) => {
     // proses file
     const { uniqueFileName, downloadUrl } = await addFileToFirebaseStorage(
       file,
-      "voices",
+      "voices"
     );
 
     // kebutuhan logging

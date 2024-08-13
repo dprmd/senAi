@@ -4,6 +4,7 @@ import { useSettingsStore } from "@/store/useSettingsStore";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useShallow } from "zustand/react/shallow";
+import imageCompression from "browser-image-compression";
 
 export const useUpdateProfilePhoto = () => {
   // zustand
@@ -13,12 +14,16 @@ export const useUpdateProfilePhoto = () => {
     setCustomProfilePhotoUrl,
     setCustomPPFileName,
     customPPFileName,
+    setLoadingCompressImage,
+    setLoadingUploadImage,
   ] = useSettingsStore(
     useShallow((state) => [
       state.setProfilePhotoUrl,
       state.setCustomProfilePhotoUrl,
       state.setCustomPPFileName,
       state.customPPFileName,
+      state.setLoadingCompressImage,
+      state.setLoadingUploadImage,
     ]),
   );
 
@@ -26,14 +31,65 @@ export const useUpdateProfilePhoto = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const updateProfilePhoto = (canvasElement) => {
+  const limitFileSize = async (file) => {
+    const maxSize = 200;
+    const fileSize = file.size / 1024;
+
+    if (fileSize < maxSize) {
+      return file;
+    } else {
+      const options = {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 1024,
+        useWebWorker: true,
+      };
+
+      let tempFile = file;
+
+      try {
+        while (true) {
+          const compressedFile = await imageCompression(tempFile, options);
+          tempFile = compressedFile;
+          if (compressedFile.size / 1024 > maxSize) {
+            continue;
+          } else {
+            break;
+          }
+        }
+      } catch (error) {
+        toast({
+          description: t("error_compressing_image"),
+          duration: 3000,
+          variant: "destructive",
+        });
+        console.log(error);
+      }
+
+      return tempFile;
+    }
+  };
+
+  const updateProfilePhoto = async (canvasElement) => {
     canvasElement.toBlob(async (blob) => {
       const formData = new FormData();
-      formData.append("image", blob, `${userId}-profilePhotoUpdate.jpg`);
+
+      // compress image before upload
+      setLoadingCompressImage(true);
+      const compressedBlob = await limitFileSize(blob);
+      setLoadingCompressImage(false);
+
+      formData.append(
+        "image",
+        compressedBlob,
+        `${userId}-profilePhotoUpdate.jpg`,
+      );
 
       const { updateProfilePhoto, updatePPUrlInFirestore } = await import(
         "@/controller/CRUDFirestore"
       );
+
+      // upload image
+      setLoadingUploadImage(true);
       const { PPFileName, newPPUrl } = await updateProfilePhoto(formData);
       const successUpdatePPUrl = await updatePPUrlInFirestore(
         userId,
@@ -42,6 +98,8 @@ export const useUpdateProfilePhoto = () => {
         customPPFileName,
         true,
       );
+      setLoadingUploadImage(false);
+
       if (successUpdatePPUrl) {
         toast({
           description: t("update_pp_success"),

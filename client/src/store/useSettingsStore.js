@@ -9,6 +9,11 @@ export const useSettingsStore = create((set) => ({
     set({ customProfilePhotoUrl }),
   profilePhotoUrl: "",
   setProfilePhotoUrl: (profilePhotoUrl) => set({ profilePhotoUrl }),
+  loadingCompressImage: false,
+  setLoadingCompressImage: (loadingCompressImage) =>
+    set({ loadingCompressImage }),
+  loadingUploadImage: false,
+  setLoadingUploadImage: (loadingUploadImage) => ({ loadingUploadImage }),
   imageFile: "",
   setImageFile: (imageFile) => set({ imageFile }),
   haveSelectImageFile: false,

@@ -1,9 +1,12 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useMobileDeviceType } from "@/hooks/useUtils";
 import { useTranslation } from "react-i18next";
 import DynamicSvgComponent from "@/components/svg/DynamicSvg";
 import { toast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
+import { useSettingsStore } from "@/store/useSettingsStore";
+import { useShallow } from "zustand/react/shallow";
+import { useAppStore } from "@/store/appStore";
 // shadcn ui
 import {
   AlertDialog,
@@ -13,12 +16,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "../../components/ui/alert-dialog";
-import { useSettingsStore } from "@/store/useSettingsStore";
-import { useShallow } from "zustand/react/shallow";
 import AlertDialogNormal from "@/components/composable/AlertDialogNormal";
-import { useAppStore } from "@/store/appStore";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useEffect } from "react";
 
 const SettingFieldImage = () => {
   // zustand
@@ -71,7 +70,7 @@ const SettingFieldImage = () => {
     fileInputRef.current.click();
   };
 
-  const handleCameraChange = (event) => {
+  const handleCameraChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
       setImageFile(file);
@@ -81,7 +80,7 @@ const SettingFieldImage = () => {
     }
   };
 
-  const handleFileChange = (event) => {
+  const handleFileChange = async (event) => {
     const file = event.target.files[0];
     if (file && (file.type === "image/png" || file.type === "image/jpeg")) {
       setImageFile(file);

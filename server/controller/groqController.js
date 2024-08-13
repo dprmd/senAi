@@ -44,7 +44,7 @@ export const getGroqReply = async (req, res) => {
 
 export const getGroqModels = async (req, res) => {
   const apiKeys = process.env.GROQ_API_KEYS.split(",");
-  const { apiKeyIndex } = req.body;
+  const { apiKeyIndex } = req.query;
   const apiKey = apiKeys[Number(apiKeyIndex)];
 
   const groq = new Groq({ apiKey });
@@ -95,7 +95,7 @@ export const getGroqModels = async (req, res) => {
   }
 };
 
-export const getGroqTranscription = async (req, res, next) => {
+export const getGroqTranscription = async (req, res) => {
   const apiKeys = process.env.GROQ_API_KEYS.split(",");
   const { apiKeyIndex } = JSON.parse(req.body.jsonData);
   const recordingFile = req.file;

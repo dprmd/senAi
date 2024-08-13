@@ -9,15 +9,9 @@ export const getGroqModels = async () => {
   const getApiKeyIndex = localStorage.getItem("senAi-user");
   const apiKeyIndex = getApiKeyIndex ? getApiKeyIndex : 0;
 
-  const models = await fetchJson(groqGetModelsEndPoint, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      apiKeyIndex,
-    }),
-  });
+  const models = await fetchJson(
+    `${groqGetModelsEndPoint}?apiKeyIndex=${apiKeyIndex}`,
+  );
 
   if (models.status === 200) {
     return models.models;

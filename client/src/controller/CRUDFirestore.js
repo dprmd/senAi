@@ -14,18 +14,14 @@ import {
   firestoreGetNameAndPPUrlEndPoint,
   firestoreUpdateProfilePhotoEndPoint,
   firestoreUpdatePPUrlEndPoint,
-  firestoreGetPPUrlEndPoint,
 } from "./serverSource";
 import { fetchJson, resetLocalStorage } from "../lib/myUtils";
+import { toast } from "@/components/ui/use-toast";
+
+// GET
 
 const checkAUser = async (userId) => {
-  const req = await fetchJson(firestoreCheckAUser, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ userId }),
-  });
+  const req = await fetchJson(`${firestoreCheckAUser}?userId=${userId}`);
 
   if (req.status === 200 || req.status === 404) {
     return req.userExist;
@@ -33,6 +29,71 @@ const checkAUser = async (userId) => {
     console.log(req);
   }
 };
+
+export const getAllChatsFromFirestore = async (userId) => {
+  const chats = await fetchJson(
+    `${firestoreGetAllChatsEndPoint}?userId=${userId}`,
+  );
+
+  if (chats.status === 200) {
+    return chats.chats;
+  } else if (chats.status === 404) {
+    const newUserId = await addNewUserToFirestoreIfNotExists();
+    return await getAllChatsFromFirestore(newUserId);
+  } else {
+    console.log(chats);
+  }
+};
+
+export const getAllChatsMemoryFromFirestore = async (userId) => {
+  const chatsMemory = await fetchJson(
+    `${firestoreGetAllChatsMemoryEndPoint}?userId=${userId}`,
+  );
+
+  if (chatsMemory.status === 200) {
+    return chatsMemory.chatsMemory;
+  } else if (chatsMemory.status === 404) {
+    const newUserId = await addNewUserToFirestoreIfNotExists();
+    return getAllChatsMemoryFromFirestore(newUserId);
+  } else {
+    console.log(chatsMemory);
+  }
+};
+
+export const getNameAndPPUrl = async (userId) => {
+  const gettedData = await fetchJson(
+    `${firestoreGetNameAndPPUrlEndPoint}?userId=${userId}`,
+  );
+
+  if (gettedData.status === 200) {
+    return gettedData;
+  } else if (gettedData.status === 404) {
+    const newUserId = await addNewUserToFirestoreIfNotExists();
+    return await getNameAndPPUrl(newUserId);
+  } else {
+    console.log(gettedData);
+  }
+};
+
+export const getPermissionToDeleteAllData = async (securityCode) => {
+  const getPermission = await fetchJson(
+    `${firestoreGetPermissionToDeleteAllDataEndPoint}?securityCode=${securityCode}`,
+  );
+
+  if (getPermission.status === 202 || getPermission.status === 405) {
+    return getPermission.permits;
+  } else if (getPermission.status === 404) {
+    toast({
+      description: "Error : Password Collection Not Exist",
+      duration: 3000,
+      variant: "destructive",
+    });
+  } else {
+    console.log(getPermission);
+  }
+};
+
+// POST
 
 export const addNewUserToFirestoreIfNotExists = async () => {
   if (localStorage.getItem("senAi-userId")) {
@@ -70,44 +131,6 @@ export const addNewUserToFirestoreIfNotExists = async () => {
   }
 };
 
-export const getAllChatsFromFirestore = async (userId) => {
-  const chats = await fetchJson(firestoreGetAllChatsEndPoint, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ userId }),
-  });
-
-  if (chats.status === 200) {
-    return chats.chats;
-  } else if (chats.status === 404) {
-    const newUserId = await addNewUserToFirestoreIfNotExists();
-    return await getAllChatsFromFirestore(newUserId);
-  } else {
-    console.log(chats);
-  }
-};
-
-export const getAllChatsMemoryFromFirestore = async (userId) => {
-  const chatsMemory = await fetchJson(firestoreGetAllChatsMemoryEndPoint, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ userId }),
-  });
-
-  if (chatsMemory.status === 200) {
-    return chatsMemory.chatsMemory;
-  } else if (chatsMemory.status === 404) {
-    const newUserId = await addNewUserToFirestoreIfNotExists();
-    return getAllChatsMemoryFromFirestore(newUserId);
-  } else {
-    console.log(chatsMemory);
-  }
-};
-
 export const addNewChatsToFirestore = async (
   userId,
   newChatFromUser,
@@ -134,6 +157,44 @@ export const addNewChatsToFirestore = async (
     console.log(savedChats);
   }
 };
+
+export const addNewVoiceChatToFireStorage = async (formData) => {
+  const uploadTask = await fetchJson(firestoreAddNewVoiceChatEndPoint, {
+    method: "POST",
+    body: formData,
+  });
+
+  if (uploadTask.status === 201) {
+    return uploadTask;
+  } else {
+    return uploadTask.error;
+  }
+};
+
+export const uploadSeenHistory = async (userId) => {
+  const { generateTimeNow } = await import("../lib/generateTime");
+  const { day, monthName, year, hour, minute, second } = generateTimeNow();
+  const lastSeen = `${day} ${monthName} ${year} , ${hour}:${minute}:${second}`;
+
+  const uploadSeenHistory = await fetchJson(
+    firestoreUploadSeenHistoryEndPoint,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userId, lastSeen }),
+    },
+  );
+
+  if (uploadSeenHistory.status === 201) {
+    return;
+  } else {
+    console.log(uploadSeenHistory);
+  }
+};
+
+// DELETE
 
 export const deleteAllChatsInFirestore = async (userId, chats) => {
   const deletedAllChats = await fetchJson(firestoreDeleteAllChatsEndPoint, {
@@ -171,88 +232,6 @@ export const deleteSomeChatsInFirestore = async (
   }
 };
 
-export const getNameAndPPUrl = async (userId) => {
-  const gettedData = await fetchJson(firestoreGetNameAndPPUrlEndPoint, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ userId }),
-  });
-
-  if (gettedData.status === 200) {
-    return gettedData;
-  } else if (gettedData.status === 404) {
-    const newUserId = await addNewUserToFirestoreIfNotExists();
-    return await getNameAndPPUrl(newUserId);
-  } else {
-    console.log(gettedData);
-  }
-};
-
-export const updateName = async (userId, newName) => {
-  const updatedName = await fetchJson(firestoreUpdateNameEndPoint, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ userId, newName }),
-  });
-
-  if (updatedName.status === 202) {
-    return updatedName;
-  } else if (updatedName.status === 404) {
-    const newUserId = await addNewUserToFirestoreIfNotExists();
-    return await updateName(newUserId, newName);
-  } else {
-    console.log(updatedName);
-  }
-};
-
-export const uploadSeenHistory = async (userId) => {
-  const { generateTimeNow } = await import("../lib/generateTime");
-  const { day, monthName, year, hour, minute, second } = generateTimeNow();
-  const lastSeen = `${day} ${monthName} ${year} , ${hour}:${minute}:${second}`;
-
-  const uploadSeenHistory = await fetchJson(
-    firestoreUploadSeenHistoryEndPoint,
-    {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ userId, lastSeen }),
-    },
-  );
-
-  if (uploadSeenHistory.status === 201) {
-    return;
-  } else {
-    console.log(uploadSeenHistory);
-  }
-};
-
-export const getPermissionToDeleteAllData = async (securityCode) => {
-  const getPermission = await fetchJson(
-    firestoreGetPermissionToDeleteAllDataEndPoint,
-    {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ securityCode }),
-    },
-  );
-
-  if (getPermission.status === 202 || getPermission.status === 405) {
-    return getPermission.permits;
-  } else if (getPermission.status === 404) {
-    alert("Error : Password Collection Not Exist");
-  } else {
-    console.log(getPermission);
-  }
-};
-
 export const deleteAllDataInFirestore = async (
   userId,
   securityCode,
@@ -276,16 +255,24 @@ export const deleteAllDataInFirestore = async (
   }
 };
 
-export const addNewVoiceChatToFireStorage = async (formData) => {
-  const uploadTask = await fetchJson(firestoreAddNewVoiceChatEndPoint, {
-    method: "POST",
-    body: formData,
+// PUT
+
+export const updateName = async (userId, newName) => {
+  const updatedName = await fetchJson(firestoreUpdateNameEndPoint, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ userId, newName }),
   });
 
-  if (uploadTask.status === 201) {
-    return uploadTask;
+  if (updatedName.status === 202) {
+    return updatedName;
+  } else if (updatedName.status === 404) {
+    const newUserId = await addNewUserToFirestoreIfNotExists();
+    return await updateName(newUserId, newName);
   } else {
-    return uploadTask.error;
+    console.log(updatedName);
   }
 };
 
@@ -293,7 +280,7 @@ export const updateProfilePhoto = async (formData) => {
   const updatedProfilePhoto = await fetchJson(
     firestoreUpdateProfilePhotoEndPoint,
     {
-      method: "POST",
+      method: "PUT",
       body: formData,
     },
   );
@@ -313,7 +300,7 @@ export const updatePPUrlInFirestore = async (
   customPPUrl,
 ) => {
   const updatePPUrl = await fetchJson(firestoreUpdatePPUrlEndPoint, {
-    method: "PATCH",
+    method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },
@@ -331,24 +318,5 @@ export const updatePPUrlInFirestore = async (
   } else {
     console.log(updatePPUrl);
     return false;
-  }
-};
-
-export const getPPUrl = async (userId) => {
-  const gettedData = await fetchJson(firestoreGetPPUrlEndPoint, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ userId }),
-  });
-
-  if (gettedData.status === 200) {
-    return gettedData;
-  } else if (gettedData.status === 404) {
-    const newUserId = await addNewUserToFirestoreIfNotExists();
-    return await getPPUrl(newUserId);
-  } else {
-    console.log(gettedData);
   }
 };

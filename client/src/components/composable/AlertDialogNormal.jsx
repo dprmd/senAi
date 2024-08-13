@@ -55,6 +55,7 @@ const AlertDialogNormal = ({
                 setOpenState(false);
                 handleCancel();
               }}
+              className="rounded-full px-3 hover:bg-green-200 dark:hover:bg-green-900"
             >
               {cancelTitle ? cancelTitle : t("cancel")}
             </AlertDialogCancel>
@@ -65,6 +66,7 @@ const AlertDialogNormal = ({
                 setOpenState(false);
                 handleContinue();
               }}
+              className="rounded-full px-3 hover:bg-green-200 dark:hover:bg-green-900"
             >
               {continueTitle ? continueTitle : t("continue")}
             </AlertDialogAction>

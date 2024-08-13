@@ -11,6 +11,7 @@ import { motion } from "framer-motion";
 import { toast } from "../ui/use-toast";
 import { useTranslation } from "react-i18next";
 import { useUpdateProfilePhoto } from "@/hooks/useUpdateProfilePhoto";
+import Loading from "./Loading";
 
 const ASPECT_RATIO = 1;
 const MIN_DIMENSION = 150;
@@ -56,15 +57,23 @@ const setCanvasPreview = (image, canvas, crop, t) => {
 
 const ImageCropper = () => {
   // zustand
-  const [imageFile, setImageFile, haveSelectImageFile, setHaveSelectImageFile] =
-    useSettingsStore(
-      useShallow((state) => [
-        state.imageFile,
-        state.setImageFile,
-        state.haveSelectImageFile,
-        state.setHaveSelectImageFile,
-      ]),
-    );
+  const [
+    imageFile,
+    setImageFile,
+    haveSelectImageFile,
+    setHaveSelectImageFile,
+    loadingCompressImage,
+    loadingUploadImage,
+  ] = useSettingsStore(
+    useShallow((state) => [
+      state.imageFile,
+      state.setImageFile,
+      state.haveSelectImageFile,
+      state.setHaveSelectImageFile,
+      state.loadingCompressImage,
+      state.loadingUploadImage,
+    ]),
+  );
 
   // hooks
   const { t } = useTranslation();
@@ -155,12 +164,12 @@ const ImageCropper = () => {
       exit={{ opacity: 0, transition: { duration: 0.2 } }}
     >
       <div
-        className="m-4 flex max-h-[550px] max-w-[400px] items-center justify-center overflow-hidden"
+        className="m-4 mb-[70px] flex max-h-max max-w-[400px] items-center justify-center"
         ref={imageContainerRef}
       >
         <ReactCrop
           ref={reactCropRef}
-          onChange={(pixelCrop, percentCrop) => {
+          onChange={(_, percentCrop) => {
             setCrop(percentCrop);
           }}
           crop={crop}
@@ -189,7 +198,7 @@ const ImageCropper = () => {
         </button>
         <button
           className="mx-4 my-2 inline-block rounded-md px-4 py-2 active:bg-slate-200 dark:active:bg-slate-800"
-          onClick={() => {
+          onClick={async () => {
             if (!beingUpdateProfilePhoto) {
               setCanvasPreview(
                 imageRef.current,
@@ -201,7 +210,7 @@ const ImageCropper = () => {
                 ),
                 t,
               );
-              updateProfilePhoto(canvasRef.current);
+              await updateProfilePhoto(canvasRef.current);
             }
             setBeingUpdateProfilePhoto(true);
           }}
@@ -223,6 +232,12 @@ const ImageCropper = () => {
           className="mb-[140px]"
         ></canvas>
       )}
+
+      {/* Loading */}
+      {loadingCompressImage && (
+        <Loading message={t("loading_compress_image")} />
+      )}
+      {loadingUploadImage && <Loading message={t("loading_upload_image")} />}
     </motion.div>
   );
 };

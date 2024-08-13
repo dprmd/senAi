@@ -80,10 +80,14 @@ const AlertDialogChangeName = ({ open, setOpen }) => {
                   setName(oldName);
                   setOpen(false);
                 }}
+                className="rounded-full px-3 hover:bg-green-200 dark:hover:bg-green-900"
               >
                 {t("cancel")}
               </AlertDialogCancel>
-              <AlertDialogAction onClick={handleSaveName}>
+              <AlertDialogAction
+                onClick={handleSaveName}
+                className="rounded-full px-3 hover:bg-green-200 dark:hover:bg-green-900"
+              >
                 {t("save")}
               </AlertDialogAction>
             </AlertDialogFooter>

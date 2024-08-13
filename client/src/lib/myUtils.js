@@ -1,3 +1,5 @@
+import { toast } from "@/components/ui/use-toast";
+
 // device maps
 const iosDeviceMapping = new Map([
   ["320x480", "IPhone 4S, 4, 3GS, 3G, 1st gen"],
@@ -105,7 +107,12 @@ export const fetchJson = async (endPoint, options) => {
     }
     return response;
   } catch (error) {
-    console.log(`An error occured`, error);
+    toast({
+      title: "An Error Occured",
+      description: error.message,
+      duration: 2500,
+      variant: "destructive",
+    });
   }
 };
 

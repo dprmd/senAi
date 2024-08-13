@@ -3,7 +3,7 @@ import { firestore } from "./firebaseInit.js";
 import { comparePassword, printOutput } from "../lib/utils.js";
 
 export const checkAUser = async (req, res) => {
-  const { userId } = req.body;
+  const { userId } = req.query;
   const userRef = doc(firestore, "users", userId);
 
   try {
@@ -31,7 +31,7 @@ export const checkAUser = async (req, res) => {
 };
 
 export const getAllChatsFromFirestore = async (req, res) => {
-  const { userId } = req.body;
+  const { userId } = req.query;
   const chatsRef = doc(firestore, "chats", userId);
 
   try {
@@ -64,7 +64,7 @@ export const getAllChatsFromFirestore = async (req, res) => {
 };
 
 export const getAllChatsMemoryFromFirestore = async (req, res) => {
-  const { userId } = req.body;
+  const { userId } = req.query;
   const chatsMemoryRef = doc(firestore, "chatsMemory", userId);
 
   try {
@@ -100,7 +100,7 @@ export const getAllChatsMemoryFromFirestore = async (req, res) => {
 };
 
 export const getNameAndProfilePhotoUrl = async (req, res) => {
-  const { userId } = req.body;
+  const { userId } = req.query;
   const userRef = doc(firestore, "users", userId);
 
   try {
@@ -142,7 +142,7 @@ export const getNameAndProfilePhotoUrl = async (req, res) => {
 };
 
 export const getPermissionToDeleteAllData = async (req, res) => {
-  const { securityCode } = req.body;
+  const { securityCode } = req.query;
 
   const passwordRef = doc(firestore, "password", "passwordDeleteAllData");
   try {
@@ -182,45 +182,5 @@ export const getPermissionToDeleteAllData = async (req, res) => {
       status: 500,
       error,
     });
-  }
-};
-
-export const getPPUrlFromFirestore = async (req, res) => {
-  const { userId } = req.body;
-  const userRef = doc(firestore, "users", userId);
-
-  try {
-    const userSnap = await getDoc(userRef);
-
-    if (userSnap.exists()) {
-      const { customPPUrl, PPUrl, PPFileName } = userSnap.data();
-      printOutput(getNameAndProfilePhotoUrl.name, req.body, {
-        status: 200,
-        customPPUrl,
-        PPUrl,
-        PPFileName,
-      });
-      res.status(200).json({
-        status: 200,
-        customPPUrl,
-        PPUrl,
-        PPFileName,
-      });
-    } else {
-      printOutput(getNameAndProfilePhotoUrl.name, req.body, {
-        status: 404,
-        message: `No Such Document Match With ${userId}`,
-      });
-      res.status(404).json({
-        status: 404,
-        message: `No Such Document Match With ${userId}`,
-      });
-    }
-  } catch (error) {
-    printOutput(getNameAndProfilePhotoUrl.name, req.body, {
-      status: 500,
-      error,
-    });
-    res.status(500).json({ status: 500, error });
   }
 };

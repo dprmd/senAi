@@ -57,23 +57,15 @@ const setCanvasPreview = (image, canvas, crop, t) => {
 
 const ImageCropper = () => {
   // zustand
-  const [
-    imageFile,
-    setImageFile,
-    haveSelectImageFile,
-    setHaveSelectImageFile,
-    loadingCompressImage,
-    loadingUploadImage,
-  ] = useSettingsStore(
-    useShallow((state) => [
-      state.imageFile,
-      state.setImageFile,
-      state.haveSelectImageFile,
-      state.setHaveSelectImageFile,
-      state.loadingCompressImage,
-      state.loadingUploadImage,
-    ]),
-  );
+  const [imageFile, setImageFile, haveSelectImageFile, setHaveSelectImageFile] =
+    useSettingsStore(
+      useShallow((state) => [
+        state.imageFile,
+        state.setImageFile,
+        state.haveSelectImageFile,
+        state.setHaveSelectImageFile,
+      ]),
+    );
 
   // hooks
   const { t } = useTranslation();
@@ -81,8 +73,8 @@ const ImageCropper = () => {
   const updateProfilePhoto = useUpdateProfilePhoto();
 
   // state and ref
-  const reactCropRef = useRef(null);
-  const imageContainerRef = useRef(null);
+  const [loadingCompress, setLoadingCompress] = useState(false);
+  const [loadingUpload, setLoadingUpload] = useState(false);
   const imageRef = useRef(null);
   const canvasRef = useRef(null);
   const [crop, setCrop] = useState();
@@ -163,12 +155,8 @@ const ImageCropper = () => {
       animate={{ opacity: 1, transition: { duration: 0.2 } }}
       exit={{ opacity: 0, transition: { duration: 0.2 } }}
     >
-      <div
-        className="m-4 mb-[70px] flex max-h-max max-w-[400px] items-center justify-center"
-        ref={imageContainerRef}
-      >
+      <div className="m-4 mb-[70px] flex max-h-max max-w-[400px] items-center justify-center">
         <ReactCrop
-          ref={reactCropRef}
           onChange={(_, percentCrop) => {
             setCrop(percentCrop);
           }}
@@ -211,6 +199,13 @@ const ImageCropper = () => {
                 t,
               );
               await updateProfilePhoto(canvasRef.current);
+
+              // fake loading
+              setLoadingCompress(true);
+              setTimeout(() => {
+                setLoadingCompress(false);
+                setLoadingUpload(true);
+              }, 4000);
             }
             setBeingUpdateProfilePhoto(true);
           }}
@@ -234,10 +229,9 @@ const ImageCropper = () => {
       )}
 
       {/* Loading */}
-      {loadingCompressImage && (
-        <Loading message={t("loading_compress_image")} />
-      )}
-      {loadingUploadImage && <Loading message={t("loading_upload_image")} />}
+      {/* <Loading /> */}
+      {loadingCompress && <Loading message={t("loading_compress_image")} />}
+      {loadingUpload && <Loading message={t("loading_upload_image")} />}
     </motion.div>
   );
 };

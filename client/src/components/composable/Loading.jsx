@@ -13,10 +13,10 @@ const Loading = ({ message }) => {
         <AlertDialogHeader>
           <AlertDialogDescription>
             <div className="flex h-full w-full items-center justify-center py-6">
-              <div className="h-max w-max">
-                <Loader2 className="mr-2 h-8 w-8 animate-spin text-green-500 dark:text-green-600" />
+              <div>
+                <Loader2 className="h-8 w-8 animate-spin text-green-500 dark:text-green-600" />
               </div>
-              <span>{message}</span>
+              <span className="ml-2 inline-block">{message}</span>
             </div>
           </AlertDialogDescription>
         </AlertDialogHeader>

@@ -14,16 +14,12 @@ export const useUpdateProfilePhoto = () => {
     setCustomProfilePhotoUrl,
     setCustomPPFileName,
     customPPFileName,
-    setLoadingCompressImage,
-    setLoadingUploadImage,
   ] = useSettingsStore(
     useShallow((state) => [
       state.setProfilePhotoUrl,
       state.setCustomProfilePhotoUrl,
       state.setCustomPPFileName,
       state.customPPFileName,
-      state.setLoadingCompressImage,
-      state.setLoadingUploadImage,
     ]),
   );
 
@@ -74,9 +70,7 @@ export const useUpdateProfilePhoto = () => {
       const formData = new FormData();
 
       // compress image before upload
-      setLoadingCompressImage(true);
       const compressedBlob = await limitFileSize(blob);
-      setLoadingCompressImage(false);
 
       formData.append(
         "image",
@@ -89,7 +83,6 @@ export const useUpdateProfilePhoto = () => {
       );
 
       // upload image
-      setLoadingUploadImage(true);
       const { PPFileName, newPPUrl } = await updateProfilePhoto(formData);
       const successUpdatePPUrl = await updatePPUrlInFirestore(
         userId,
@@ -98,7 +91,6 @@ export const useUpdateProfilePhoto = () => {
         customPPFileName,
         true,
       );
-      setLoadingUploadImage(false);
 
       if (successUpdatePPUrl) {
         toast({

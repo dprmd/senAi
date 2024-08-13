@@ -1,19 +1,19 @@
-import { useState, useEffect, lazy, Suspense } from "react";
-import { generateTimeNow } from "../../../lib/generateTime";
-import useOnlineStatus from "../../../hooks/useOnlineStatus";
+import AudioChat from "@/components/composable/AudioChat";
+import DynamicSvgComponent from "@/components/svg/DynamicSvg";
+import { useLongPressChat } from "@/hooks/HoldChats/useLongPressChat";
 import { useChatsStore } from "@/store/useChatsStore";
+import { lazy, Suspense, useEffect, useState } from "react";
+import { useInView } from "react-intersection-observer";
+import rehypeRaw from "rehype-raw";
+import remarkGfm from "remark-gfm";
 import { useShallow } from "zustand/react/shallow";
 import CodeBlockSkeleton from "../../../components/Skeleton/CodeBlockSkeleton";
-import DynamicSvgComponent from "@/components/svg/DynamicSvg";
-import { useLongPressChat } from "@/hooks/useUtils";
-import { useInView } from "react-intersection-observer";
+import { Skeleton } from "../../../components/ui/skeleton";
+import useOnlineStatus from "../../../hooks/useOnlineStatus";
+import { generateTimeNow } from "../../../lib/generateTime";
 // React Markdown
 const Markdown = lazy(() => import("react-markdown"));
 const CodeBlock = lazy(() => import("./CodeBlock"));
-import remarkGfm from "remark-gfm";
-import rehypeRaw from "rehype-raw";
-import { Skeleton } from "../../../components/ui/skeleton";
-import AudioChat from "@/components/composable/AudioChat";
 
 const ChatBubble = ({ chat }) => {
   // hooks

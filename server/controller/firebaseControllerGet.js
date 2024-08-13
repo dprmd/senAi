@@ -1,6 +1,6 @@
 import { doc, getDoc } from "firebase/firestore";
-import { firestore } from "./firebaseInit.js";
 import { comparePassword, printOutput } from "../lib/utils.js";
+import { firestore } from "./firebaseInit.js";
 
 export const checkAUser = async (req, res) => {
   const { userId } = req.query;
@@ -157,6 +157,7 @@ export const getPermissionToDeleteAllData = async (req, res) => {
         });
         res.status(202).json({ status: 202, permits: true });
       } else {
+        // if security code not match
         printOutput(getPermissionToDeleteAllData.name, req.body, {
           state: 405,
           permits: false,
@@ -164,13 +165,14 @@ export const getPermissionToDeleteAllData = async (req, res) => {
         res.status(405).json({ status: 405, permits: false });
       }
     } else {
+      // if password document not exist
       printOutput(getPermissionToDeleteAllData.name, req.body, {
         status: 404,
-        message: `No Such Document Match With`,
+        message: `No Such Document Match With passwordDeleteAllData`,
       });
       res.status(404).json({
         status: 404,
-        message: `No Such Document Match With`,
+        message: `No Such Document Match With passwordDeleteAllData`,
       });
     }
   } catch (error) {

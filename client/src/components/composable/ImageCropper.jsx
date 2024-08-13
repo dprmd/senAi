@@ -1,16 +1,16 @@
-import { useState, useEffect, useRef } from "react";
+import { useUpdateProfilePhoto } from "@/hooks/useUpdateProfilePhoto";
 import { useSettingsStore } from "@/store/useSettingsStore";
-import { useNavigate } from "react-router-dom";
-import { useShallow } from "zustand/react/shallow";
+import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import ReactCrop, {
   centerCrop,
   convertToPixelCrop,
   makeAspectCrop,
 } from "react-image-crop";
-import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { useShallow } from "zustand/react/shallow";
 import { toast } from "../ui/use-toast";
-import { useTranslation } from "react-i18next";
-import { useUpdateProfilePhoto } from "@/hooks/useUpdateProfilePhoto";
 import Loading from "./Loading";
 
 const ASPECT_RATIO = 1;
@@ -57,15 +57,23 @@ const setCanvasPreview = (image, canvas, crop, t) => {
 
 const ImageCropper = () => {
   // zustand
-  const [imageFile, setImageFile, haveSelectImageFile, setHaveSelectImageFile] =
-    useSettingsStore(
-      useShallow((state) => [
-        state.imageFile,
-        state.setImageFile,
-        state.haveSelectImageFile,
-        state.setHaveSelectImageFile,
-      ]),
-    );
+  const [
+    imageFile,
+    setImageFile,
+    haveSelectImageFile,
+    setHaveSelectImageFile,
+    loadingCompressImage,
+    loadingUploadImage,
+  ] = useSettingsStore(
+    useShallow((state) => [
+      state.imageFile,
+      state.setImageFile,
+      state.haveSelectImageFile,
+      state.setHaveSelectImageFile,
+      state.loadingCompressImage,
+      state.loadingUploadImage,
+    ]),
+  );
 
   // hooks
   const { t } = useTranslation();
@@ -73,8 +81,6 @@ const ImageCropper = () => {
   const updateProfilePhoto = useUpdateProfilePhoto();
 
   // state and ref
-  const [loadingCompress, setLoadingCompress] = useState(false);
-  const [loadingUpload, setLoadingUpload] = useState(false);
   const imageRef = useRef(null);
   const canvasRef = useRef(null);
   const [crop, setCrop] = useState();
@@ -198,14 +204,9 @@ const ImageCropper = () => {
                 ),
                 t,
               );
-              await updateProfilePhoto(canvasRef.current);
 
-              // fake loading
-              setLoadingCompress(true);
-              setTimeout(() => {
-                setLoadingCompress(false);
-                setLoadingUpload(true);
-              }, 4000);
+              // update Profile Photo to firebase
+              await updateProfilePhoto(canvasRef.current);
             }
             setBeingUpdateProfilePhoto(true);
           }}
@@ -229,9 +230,10 @@ const ImageCropper = () => {
       )}
 
       {/* Loading */}
-      {/* <Loading /> */}
-      {loadingCompress && <Loading message={t("loading_compress_image")} />}
-      {loadingUpload && <Loading message={t("loading_upload_image")} />}
+      {loadingCompressImage && (
+        <Loading message={t("loading_compress_image")} />
+      )}
+      {loadingUploadImage && <Loading message={t("loading_upload_image")} />}
     </motion.div>
   );
 };

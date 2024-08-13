@@ -1,12 +1,12 @@
-import { useShallow } from "zustand/react/shallow";
-import { SendHorizonal, Mic } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { useAppStore } from "../../../store/appStore";
-import { useSettingsStore } from "@/store/useSettingsStore";
-import { useSubmitGroq } from "../../../hooks/useSubmitGroq";
-import { useClearHoldChats } from "@/hooks/useUtils";
-import { useRecordStore } from "@/store/useRecordStore";
 import RecordAudioDialog from "@/components/composable/RecordAudioDialog";
+import { useClearHoldChats } from "@/hooks/HoldChats/useClearHoldChats";
+import { useRecordStore } from "@/store/useRecordStore";
+import { useSettingsStore } from "@/store/useSettingsStore";
+import { Mic, SendHorizonal } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { useShallow } from "zustand/react/shallow";
+import { useSubmitGroq } from "../../../hooks/useSubmitGroq";
+import { useAppStore } from "../../../store/appStore";
 
 const Footer = () => {
   // hooks

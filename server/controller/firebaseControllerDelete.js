@@ -1,5 +1,3 @@
-import { ref, deleteObject, listAll } from "firebase/storage";
-import { firestore, MY_COLLECTION, storage } from "./firebaseInit.js";
 import {
   collection,
   doc,
@@ -10,16 +8,18 @@ import {
   updateDoc,
   writeBatch,
 } from "firebase/firestore";
+import { deleteObject, listAll, ref } from "firebase/storage";
 import { comparePassword, printOutput } from "../lib/utils.js";
+import { firestore, MY_COLLECTION, storage } from "./firebaseInit.js";
 
-const deleteFolderInFirebaseStorage = (folderName) => {
+export const deleteFolderInFirebaseStorage = (folderName) => {
   const folderPath = `${folderName}/`;
   const folderRef = ref(storage, folderPath);
 
   listAll(folderRef)
     .then((result) => {
-      result.items.forEach((fileRef) => {
-        deleteObject(fileRef)
+      result.items.forEach(async (fileRef) => {
+        await deleteObject(fileRef)
           .then(() => {
             console.log(`Delete ${fileRef.name} Successfully`);
           })
@@ -36,7 +36,7 @@ const deleteFolderInFirebaseStorage = (folderName) => {
     });
 };
 
-const deleteFilesInFirebaseStorage = (fileList, folderName) => {
+export const deleteFilesInFirebaseStorage = (fileList, folderName) => {
   let filesTarget;
 
   if (typeof fileList === "string") {
@@ -48,10 +48,10 @@ const deleteFilesInFirebaseStorage = (fileList, folderName) => {
   const success = [];
   const failed = [];
 
-  filesTarget.forEach((fileName) => {
+  filesTarget.forEach(async (fileName) => {
     const fileRef = ref(storage, `${folderName}/${fileName}`);
 
-    deleteObject(fileRef)
+    await deleteObject(fileRef)
       .then(() => {
         success.push({ message: `Delete ${fileName} Successfully` });
       })
@@ -70,30 +70,23 @@ export const deleteAllChatsInFirestore = async (req, res) => {
   const chatsMemoryRef = doc(firestore, "chatsMemory", userId);
 
   try {
-    updateDoc(chatsRef, {
+    await updateDoc(chatsRef, {
       chats: [],
     });
-    updateDoc(chatsMemoryRef, {
+    await updateDoc(chatsMemoryRef, {
       chatsMemory: [],
     });
-    const deleteTask = chats.map((chat) => {
+
+    // delete voice in firebase storage
+    chats.map((chat) => {
       if (chat.type === "audio") {
-        const successTask = [];
-        const failedTask = [];
-        const { success, failed } = deleteFilesInFirebaseStorage(
-          chat.audioFileName,
-          "voices",
-        );
-        successTask.push(...success);
-        failedTask.push(...failed);
-        return { success: successTask, failed: failedTask };
+        deleteFilesInFirebaseStorage(chat.audioFileName, "voices");
       }
     });
 
     printOutput(deleteAllChatsInFirestore.name, req.body, {
       status: 202,
       message: "Delete All Chats And Its Memories",
-      deleteTask,
     });
     res.status(202).json({
       status: 202,
@@ -119,30 +112,23 @@ export const deleteSomeChatsInFirestore = async (req, res) => {
   }));
 
   try {
-    updateDoc(chatsRef, {
+    await updateDoc(chatsRef, {
       chats: someChatsNew,
     });
-    updateDoc(chatsMemoryRef, {
+    await updateDoc(chatsMemoryRef, {
       chatsMemory: chatsMemoryNew,
     });
-    const deleteTask = someChatsDeleted.map((chat) => {
+
+    // delete voice file in firebase storage
+    someChatsDeleted.map((chat) => {
       if (chat.type === "audio") {
-        const successTask = [];
-        const failedTask = [];
-        const { success, failed } = deleteFilesInFirebaseStorage(
-          chat.audioFileName,
-          "voices",
-        );
-        successTask.push(...success);
-        failedTask.push(...failed);
-        return { success: successTask, failed: failedTask };
+        deleteFilesInFirebaseStorage(chat.audioFileName, "voices");
       }
     });
 
     printOutput(deleteSomeChatsInFirestore.name, req.body, {
       status: 202,
       message: "Delete Some Chats You Selected",
-      deleteTask,
     });
     res.status(202).json({
       status: 202,
@@ -237,6 +223,7 @@ export const deleteAllDataInFirestore = async (req, res) => {
             },
           });
         } else {
+          // if chats, backupChats, and memoryChats document not exist
           printOutput(deleteAllDataInFirestore.name, req.body, {
             status: 404,
             message: `No Such Document Match With ${userId}`,
@@ -247,6 +234,7 @@ export const deleteAllDataInFirestore = async (req, res) => {
           });
         }
       } else {
+        // if security code not match
         printOutput(deleteAllDataInFirestore, req.body, {
           status: 405,
           message: "Wrong Security Code",
@@ -254,6 +242,7 @@ export const deleteAllDataInFirestore = async (req, res) => {
         res.status(405).json({ status: 405, message: "Wrong Security Code" });
       }
     } else {
+      // if password collection not exist
       printOutput(deleteAllDataInFirestore.name, req.body, {
         state: 404,
         message: `No Such Document Match With passwordDeleteAllData`,
@@ -292,4 +281,27 @@ const deleteCollection = async (collectionPath, batchSize) => {
 
   await batch.commit();
   await deleteCollection(collectionPath, batchSize);
+};
+
+export const deletePPInFireStorage = (req, res) => {
+  const { oldPPFileName } = req.body;
+
+  try {
+    // delete Profile Picture
+    deleteFilesInFirebaseStorage(oldPPFileName, "images");
+
+    printOutput(deletePPInFireStorage.name, req.body, {
+      status: 202,
+      message: "Profile Picture Deleted",
+    });
+
+    res.status(202).json({
+      status: 202,
+      message: "Profile Picture Deleted",
+    });
+  } catch (error) {
+    printOutput(deletePPInFireStorage.name, req.body, { status: 500, error });
+
+    res.status(500).json({ status: 500, error });
+  }
 };

@@ -2,6 +2,11 @@ import { create } from "zustand";
 import defaultState from "./defaultState.json";
 
 export const useSettingsStore = create((set) => ({
+  loadingCompressImage: false,
+  setLoadingCompressImage: (loadingCompressImage) =>
+    set({ loadingCompressImage }),
+  loadingUploadImage: false,
+  setLoadingUploadImage: (loadingUploadImage) => set({ loadingUploadImage }),
   customPPFileName: "",
   setCustomPPFileName: (customPPFileName) => set({ customPPFileName }),
   customProfilePhotoUrl: false,

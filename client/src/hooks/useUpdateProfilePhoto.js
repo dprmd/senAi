@@ -1,10 +1,10 @@
 import { toast } from "@/components/ui/use-toast";
 import { useAppStore } from "@/store/appStore";
 import { useSettingsStore } from "@/store/useSettingsStore";
+import imageCompression from "browser-image-compression";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useShallow } from "zustand/react/shallow";
-import imageCompression from "browser-image-compression";
 
 export const useUpdateProfilePhoto = () => {
   // zustand
@@ -12,14 +12,18 @@ export const useUpdateProfilePhoto = () => {
   const [
     setProfilePhotoUrl,
     setCustomProfilePhotoUrl,
-    setCustomPPFileName,
     customPPFileName,
+    setCustomPPFileName,
+    setLoadingCompressImage,
+    setLoadingUploadImage,
   ] = useSettingsStore(
     useShallow((state) => [
       state.setProfilePhotoUrl,
       state.setCustomProfilePhotoUrl,
-      state.setCustomPPFileName,
       state.customPPFileName,
+      state.setCustomPPFileName,
+      state.setLoadingCompressImage,
+      state.setLoadingUploadImage,
     ]),
   );
 
@@ -40,15 +44,18 @@ export const useUpdateProfilePhoto = () => {
         useWebWorker: true,
       };
 
+      let compressAgain = true;
       let tempFile = file;
 
       try {
-        while (true) {
+        while (compressAgain) {
           const compressedFile = await imageCompression(tempFile, options);
           tempFile = compressedFile;
           if (compressedFile.size / 1024 > maxSize) {
+            compressAgain = true;
             continue;
           } else {
+            compressAgain = false;
             break;
           }
         }
@@ -70,12 +77,18 @@ export const useUpdateProfilePhoto = () => {
       const formData = new FormData();
 
       // compress image before upload
+      setLoadingCompressImage(true);
       const compressedBlob = await limitFileSize(blob);
+      setLoadingCompressImage(false);
 
       formData.append(
         "image",
         compressedBlob,
         `${userId}-profilePhotoUpdate.jpg`,
+      );
+      formData.append(
+        "oldPPFileName",
+        JSON.stringify({ oldPPFileName: customPPFileName }),
       );
 
       const { updateProfilePhoto, updatePPUrlInFirestore } = await import(
@@ -83,14 +96,15 @@ export const useUpdateProfilePhoto = () => {
       );
 
       // upload image
+      setLoadingUploadImage(true);
       const { PPFileName, newPPUrl } = await updateProfilePhoto(formData);
       const successUpdatePPUrl = await updatePPUrlInFirestore(
         userId,
         newPPUrl,
         PPFileName,
-        customPPFileName,
         true,
       );
+      setLoadingUploadImage(false);
 
       if (successUpdatePPUrl) {
         toast({

@@ -1,22 +1,24 @@
-import {
-  firestoreAddNewChatsEndPoint,
-  firestoreGetAllChatsEndPoint,
-  firestoreAddNewUserEndPoint,
-  firestoreDeleteAllChatsEndPoint,
-  firestoreUpdateNameEndPoint,
-  firestoreUploadSeenHistoryEndPoint,
-  firestoreDeleteSomeChatsEndPoint,
-  firestoreGetPermissionToDeleteAllDataEndPoint,
-  firestoreDeleteAllDataEndPoint,
-  firestoreAddNewVoiceChatEndPoint,
-  firestoreGetAllChatsMemoryEndPoint,
-  firestoreCheckAUser,
-  firestoreGetNameAndPPUrlEndPoint,
-  firestoreUpdateProfilePhotoEndPoint,
-  firestoreUpdatePPUrlEndPoint,
-} from "./serverSource";
-import { fetchJson, resetLocalStorage } from "../lib/myUtils";
 import { toast } from "@/components/ui/use-toast";
+import { t } from "i18next";
+import { fetchJson, resetLocalStorage } from "../lib/myUtils";
+import {
+  firestorageAddNewVoiceChatEndPoint,
+  firestorageDeletePPEndPoint,
+  firestorageUpdateProfilePhotoEndPoint,
+  firestoreAddNewChatsEndPoint,
+  firestoreAddNewUserEndPoint,
+  firestoreCheckAUser,
+  firestoreDeleteAllChatsEndPoint,
+  firestoreDeleteAllDataEndPoint,
+  firestoreDeleteSomeChatsEndPoint,
+  firestoreGetAllChatsEndPoint,
+  firestoreGetAllChatsMemoryEndPoint,
+  firestoreGetNameAndPPUrlEndPoint,
+  firestoreGetPermissionToDeleteAllDataEndPoint,
+  firestoreUpdateNameEndPoint,
+  firestoreUpdatePPUrlEndPoint,
+  firestoreUploadSeenHistoryEndPoint,
+} from "./serverSource";
 
 // GET
 
@@ -38,8 +40,11 @@ export const getAllChatsFromFirestore = async (userId) => {
   if (chats.status === 200) {
     return chats.chats;
   } else if (chats.status === 404) {
-    const newUserId = await addNewUserToFirestoreIfNotExists();
-    return await getAllChatsFromFirestore(newUserId);
+    toast({
+      description: t("userid_not_registered"),
+      duration: 2000,
+      variant: "destructive",
+    });
   } else {
     console.log(chats);
   }
@@ -53,8 +58,11 @@ export const getAllChatsMemoryFromFirestore = async (userId) => {
   if (chatsMemory.status === 200) {
     return chatsMemory.chatsMemory;
   } else if (chatsMemory.status === 404) {
-    const newUserId = await addNewUserToFirestoreIfNotExists();
-    return getAllChatsMemoryFromFirestore(newUserId);
+    toast({
+      description: t("userid_not_registered"),
+      duration: 2000,
+      variant: "destructive",
+    });
   } else {
     console.log(chatsMemory);
   }
@@ -68,8 +76,11 @@ export const getNameAndPPUrl = async (userId) => {
   if (gettedData.status === 200) {
     return gettedData;
   } else if (gettedData.status === 404) {
-    const newUserId = await addNewUserToFirestoreIfNotExists();
-    return await getNameAndPPUrl(newUserId);
+    toast({
+      description: t("userid_not_registered"),
+      duration: 2000,
+      variant: "destructive",
+    });
   } else {
     console.log(gettedData);
   }
@@ -84,7 +95,7 @@ export const getPermissionToDeleteAllData = async (securityCode) => {
     return getPermission.permits;
   } else if (getPermission.status === 404) {
     toast({
-      description: "Error : Password Collection Not Exist",
+      description: t("no_password_collection"),
       duration: 3000,
       variant: "destructive",
     });
@@ -147,19 +158,18 @@ export const addNewChatsToFirestore = async (
   if (savedChats.status === 201) {
     return;
   } else if (savedChats.status === 404) {
-    const newUserId = addNewUserToFirestoreIfNotExists();
-    return await addNewChatsToFirestore(
-      newUserId,
-      newChatFromUser,
-      newChatFromAi,
-    );
+    toast({
+      description: t("userid_not_registered"),
+      duration: 2000,
+      variant: "destructive",
+    });
   } else {
     console.log(savedChats);
   }
 };
 
 export const addNewVoiceChatToFireStorage = async (formData) => {
-  const uploadTask = await fetchJson(firestoreAddNewVoiceChatEndPoint, {
+  const uploadTask = await fetchJson(firestorageAddNewVoiceChatEndPoint, {
     method: "POST",
     body: formData,
   });
@@ -255,6 +265,22 @@ export const deleteAllDataInFirestore = async (
   }
 };
 
+export const deletePPInFireStorage = async (oldPPFileName) => {
+  const deletePP = await fetchJson(firestorageDeletePPEndPoint, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ oldPPFileName }),
+  });
+
+  if (deletePP.status === 202) {
+    return;
+  } else {
+    console.log(deletePP);
+  }
+};
+
 // PUT
 
 export const updateName = async (userId, newName) => {
@@ -269,8 +295,11 @@ export const updateName = async (userId, newName) => {
   if (updatedName.status === 202) {
     return updatedName;
   } else if (updatedName.status === 404) {
-    const newUserId = await addNewUserToFirestoreIfNotExists();
-    return await updateName(newUserId, newName);
+    toast({
+      description: t("userid_not_registered"),
+      duration: 2000,
+      variant: "destructive",
+    });
   } else {
     console.log(updatedName);
   }
@@ -278,7 +307,7 @@ export const updateName = async (userId, newName) => {
 
 export const updateProfilePhoto = async (formData) => {
   const updatedProfilePhoto = await fetchJson(
-    firestoreUpdateProfilePhotoEndPoint,
+    firestorageUpdateProfilePhotoEndPoint,
     {
       method: "PUT",
       body: formData,
@@ -296,7 +325,6 @@ export const updatePPUrlInFirestore = async (
   userId,
   newPPUrl,
   newPPFileName,
-  oldPPFileName,
   customPPUrl,
 ) => {
   const updatePPUrl = await fetchJson(firestoreUpdatePPUrlEndPoint, {
@@ -308,7 +336,6 @@ export const updatePPUrlInFirestore = async (
       userId,
       newPPUrl,
       newPPFileName,
-      oldPPFileName,
       customPPUrl,
     }),
   });

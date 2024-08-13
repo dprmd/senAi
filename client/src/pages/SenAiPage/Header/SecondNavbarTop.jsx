@@ -1,11 +1,12 @@
-import { useState } from "react";
-import { useShallow } from "zustand/react/shallow";
-import { useTranslation } from "react-i18next";
-import { useChatsStore } from "@/store/useChatsStore";
-import ReturnButton from "@/components/composable/ReturnButton";
 import AlertDialogNormal from "@/components/composable/AlertDialogNormal";
+import ReturnButton from "@/components/composable/ReturnButton";
 import DynamicSvgComponent from "@/components/svg/DynamicSvg";
-import { useClearHoldChats, useDeleteSomeChats } from "@/hooks/useUtils";
+import { useDeleteSomeChats } from "@/hooks/Chats/useDeleteSomChats";
+import { useClearHoldChats } from "@/hooks/HoldChats/useClearHoldChats";
+import { useChatsStore } from "@/store/useChatsStore";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useShallow } from "zustand/react/shallow";
 
 const SecondNavbarTop = () => {
   // hooks

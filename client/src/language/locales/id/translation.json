@@ -81,8 +81,11 @@
   "loading_upload_image": "Mengunggah Gambar",
   "error_compressing_image": "Kompress Image Error",
   "no_2d_context": "Browsermu Tidak Memiliki 2d Context",
-  "update_pp_success": "Foto Profile Di Update",
-  "update_pp_failed": "Gagal Mengupdate Foto Profile",
+  "update_pp_success": "Foto Profile Di Perbarui",
+  "update_pp_failed": "Gagal Memperbarui Foto Profile",
   "upload_pp": "Uploading",
-  "delete_pp": "Hapus foto profile ?"
+  "delete_pp": "Hapus foto profile ?",
+  "deleted_pp": "Foto profile di hapus",
+  "userid_not_registered": "UserId Tidak Terdaftar",
+  "no_password_collection": "Tidak ada password collection"
 }

@@ -1,15 +1,16 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useShallow } from "zustand/react/shallow";
-import { MoonStar, SunIcon } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { useSettingsStore } from "@/store/useSettingsStore";
-import { useChatsStore } from "@/store/useChatsStore";
-import { useDeleteAllChats, useSwitchTheme } from "@/hooks/useUtils";
-import ProfilePhoto from "@/pages/SenAiPage/Header/ProfilePhoto";
-import SenStatus from "@/pages/SenAiPage/Header/SenStatus";
 import AlertDialogNormal from "@/components/composable/AlertDialogNormal";
 import DynamicSvgComponent from "@/components/svg/DynamicSvg";
+import { useDeleteAllChats } from "@/hooks/Chats/useDeleteAllChats";
+import { useSwitchTheme } from "@/hooks/useUtils";
+import ProfilePhoto from "@/pages/SenAiPage/Header/ProfilePhoto";
+import SenStatus from "@/pages/SenAiPage/Header/SenStatus";
+import { useChatsStore } from "@/store/useChatsStore";
+import { useSettingsStore } from "@/store/useSettingsStore";
+import { MoonStar, SunIcon } from "lucide-react";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import { useShallow } from "zustand/react/shallow";
 // shadcn ui
 import {
   DropdownMenu,

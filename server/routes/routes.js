@@ -1,17 +1,18 @@
 /* eslint-disable no-undef */
 import { Router } from "express";
+import fs from "fs";
+import multer from "multer";
 import {
-  getGroqReply,
   getGroqModels,
+  getGroqReply,
   getGroqTranscription,
 } from "../controller/groqController.js";
-import multer from "multer";
-import fs from "fs";
 
 // DELETE
 import {
   deleteAllChatsInFirestore,
   deleteAllDataInFirestore,
+  deletePPInFireStorage,
   deleteSomeChatsInFirestore,
 } from "../controller/firebaseControllerDelete.js";
 
@@ -85,6 +86,7 @@ router.post("/uploadSeenHistory", uploadSeenHistory);
 router.delete("/deleteAllChats", deleteAllChatsInFirestore);
 router.delete("/deleteSomeChats", deleteSomeChatsInFirestore);
 router.delete("/deleteAllData", deleteAllDataInFirestore);
+router.delete("/deleteProfilePicture", deletePPInFireStorage);
 
 // PUT
 router.put("/updateName", updateName);

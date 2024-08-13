@@ -144,3 +144,7 @@ export const getDeviceType = () => {
   }
   return "Desktop";
 };
+
+// export const checkLS = (value) => {
+
+// }

@@ -10,18 +10,23 @@ export const firestoreCheckAUser = `${serverSource}/checkAUser`;
 export const firestoreGetAllChatsEndPoint = `${serverSource}/getAllChats`;
 export const firestoreGetAllChatsMemoryEndPoint = `${serverSource}/getAllChatsMemory`;
 export const firestoreGetNameAndPPUrlEndPoint = `${serverSource}/getNameAndPPUrl`;
+export const firestoreGetPermissionToDeleteAllDataEndPoint = `${serverSource}/getPermissionToDeleteAllData`;
 
+// POST
 export const groqGetReplyEndPoint = `${serverSource}/getGroqReply`;
 export const groqGetTranscriptionEndPoint = `${serverSource}/getGroqTranscription`;
 export const firestoreAddNewUserEndPoint = `${serverSource}/addNewUser`;
 export const firestoreAddNewChatsEndPoint = `${serverSource}/addNewChats`;
+export const firestoreUploadSeenHistoryEndPoint = `${serverSource}/uploadSeenHistory`;
+export const firestorageAddNewVoiceChatEndPoint = `${serverSource}/addNewVoiceChat`;
+
+// DELETE
 export const firestoreDeleteAllChatsEndPoint = `${serverSource}/deleteAllChats`;
 export const firestoreDeleteSomeChatsEndPoint = `${serverSource}/deleteSomeChats`;
-
-export const firestoreUpdateNameEndPoint = `${serverSource}/updateName`;
-export const firestoreUploadSeenHistoryEndPoint = `${serverSource}/uploadSeenHistory`;
-export const firestoreGetPermissionToDeleteAllDataEndPoint = `${serverSource}/getPermissionToDeleteAllData`;
 export const firestoreDeleteAllDataEndPoint = `${serverSource}/deleteAllData`;
-export const firestoreAddNewVoiceChatEndPoint = `${serverSource}/addNewVoiceChat`;
-export const firestoreUpdateProfilePhotoEndPoint = `${serverSource}/updateProfilePhoto`;
+export const firestorageDeletePPEndPoint = `${serverSource}/deleteProfilePicture`;
+
+// PUT
+export const firestoreUpdateNameEndPoint = `${serverSource}/updateName`;
+export const firestorageUpdateProfilePhotoEndPoint = `${serverSource}/updateProfilePhoto`;
 export const firestoreUpdatePPUrlEndPoint = `${serverSource}/updatePPUrl`;

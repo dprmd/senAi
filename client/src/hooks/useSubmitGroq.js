@@ -1,16 +1,16 @@
-import { useShallow } from "zustand/react/shallow";
-import { useTranslation } from "react-i18next";
-import { useAppStore } from "../store/appStore";
+import { getGroqReply } from "@/controller/groq";
 import { useChatsStore } from "@/store/useChatsStore";
 import { useSettingsStore } from "@/store/useSettingsStore";
-import useOnlineStatus from "./useOnlineStatus";
-import { useInstruction } from "./useUtils";
-import { sleep } from "../lib/generateTime";
-import { getGroqReply } from "@/controller/groq";
+import { useTranslation } from "react-i18next";
+import { useShallow } from "zustand/react/shallow";
 import { addNewChatsToFirestore } from "../controller/CRUDFirestore";
+import { sleep } from "../lib/generateTime";
+import { useAppStore } from "../store/appStore";
+import { useInstruction } from "./Chats/useInstruction";
+import useOnlineStatus from "./useOnlineStatus";
 
 export const useSubmitGroq = () => {
-  // hooks
+  // zustand
   const [setChats, getChats, setChatsMemory, getChatsMemory] = useChatsStore(
     useShallow((state) => [
       state.setChats,
@@ -37,6 +37,8 @@ export const useSubmitGroq = () => {
       state.setGroqFetchProses,
     ]),
   );
+
+  // hooks
   const online = useOnlineStatus();
   const { t } = useTranslation();
   const instruction = useInstruction();
@@ -51,9 +53,14 @@ export const useSubmitGroq = () => {
       time: new Date().getTime(),
       message: messageFromUser,
     };
+
+    // reset message from user state
     setMessageFromUser("");
 
+    // add chatFrom user to state chats
     setChats([...getChats(), chatFromUser]);
+
+    // add more keys and value for audio type
     if (type === "audio") {
       chatFromUser.message = messageFromUser.text;
       chatFromUser.downloadUrl = messageFromUser.downloadUrl;
@@ -100,9 +107,8 @@ export const useSubmitGroq = () => {
         },
       ]);
 
-      // comment this when firebase is error
+      // add new chats and memory chats will store by server
       addNewChatsToFirestore(userId, chatFromUser, chatFromAi);
-      // comment this when firebase is error
     } else {
       chatFromAi.time = new Date().getTime();
       chatFromAi.message = t("senAi_cant_receive_message");

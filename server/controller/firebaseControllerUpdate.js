@@ -1,8 +1,8 @@
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { firestore, storage } from "./firebaseInit.js";
 import { printOutput } from "../lib/utils.js";
 import { addFileToFirebaseStorage } from "./firebaseController.js";
-import { deleteObject, ref } from "firebase/storage";
+import { deleteFilesInFirebaseStorage } from "./firebaseControllerDelete.js";
+import { firestore } from "./firebaseInit.js";
 
 export const updateName = async (req, res) => {
   const { userId, newName } = req.body;
@@ -12,7 +12,7 @@ export const updateName = async (req, res) => {
     const userSnap = await getDoc(userRef);
 
     if (userSnap.exists()) {
-      updateDoc(userRef, {
+      await updateDoc(userRef, {
         name: newName,
       });
 
@@ -47,12 +47,17 @@ export const updateName = async (req, res) => {
 };
 
 export const updateProfilePhoto = async (req, res) => {
+  const { oldPPFileName } = JSON.parse(req.body.oldPPFileName);
   const file = req.file;
   try {
+    // upload image
     const { uniqueFileName, downloadUrl } = await addFileToFirebaseStorage(
       file,
       "images",
     );
+
+    // delete previous image
+    deleteFilesInFirebaseStorage(oldPPFileName, "images");
 
     printOutput(updateProfilePhoto.name, req.file, {
       status: 201,
@@ -71,8 +76,7 @@ export const updateProfilePhoto = async (req, res) => {
 };
 
 export const updatePPUrl = async (req, res) => {
-  const { userId, newPPUrl, newPPFileName, oldPPFileName, customPPUrl } =
-    req.body;
+  const { userId, newPPUrl, newPPFileName, customPPUrl } = req.body;
 
   const userRef = doc(firestore, "users", userId);
   try {
@@ -84,27 +88,7 @@ export const updatePPUrl = async (req, res) => {
         PPUrl: newPPUrl,
         PPFileName: newPPFileName,
       });
-      // jika customPPUrl true = akan mengupdate photo , maka hapus photo sebelumnya
-      if (customPPUrl) {
-        const imageFileRef = ref(storage, `images/${oldPPFileName}`);
-        deleteObject(imageFileRef)
-          .then(() => {
-            console.log("Delete Profile Photo");
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-        // jika customPPUrl false = akan menghapus photo , maka hapus photo terkait
-      } else {
-        const imageFileRef = ref(storage, `images/${newPPFileName}`);
-        deleteObject(imageFileRef)
-          .then(() => {
-            console.log("Delete Profile Photo");
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      }
+
       printOutput(updatePPUrl.name, req.body, {
         status: 202,
         message: `Updated Profile Photo`,

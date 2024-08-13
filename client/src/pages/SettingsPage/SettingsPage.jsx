@@ -1,78 +1,39 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useShallow } from "zustand/react/shallow";
-import { useTranslation } from "react-i18next";
-import { useAppStore } from "../../store/appStore";
+import { useSettingsPageFetch } from "@/hooks/Fetcher/useSettingsPageFetch";
 import { useSettingsStore } from "@/store/useSettingsStore";
 import { motion } from "framer-motion";
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import { useShallow } from "zustand/react/shallow";
+import SettingsTop from "../../components/composable/SettingsTop";
+import SettingFieldBotLanguagePreferences from "./SettingFieldBotLanguagePreferences";
 import SettingFieldImage from "./SettingFieldImage";
-import SettingFieldUser from "./SettingFieldUser";
+import SettingFieldLanguage from "./SettingFieldLanguage";
 import SettingFieldModel from "./SettingFieldModel";
 import SettingFieldName from "./SettingFieldName";
+import SettingFieldUser from "./SettingFieldUser";
 import SettingField from "./SettingsField";
-import SettingsTop from "../../components/composable/SettingsTop";
-import SettingFieldLanguage from "./SettingFieldLanguage";
-import SettingFieldBotLanguagePreferences from "./SettingFieldBotLanguagePreferences";
 
 const SettingsPage = () => {
   // zustand
-  const [setUserId] = useAppStore(useShallow((state) => [state.setUserId]));
   const [
-    setName,
-    setOldName,
-    setProfilePhotoUrl,
     settingsComponentDidFetch,
     setSettingsComponentDidFetch,
     settingModelComponentDidFetch,
-    setSettingModelComponentDidFetch,
-    setCurrentModels,
-    setCustomProfilePhotoUrl,
-    setCustomPPFileName,
   ] = useSettingsStore(
     useShallow((state) => [
-      state.setName,
-      state.setOldName,
-      state.setProfilePhotoUrl,
       state.settingsComponentDidFetch,
       state.setSettingsComponentDidFetch,
       state.settingModelComponentDidFetch,
-      state.setSettingModelComponentDidFetch,
-      state.setCurrentModels,
-      state.setCustomProfilePhotoUrl,
-      state.setCustomPPFileName,
     ]),
   );
 
   // hooks
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const settingsPageFetch = useSettingsPageFetch();
 
   useEffect(() => {
-    const initFetch = async () => {
-      if (!settingModelComponentDidFetch) {
-        const { getGroqModels } = await import("../../controller/groq");
-        getGroqModels().then((models) => {
-          setCurrentModels(models);
-          setSettingModelComponentDidFetch(true);
-        });
-      }
-
-      const { addNewUserToFirestoreIfNotExists, getNameAndPPUrl } =
-        await import("../../controller/CRUDFirestore");
-
-      const getUserId = await addNewUserToFirestoreIfNotExists();
-      setUserId(getUserId);
-      localStorage.setItem("senAi-userId", getUserId);
-
-      const { name, PPUrl, customPPUrl, PPFileName } =
-        await getNameAndPPUrl(getUserId);
-      setOldName(name);
-      setName(name);
-      setProfilePhotoUrl(PPUrl);
-      setCustomProfilePhotoUrl(customPPUrl);
-      setCustomPPFileName(PPFileName);
-    };
-
     const whenEscClicked = (e) => {
       if (e.keyCode === 27) {
         navigate("/");
@@ -81,7 +42,7 @@ const SettingsPage = () => {
 
     if (!settingsComponentDidFetch) {
       // comment this when firebase is error
-      initFetch();
+      settingsPageFetch();
       // comment this when firebase is error
       setSettingsComponentDidFetch(true);
     }

@@ -1,9 +1,10 @@
-import Groq from "groq-sdk";
+/* eslint-disable no-undef */
 import { config } from "dotenv";
+import fs from "fs";
+import Groq from "groq-sdk";
+import { filterModels } from "../lib/utils.js";
 import { modelDescription } from "./modelDescription.js";
 config();
-import { filterModels } from "../lib/utils.js";
-import fs from "fs";
 
 export const getGroqReply = async (req, res) => {
   const apiKeys = process.env.GROQ_API_KEYS.split(",");

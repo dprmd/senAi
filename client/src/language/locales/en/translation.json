@@ -81,8 +81,11 @@
   "error_compressing_image": "Error While Compressing Image",
   "image_size_too_large": "Maximum image size is 200 kb",
   "no_2d_context": "Your browser does not have 2d Context",
-  "update_pp_success": "Update Profile Photo Success",
-  "update_pp_failed": "Update Profile Photo Failed",
+  "update_pp_success": "Successfully updated profile photo",
+  "update_pp_failed": "Failed to update profile photo",
   "upload_pp": "Mengupload Photo",
-  "delete_pp": "remove profile photo ?"
+  "delete_pp": "remove profile photo ?",
+  "deleted_pp": "Profile photo removed",
+  "userid_not_registered": "UserId Not Registered",
+  "no_password_collection": "Password Collection does not exist"
 }

@@ -1,13 +1,14 @@
-import { useState, useRef, useEffect } from "react";
-import { useMobileDeviceType } from "@/hooks/useUtils";
-import { useTranslation } from "react-i18next";
 import DynamicSvgComponent from "@/components/svg/DynamicSvg";
 import { toast } from "@/components/ui/use-toast";
-import { useNavigate } from "react-router-dom";
+import { useMobileDeviceType } from "@/hooks/useUtils";
 import { useSettingsStore } from "@/store/useSettingsStore";
+import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { useShallow } from "zustand/react/shallow";
-import { useAppStore } from "@/store/appStore";
 // shadcn ui
+import AlertDialogNormal from "@/components/composable/AlertDialogNormal";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -16,8 +17,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "../../components/ui/alert-dialog";
-import AlertDialogNormal from "@/components/composable/AlertDialogNormal";
-import { Skeleton } from "@/components/ui/skeleton";
 
 const SettingFieldImage = () => {
   // zustand
@@ -42,7 +41,6 @@ const SettingFieldImage = () => {
       state.setCustomPPFileName,
     ]),
   );
-  const [userId] = useAppStore(useShallow((state) => [state.userId]));
 
   // hooks
   const { t } = useTranslation();
@@ -106,21 +104,23 @@ const SettingFieldImage = () => {
   };
 
   const handleDeletePP = async () => {
-    // ubah customPPUrl di firestore menjadi false
-    const { updatePPUrlInFirestore } = await import(
+    // delete PP
+    const { deletePPInFireStorage } = await import(
       "@/controller/CRUDFirestore"
     );
-    await updatePPUrlInFirestore(
-      userId,
-      "img/haku.jpeg",
-      customPPFileName,
-      "",
-      false,
-    );
+    await deletePPInFireStorage(customPPFileName);
+
+    // reset state
     setCustomProfilePhotoUrl(false);
     setCustomPPFileName("");
     setOpenPhotoPreviewSmall(false);
     setProfilePhotoUrl("img/haku.jpeg");
+    localStorage.setItem("senAi-love", "no");
+    setIsLove(false);
+    toast({
+      description: t("deleted_pp"),
+      duration: 3000,
+    });
   };
 
   useEffect(() => {

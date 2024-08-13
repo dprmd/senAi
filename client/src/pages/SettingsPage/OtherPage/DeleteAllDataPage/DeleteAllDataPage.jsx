@@ -1,24 +1,25 @@
-import { useState, useEffect } from "react";
-import { useShallow } from "zustand/react/shallow";
-import { Loader2 } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { motion } from "framer-motion";
+import AlertDialogNormal from "@/components/composable/AlertDialogNormal";
+import Loading from "@/components/composable/Loading";
+import SettingsTop from "@/components/composable/SettingsTop";
 import { useAppStore } from "@/store/appStore";
 import { useChatsStore } from "@/store/useChatsStore";
-import SettingsTop from "@/components/composable/SettingsTop";
-import Loading from "@/components/composable/Loading";
-import AlertDialogNormal from "@/components/composable/AlertDialogNormal";
+import { motion } from "framer-motion";
+import { Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useShallow } from "zustand/react/shallow";
 // shadcn ui
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSeparator,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/components/ui/use-toast";
+import { useRef } from "react";
 
 const SettingOtherDeleteAllData = () => {
   // hooks
@@ -28,7 +29,8 @@ const SettingOtherDeleteAllData = () => {
   const [userId] = useAppStore(useShallow((state) => [state.userId]));
   const { t } = useTranslation();
 
-  // state
+  // state and ref
+  const mainRef = useRef(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [option, setOption] = useState({
     withChats: false,
@@ -45,14 +47,17 @@ const SettingOtherDeleteAllData = () => {
   const handleCheck = async () => {
     if (securityCode.length < maxLengthSecurityCode) return;
 
+    // dynamic import
     const { getPermissionToDeleteAllData } = await import(
       "@/controller/CRUDFirestore"
     );
     const { sleep } = await import("@/lib/generateTime");
+
     setIsChecking(true);
     await sleep(500);
     const permission = await getPermissionToDeleteAllData(securityCode);
     await sleep(500);
+
     if (permission) {
       setDeleteAllDataDialog(true);
     } else {
@@ -67,22 +72,19 @@ const SettingOtherDeleteAllData = () => {
       !option.withBackupChats &&
       !option.withLastSeenHistory &&
       !option.withDestroyAllCollections
-    )
+    ) {
       return;
+    }
+
+    // delete begin
     setIsDeleting(true);
+    setDeleteAllDataDialog(false);
+
+    // reset chats and chatsMemory state
     if (option.withChats && option.withBackupChats) {
       setChats([]);
       setChatsMemory([]);
     }
-    setDeleteAllDataDialog(false);
-    const { deleteAllDataInFirestore } = await import(
-      "@/controller/CRUDFirestore"
-    );
-    const message = await deleteAllDataInFirestore(
-      userId,
-      securityCode,
-      option,
-    );
 
     // reset all state
     setSecurityCode("");
@@ -92,21 +94,30 @@ const SettingOtherDeleteAllData = () => {
       withLastSeenHistory: false,
     });
 
+    // dynamic import and fetch begin
+    const { deleteAllDataInFirestore } = await import(
+      "@/controller/CRUDFirestore"
+    );
+
+    const message = await deleteAllDataInFirestore(
+      userId,
+      securityCode,
+      option,
+    );
+
     // tell user
     toast({
       title: t("deleted_all_data"),
       description: message,
       duration: 2500,
     });
+
     setIsDeleting(false);
   };
 
   useEffect(() => {
     const height = window.innerHeight;
-    const settingOtherClearAllData = document.querySelector(
-      ".settingOtherClearAllData",
-    );
-    settingOtherClearAllData.style.minHeight = `${height - 60}px`;
+    mainRef.current.style.minHeight = `${height - 60}px`;
   }, []);
 
   return (
@@ -121,7 +132,10 @@ const SettingOtherDeleteAllData = () => {
           title={t("delete_all_data_title")}
           urlBack="/settings/other"
         />
-        <main className="settingOtherClearAllData flex flex-col items-center justify-start py-10">
+        <main
+          className="flex flex-col items-center justify-start py-10"
+          ref={mainRef}
+        >
           <div className="text-center">
             <span className="text-xl font-bold" id="enter-security-code">
               {t("enter_security_code")}

@@ -1,11 +1,12 @@
-import { useEffect, lazy, Suspense, useState } from "react";
-import { useShallow } from "zustand/react/shallow";
-import { useTranslation } from "react-i18next";
+import ChatBubbleSkeleton from "@/components/Skeleton/ChatBubbleSkeleton";
+import { useSenAiPageFetch } from "@/hooks/Fetcher/useSenAiPageFetch";
+import { useEscClicked } from "@/hooks/useUtils";
 import { useAppStore } from "@/store/appStore";
 import { useChatsStore } from "@/store/useChatsStore";
-import { useEscClicked, useSenAiPageFetch } from "@/hooks/useUtils";
-import ChatBubbleSkeleton from "@/components/Skeleton/ChatBubbleSkeleton";
+import { lazy, Suspense, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
+import { useShallow } from "zustand/react/shallow";
 import ScrollToBottom from "./ScrollToBottom";
 const ChatBubble = lazy(() => import("./ChatBubble"));
 

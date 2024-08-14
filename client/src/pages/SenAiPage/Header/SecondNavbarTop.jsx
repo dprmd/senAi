@@ -1,7 +1,7 @@
 import AlertDialogNormal from "@/components/composable/AlertDialogNormal";
 import ReturnButton from "@/components/composable/ReturnButton";
 import DynamicSvgComponent from "@/components/svg/DynamicSvg";
-import { useDeleteSomeChats } from "@/hooks/Chats/useDeleteSomChats";
+import { useDeleteSomeChats } from "@/hooks/Chats/useDeleteSomeChats";
 import { useClearHoldChats } from "@/hooks/HoldChats/useClearHoldChats";
 import { useChatsStore } from "@/store/useChatsStore";
 import { useState } from "react";

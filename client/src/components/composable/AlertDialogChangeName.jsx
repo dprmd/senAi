@@ -16,6 +16,8 @@ import {
 import { Input } from "../ui/input";
 import { toast } from "../ui/use-toast";
 
+const MAX_NAME_LENGTH = 30;
+
 const AlertDialogChangeName = ({ open, setOpen }) => {
   // zustand
   const [userId] = useAppStore(useShallow((state) => [state.userId]));
@@ -62,7 +64,7 @@ const AlertDialogChangeName = ({ open, setOpen }) => {
               </AlertDialogTitle>
               <AlertDialogDescription className="relative">
                 <Input
-                  maxLength={25}
+                  maxLength={MAX_NAME_LENGTH}
                   value={name}
                   onChange={(e) => {
                     setName(e.target.value);
@@ -70,7 +72,7 @@ const AlertDialogChangeName = ({ open, setOpen }) => {
                   className="px-0 dark:text-slate-100"
                 />
                 <span className="absolute right-2 top-[50%] translate-y-[-50%]">
-                  {name.length === 0 ? "" : 25 - name.length}
+                  {name.length === 0 ? "" : MAX_NAME_LENGTH - name.length}
                 </span>
               </AlertDialogDescription>
             </AlertDialogHeader>

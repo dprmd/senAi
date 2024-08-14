@@ -1,13 +1,14 @@
-import { useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { useShallow } from "zustand/react/shallow";
-import { useTranslation } from "react-i18next";
-import { motion } from "framer-motion";
-import { useSettingsStore } from "@/store/useSettingsStore";
 import SettingsTop from "@/components/composable/SettingsTop";
+import { useSettingsStore } from "@/store/useSettingsStore";
+import { motion } from "framer-motion";
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { Link, useNavigate } from "react-router-dom";
+import { useShallow } from "zustand/react/shallow";
 // shadcn ui
-import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { setLS } from "@/lib/myUtils";
 
 const SettingOthersPage = () => {
   // hooks
@@ -48,11 +49,11 @@ const SettingOthersPage = () => {
               checked={enterIsSend === "yes"}
               onCheckedChange={() => {
                 if (enterIsSend === "yes") {
-                  localStorage.setItem("senAi-enterIsSend", "no");
+                  setLS("senAi-enterIsSend", "no");
                   setEnterIsSend("no");
                 }
                 if (enterIsSend === "no") {
-                  localStorage.setItem("senAi-enterIsSend", "yes");
+                  setLS("senAi-enterIsSend", "yes");
                   setEnterIsSend("yes");
                 }
               }}
@@ -69,11 +70,11 @@ const SettingOthersPage = () => {
               aria-labelledby="dark-mode-toggle"
               onCheckedChange={() => {
                 if (darkMode) {
-                  localStorage.setItem("senAi-theme", "light");
+                  setLS("senAi-theme", "light");
                   setDarkMode(false);
                 }
                 if (!darkMode) {
-                  localStorage.setItem("senAi-theme", "dark");
+                  setLS("senAi-theme", "dark");
                   setDarkMode(true);
                 }
               }}

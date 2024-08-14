@@ -9,11 +9,11 @@ export const useInstruction = () => {
 
   if (botLanguage === "Auto") {
     instruction = "Please Answer Me";
-  }
-  if (botLanguage === "English") {
+  } else if (botLanguage === "English") {
     instruction = "Please Answer Me In English Language";
-  }
-  if (botLanguage === "Indonesia") {
+  } else if (botLanguage === "Indonesia (Formal)") {
+    instruction = "Please Answer Me In Formal Indonesian Language";
+  } else if (botLanguage === "Indonesia (Informal)") {
     instruction = "Please Answer Me In Informal Indonesian Language";
   }
 

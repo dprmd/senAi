@@ -1,4 +1,5 @@
 import { toast } from "@/components/ui/use-toast";
+import { setLS } from "@/lib/myUtils";
 import { useAppStore } from "@/store/appStore";
 import { useSettingsStore } from "@/store/useSettingsStore";
 import { useShallow } from "zustand/react/shallow";
@@ -59,7 +60,7 @@ export const useSettingsPageFetch = () => {
 
       if (shouldCheckAUser) {
         const getUserId = await addNewUserToFirestoreIfNotExists();
-        localStorage.setItem("senAi-userId", getUserId);
+        setLS("senAi-userId", getUserId);
         setUserId(getUserId);
         setShouldCheckAUser(false);
       }

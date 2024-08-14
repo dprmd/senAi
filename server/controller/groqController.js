@@ -11,11 +11,12 @@ export const getGroqReply = async (req, res) => {
   const { apiKeyIndex, message, model, systemInstruction, conversation } =
     req.body;
   const apiKey = apiKeys[Number(apiKeyIndex)];
-  const conversationMemory = conversation.map(({ time, ...rest }) => rest);
+  const conversationMemory = conversation.map(({ time, ...rest }) => {
+    time;
+    return rest;
+  });
 
   const groq = new Groq({ apiKey });
-  const customInstruction =
-    "if you are asked your name or called sen, remember your name is sen, if asked who your maker is then answer my maker is adi permadi";
 
   try {
     const requestToGroq = async (message, model) => {
@@ -24,7 +25,7 @@ export const getGroqReply = async (req, res) => {
           ...conversationMemory,
           {
             role: "system",
-            content: `${customInstruction} ${systemInstruction}`,
+            content: systemInstruction,
           },
           {
             role: "user",

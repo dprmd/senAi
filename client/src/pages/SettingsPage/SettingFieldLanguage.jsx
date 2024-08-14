@@ -1,12 +1,13 @@
+import AlertDialogNormal from "@/components/composable/AlertDialogNormal";
 import { useState } from "react";
-import { useShallow } from "zustand/react/shallow";
 import { useTranslation } from "react-i18next";
+import { useShallow } from "zustand/react/shallow";
 import { useSettingsStore } from "../../store/useSettingsStore";
 import SettingField from "./SettingsField";
-import AlertDialogNormal from "@/components/composable/AlertDialogNormal";
 // shadcn ui
-import { RadioGroup, RadioGroupItem } from "../../components/ui/radio-group";
+import { setLS } from "@/lib/myUtils";
 import { Label } from "../../components/ui/label";
+import { RadioGroup, RadioGroupItem } from "../../components/ui/radio-group";
 
 const SettingFieldLanguage = () => {
   // hooks
@@ -52,8 +53,8 @@ const SettingFieldLanguage = () => {
           setTempLanguageLabel(languageLabel);
         }}
         handleContinue={() => {
-          localStorage.setItem("senAi-language", tempLanguage);
-          localStorage.setItem("senAi-languageLabel", tempLanguageLabel);
+          setLS("senAi-language", tempLanguage);
+          setLS("senAi-languageLabel", tempLanguageLabel);
           setLanguage(tempLanguage);
           setLanguageLabel(tempLanguageLabel);
         }}

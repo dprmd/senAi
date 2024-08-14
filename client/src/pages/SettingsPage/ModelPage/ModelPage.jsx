@@ -1,11 +1,12 @@
-import { useEffect } from "react";
-import { useShallow } from "zustand/react/shallow";
+import SettingsTop from "@/components/composable/SettingsTop";
 import { useSettingsStore } from "@/store/useSettingsStore";
 import { motion } from "framer-motion";
-import SettingsTop from "@/components/composable/SettingsTop";
+import { useEffect } from "react";
+import { useShallow } from "zustand/react/shallow";
 // shadcn ui
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { setLS } from "@/lib/myUtils";
 
 const SettingsModelPage = () => {
   // hooks
@@ -55,7 +56,7 @@ const SettingsModelPage = () => {
         <RadioGroup
           defaultValue={model}
           onValueChange={(e) => {
-            localStorage.setItem("senAi-model", e);
+            setLS("senAi-model", e);
             setModel(e);
           }}
         >

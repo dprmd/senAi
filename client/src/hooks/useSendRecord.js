@@ -1,12 +1,13 @@
+import { addNewVoiceChatToFireStorage } from "@/controller/CRUDFirestore";
+import { getGroqTranscription } from "@/controller/groq";
+import { getLS } from "@/lib/myUtils";
 import { useAppStore } from "@/store/appStore";
 import { useRecordStore } from "@/store/useRecordStore";
-import { useShallow } from "zustand/react/shallow";
-import { useSubmitGroq } from "./useSubmitGroq";
-import { toast } from "../components/ui/use-toast";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { getGroqTranscription } from "@/controller/groq";
-import { addNewVoiceChatToFireStorage } from "@/controller/CRUDFirestore";
+import { useShallow } from "zustand/react/shallow";
+import { toast } from "../components/ui/use-toast";
+import { useSubmitGroq } from "./useSubmitGroq";
 
 export const useSendRecord = (audioPlaybackRef, seekBar) => {
   // hooks
@@ -89,7 +90,7 @@ export const useSendRecord = (audioPlaybackRef, seekBar) => {
     formData.append(
       "jsonData",
       JSON.stringify({
-        apiKeyIndex: localStorage.getItem("senAi-user"),
+        apiKeyIndex: getLS("senAi-user"),
       }),
     );
 

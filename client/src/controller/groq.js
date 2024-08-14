@@ -1,12 +1,12 @@
-import { fetchJson } from "../lib/myUtils";
+import { fetchJson, getLS } from "../lib/myUtils";
 import {
-  groqGetReplyEndPoint,
   groqGetModelsEndPoint,
+  groqGetReplyEndPoint,
   groqGetTranscriptionEndPoint,
 } from "./serverSource";
 
 export const getGroqModels = async () => {
-  const getApiKeyIndex = localStorage.getItem("senAi-user");
+  const getApiKeyIndex = getLS("senAi-user");
   const apiKeyIndex = getApiKeyIndex ? getApiKeyIndex : 0;
 
   const models = await fetchJson(
@@ -24,7 +24,7 @@ export const getGroqReply = async (
   systemInstruction,
   conversation,
 ) => {
-  const getApiKeyIndex = localStorage.getItem("senAi-user");
+  const getApiKeyIndex = getLS("senAi-user");
   const apiKeyIndex = getApiKeyIndex ? getApiKeyIndex : 0;
 
   const replyUserMessage = await fetchJson(groqGetReplyEndPoint, {

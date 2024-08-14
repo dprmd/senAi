@@ -1,4 +1,5 @@
 import { toast } from "@/components/ui/use-toast";
+import { rmLS } from "@/lib/myUtils";
 import { useAppStore } from "@/store/appStore";
 import { useSettingsStore } from "@/store/useSettingsStore";
 import imageCompression from "browser-image-compression";
@@ -90,6 +91,7 @@ export const useUpdateProfilePhoto = () => {
         "oldPPFileName",
         JSON.stringify({ oldPPFileName: customPPFileName }),
       );
+      console.log(formData);
 
       const { updateProfilePhoto, updatePPUrlInFirestore } = await import(
         "@/controller/CRUDFirestore"
@@ -114,6 +116,7 @@ export const useUpdateProfilePhoto = () => {
         setProfilePhotoUrl(newPPUrl);
         setCustomProfilePhotoUrl(true);
         setCustomPPFileName(PPFileName);
+        rmLS("senAi-love");
       } else {
         toast({
           description: t("update_pp_failed"),

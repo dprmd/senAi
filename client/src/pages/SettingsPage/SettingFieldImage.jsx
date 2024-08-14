@@ -10,6 +10,7 @@ import { useShallow } from "zustand/react/shallow";
 // shadcn ui
 import AlertDialogNormal from "@/components/composable/AlertDialogNormal";
 import { Skeleton } from "@/components/ui/skeleton";
+import { checkLS, getLS, setLS } from "@/lib/myUtils";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -51,9 +52,7 @@ const SettingFieldImage = () => {
 
   // state dan ref
   const [openDeletePPDialog, setOpenDeletePPDialog] = useState(false);
-  const getLove = localStorage.getItem("senAi-love")
-    ? localStorage.getItem("senAi-love")
-    : "no";
+  const getLove = checkLS("senAi-love") ? getLS("senAi-love") : "no";
   const [isLove, setIsLove] = useState(getLove === "yes" ? true : false);
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
@@ -97,9 +96,9 @@ const SettingFieldImage = () => {
 
   const handleLoveImage = () => {
     if (isLove) {
-      localStorage.setItem("senAi-love", "no");
+      setLS("senAi-love", "no");
     } else {
-      localStorage.setItem("senAi-love", "yes");
+      setLS("senAi-love", "yes");
     }
     setIsLove((prev) => !prev);
   };
@@ -123,7 +122,7 @@ const SettingFieldImage = () => {
       setCustomPPFileName("");
       setOpenPhotoPreviewSmall(false);
       setProfilePhotoUrl("img/haku.jpeg");
-      localStorage.setItem("senAi-love", "no");
+      setLS("senAi-love", "no");
       setIsLove(false);
       toast({
         description: t("deleted_pp"),
@@ -252,7 +251,7 @@ const SettingFieldImage = () => {
       {/* Profile Photo Preview Small */}
       <AlertDialog open={openPhotoPreviewSmall}>
         <AlertDialogContent
-          className="h-[300px] w-[300px] rounded-none p-0"
+          className="debug h-[300px] w-[300px] rounded-none p-0"
           onClickOverlay={() => {
             setOpenPhotoPreviewSmall(false);
           }}

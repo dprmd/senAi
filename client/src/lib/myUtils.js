@@ -117,15 +117,21 @@ export const fetchJson = async (endPoint, options) => {
 };
 
 export const resetLocalStorage = () => {
-  localStorage.removeItem("senAi-theme");
-  localStorage.removeItem("senAi-userId");
-  localStorage.removeItem("senAi-user");
-  localStorage.removeItem("senAi-model");
-  localStorage.removeItem("senAi-language");
-  localStorage.removeItem("senAi-languageLabel");
-  localStorage.removeItem("senAi-botLanguage");
-  localStorage.removeItem("senAi-enterIsSend");
-  localStorage.removeItem("senAi-love");
+  const toReset = [
+    "senAi-theme",
+    "senAi-userId",
+    "senAi-user",
+    "senAi-model",
+    "senAi-language",
+    "senAi-languageLabel",
+    "senAi-botLanguage",
+    "senAi-enterIsSend",
+    "senAi-love",
+  ];
+
+  toReset.forEach((item) => {
+    rmLS(item);
+  });
 };
 
 export const getDeviceType = () => {
@@ -145,6 +151,23 @@ export const getDeviceType = () => {
   return "Desktop";
 };
 
-// export const checkLS = (value) => {
+export const checkLS = (key) => {
+  const data = localStorage.getItem(key);
+  if (data) {
+    return true;
+  } else {
+    return false;
+  }
+};
 
-// }
+export const getLS = (key) => {
+  return localStorage.getItem(key);
+};
+
+export const setLS = (key, newValue) => {
+  localStorage.setItem(key, newValue);
+};
+
+export const rmLS = (key) => {
+  localStorage.removeItem(key);
+};

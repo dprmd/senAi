@@ -1,4 +1,4 @@
-import { getDeviceType } from "@/lib/myUtils";
+import { getDeviceType, setLS } from "@/lib/myUtils";
 import { useSettingsStore } from "@/store/useSettingsStore";
 import { useState } from "react";
 import { useShallow } from "zustand/react/shallow";
@@ -22,10 +22,10 @@ export const useSwitchTheme = () => {
 
   const switchTheme = () => {
     if (darkMode) {
-      localStorage.setItem("senAi-theme", "light");
+      setLS("senAi-theme", "light");
       setDarkMode(false);
     } else {
-      localStorage.setItem("senAi-theme", "dark");
+      setLS("senAi-theme", "dark");
       setDarkMode(true);
     }
   };

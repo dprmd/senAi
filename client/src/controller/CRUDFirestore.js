@@ -1,6 +1,12 @@
 import { toast } from "@/components/ui/use-toast";
 import { t } from "i18next";
-import { fetchJson, resetLocalStorage } from "../lib/myUtils";
+import {
+  checkLS,
+  fetchJson,
+  getLS,
+  resetLocalStorage,
+  rmLS,
+} from "../lib/myUtils";
 import {
   firestorageAddNewVoiceChatEndPoint,
   firestorageDeletePPEndPoint,
@@ -107,13 +113,13 @@ export const getPermissionToDeleteAllData = async (securityCode) => {
 // POST
 
 export const addNewUserToFirestoreIfNotExists = async () => {
-  if (localStorage.getItem("senAi-userId")) {
-    const userIdFromLocalStorage = localStorage.getItem("senAi-userId");
+  if (checkLS("senAi-userId")) {
+    const userIdFromLocalStorage = getLS("senAi-userId");
     const letsCheckTheUserId = await checkAUser(userIdFromLocalStorage);
     if (letsCheckTheUserId) {
       return userIdFromLocalStorage;
     } else {
-      localStorage.removeItem("senAi-userId");
+      rmLS("senAi-userId");
       return addNewUserToFirestoreIfNotExists();
     }
   } else {

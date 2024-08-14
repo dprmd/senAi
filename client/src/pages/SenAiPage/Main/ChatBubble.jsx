@@ -58,8 +58,8 @@ const ChatBubble = ({ chat, isPreviousRight, isPreviousLeft, chatIndex }) => {
       <div
         className={`${chatBubbleStyle} ${
           chat.position === "left"
-            ? `message-left ${isPreviousLeft ? "rounded-tl-xl" : "message"} ${chatIndex === 0 ? "message rounded-tl-none" : ""} ${chat.type === "audio" ? "flex min-w-[300px] max-w-[300px] flex-col" : ""}`
-            : `message-right ${isPreviousRight ? "rounded-tr-xl" : "message"} ${chatIndex === 0 ? "message rounded-tr-none" : ""} ${chat.type === "audio" ? "flex min-w-[300px] max-w-[300px] flex-col" : ""}`
+            ? `message-left ${isPreviousLeft && chatIndex !== 0 ? "rounded-tl-xl" : "message"} ${chat.type === "audio" ? "flex min-w-[300px] max-w-[300px] flex-col" : ""}`
+            : `message-right ${isPreviousRight && chatIndex !== 0 ? "rounded-tr-xl" : "message"} ${chat.type === "audio" ? "flex min-w-[300px] max-w-[300px] flex-col" : ""}`
         }`}
       >
         <Suspense

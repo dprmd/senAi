@@ -14,6 +14,8 @@ export const getGroqReply = async (req, res) => {
   const conversationMemory = conversation.map(({ time, ...rest }) => rest);
 
   const groq = new Groq({ apiKey });
+  const customInstruction =
+    "if you are asked your name or called sen, remember your name is sen, if asked who your maker is then answer my maker is adi permadi";
 
   try {
     const requestToGroq = async (message, model) => {
@@ -22,7 +24,7 @@ export const getGroqReply = async (req, res) => {
           ...conversationMemory,
           {
             role: "system",
-            content: systemInstruction,
+            content: `${customInstruction} ${systemInstruction}`,
           },
           {
             role: "user",

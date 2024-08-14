@@ -3,7 +3,7 @@ import { toast } from "@/components/ui/use-toast";
 import { useMobileDeviceType } from "@/hooks/useUtils";
 import { useAppStore } from "@/store/appStore";
 import { useSettingsStore } from "@/store/useSettingsStore";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useShallow } from "zustand/react/shallow";
@@ -59,7 +59,6 @@ const SettingFieldImage = () => {
   const cameraInputRef = useRef(null);
   const [openFilePicker, setOpenFilePicker] = useState(false);
   const [openPhotoPreviewSmall, setOpenPhotoPreviewSmall] = useState(false);
-  const [isLoadPP, setIsLoadPP] = useState(false);
 
   // callback
   const handleCameraClick = async () => {
@@ -133,24 +132,11 @@ const SettingFieldImage = () => {
     }
   };
 
-  useEffect(() => {
-    const imageElement = new Image();
-    imageElement.src = profilePhotoUrl;
-
-    imageElement.addEventListener("load", () => {
-      setIsLoadPP(true);
-    });
-
-    return () => {
-      imageElement.removeEventListener("load", () => {});
-    };
-  }, []);
-
   return (
     <>
       <div className="flex items-center justify-center py-5">
         <div className="relative rounded-full">
-          {isLoadPP ? (
+          {profilePhotoUrl.length > 0 ? (
             <img
               src={profilePhotoUrl}
               className="h-full max-h-[150px] min-h-[150px] min-w-[150px] max-w-[150px] rounded-full"

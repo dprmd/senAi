@@ -16,9 +16,11 @@ export const useLongPressChat = ({ chat, holding, setHolding }) => {
     ]),
   );
 
+  const HOLD_DURATION_IN_MS = 800;
   let isHolding;
+  let isHoldingMove;
   const handleLongPressChat = () => {
-    if (isHolding && !stillHold) {
+    if (isHolding && !stillHold && !isHoldingMove) {
       setStillHold(true);
       setFirstTimeHold(true);
       setHoldChats([...holdChats, chat]);
@@ -26,16 +28,20 @@ export const useLongPressChat = ({ chat, holding, setHolding }) => {
     }
     isHolding = false;
   };
+  const handleHoldMove = () => {
+    isHoldingMove = true;
+  };
   const handleHoldChatStart = () => {
     if (!stillHold) {
       isHolding = true;
       setTimeout(() => {
         handleLongPressChat();
-      }, 1000);
+      }, HOLD_DURATION_IN_MS);
     }
   };
   const handleHoldChatEnd = () => {
     isHolding = false;
+    isHoldingMove = false;
   };
 
   const handleClickHoldChat = () => {
@@ -58,5 +64,10 @@ export const useLongPressChat = ({ chat, holding, setHolding }) => {
     }
   };
 
-  return { handleHoldChatStart, handleHoldChatEnd, handleClickHoldChat };
+  return {
+    handleHoldChatStart,
+    handleHoldChatEnd,
+    handleClickHoldChat,
+    handleHoldMove,
+  };
 };

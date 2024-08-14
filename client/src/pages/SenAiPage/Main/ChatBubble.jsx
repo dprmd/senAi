@@ -28,12 +28,16 @@ const ChatBubble = ({ chat }) => {
 
   // Holding Operation
   const [holding, setHolding] = useState(false);
-  const { handleHoldChatStart, handleHoldChatEnd, handleClickHoldChat } =
-    useLongPressChat({
-      chat,
-      holding,
-      setHolding,
-    });
+  const {
+    handleHoldChatStart,
+    handleHoldChatEnd,
+    handleClickHoldChat,
+    handleHoldMove,
+  } = useLongPressChat({
+    chat,
+    holding,
+    setHolding,
+  });
 
   useEffect(() => {
     setHolding(false);
@@ -43,12 +47,9 @@ const ChatBubble = ({ chat }) => {
     <li
       aria-hidden={true}
       className={`simetris flex w-screen flex-col py-0 ${stillHold && holding ? "bg-green-800 bg-opacity-50" : ""}`}
-      onTouchStart={() => {
-        handleHoldChatStart();
-      }}
-      onTouchEnd={() => {
-        handleHoldChatEnd();
-      }}
+      onTouchMove={handleHoldMove}
+      onTouchStart={handleHoldChatStart}
+      onTouchEnd={handleHoldChatEnd}
       onMouseDown={handleHoldChatStart}
       onMouseUp={handleHoldChatEnd}
       onClick={handleClickHoldChat}

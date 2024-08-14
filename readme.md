@@ -1,6 +1,7 @@
 ## Sen Ai
 
 ### Dev Chance
+
 - clean code : 1%
 - maintainability : 0.1%
 - security : 0.06%
@@ -50,9 +51,3 @@ to run local
 cd server
 pnpm run dev
 ```
-
-### bugs to be fixed later 🗿🗿🗿
-
-#### bugs
-
-- bug when holding chat and scrolling at the same time on the mobile platform

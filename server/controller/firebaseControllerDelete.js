@@ -31,7 +31,7 @@ export const deleteFolderInFirebaseStorage = (folderName) => {
     .catch((error) => {
       console.error(
         `Failed to get list all files in folder ${folderName} :`,
-        error,
+        error
       );
     });
 };
@@ -154,85 +154,64 @@ export const deleteAllDataInFirestore = async (req, res) => {
 
   try {
     const passwordSnap = await getDoc(passwordRef);
-    const userSnap = await getDoc(userRef);
-    const chatsSnap = await getDoc(chatsRef);
-    const backupChatsSnap = await getDoc(backupChatsRef);
-    const chatsMemorySnap = await getDoc(chatsMemoryRef);
 
     if (passwordSnap.exists()) {
       const encryptedPassword = passwordSnap.data().passwordDeleteAllData;
       const compareResult = comparePassword(securityCode, encryptedPassword);
 
       if (compareResult) {
-        if (
-          userSnap.exists() &&
-          chatsSnap.exists() &&
-          backupChatsSnap.exists() &&
-          chatsMemorySnap.exists()
-        ) {
-          if (option.withChats || option.withBackupChats) {
-            await updateDoc(chatsMemoryRef, { chatsMemory: [] });
-          }
-
-          if (option.withLastSeenHistory) {
-            await updateDoc(userRef, { lastSeen: "", seenHistory: [] });
-          }
-
-          if (option.withChats) {
-            await updateDoc(chatsRef, { chats: [] });
-          }
-
-          if (option.withBackupChats) {
-            await updateDoc(backupChatsRef, { backupChats: [] });
-          }
-
-          if (option.withDestroyAllCollections) {
-            MY_COLLECTION.forEach(async (collectionName) => {
-              const batchSize = 100;
-              await deleteCollection(collectionName, batchSize)
-                .then(() => {
-                  console.log(`Collection ${collectionName} Has Deleted`);
-                })
-                .catch((error) => {
-                  console.error(
-                    `Fail to delete ${collectionName} Collection`,
-                    error,
-                  );
-                });
-            });
-            deleteFolderInFirebaseStorage("images");
-            deleteFolderInFirebaseStorage("voices");
-          }
-
-          printOutput(deleteAllDataInFirestore.name, req.body, {
-            status: 202,
-            whichDelete: {
-              chats: option.withChats,
-              backupChats: option.withBackupChats,
-              lastSeenHistory: option.withLastSeenHistory,
-              allCollections: option.withDestroyAllCollections,
-            },
-          });
-          res.status(202).json({
-            status: 202,
-            whichDelete: {
-              chats: option.withChats,
-              backupChats: option.withBackupChats,
-              lastSeenHistory: option.withLastSeenHistory,
-              allCollections: option.withDestroyAllCollections,
-            },
-          });
-        } else {
-          // if chats, backupChats, and memoryChats document not exist
-          printOutput(deleteAllDataInFirestore.name, req.body, {
-            status: 404,
-            message: `No Such Document Match With ${userId}`,
-          });
-          res.status(404).json({
-            status: 404,
-            message: `No Such Document Match With ${userId}`,
-          });
+        if (option.withChats || option.withBackupChats) {
+          await updateDoc(chatsMemoryRef, { chatsMemory: [] });
         }
+
+        if (option.withLastSeenHistory) {
+          await updateDoc(userRef, { lastSeen: "", seenHistory: [] });
+        }
+
+        if (option.withChats) {
+          await updateDoc(chatsRef, { chats: [] });
+        }
+
+        if (option.withBackupChats) {
+          await updateDoc(backupChatsRef, { backupChats: [] });
+        }
+
+        if (option.withDestroyAllCollections) {
+          MY_COLLECTION.forEach(async (collectionName) => {
+            const batchSize = 100;
+            await deleteCollection(collectionName, batchSize)
+              .then(() => {
+                console.log(`Collection ${collectionName} Has Deleted`);
+              })
+              .catch((error) => {
+                console.error(
+                  `Fail to delete ${collectionName} Collection`,
+                  error
+                );
+              });
+          });
+          deleteFolderInFirebaseStorage("images");
+          deleteFolderInFirebaseStorage("voices");
+        }
+
+        printOutput(deleteAllDataInFirestore.name, req.body, {
+          status: 202,
+          whichDelete: {
+            chats: option.withChats,
+            backupChats: option.withBackupChats,
+            lastSeenHistory: option.withLastSeenHistory,
+            allCollections: option.withDestroyAllCollections,
+          },
+        });
+        res.status(202).json({
+          status: 202,
+          whichDelete: {
+            chats: option.withChats,
+            backupChats: option.withBackupChats,
+            lastSeenHistory: option.withLastSeenHistory,
+            allCollections: option.withDestroyAllCollections,
+          },
+        });
       } else {
         // if security code not match
         printOutput(deleteAllDataInFirestore, req.body, {

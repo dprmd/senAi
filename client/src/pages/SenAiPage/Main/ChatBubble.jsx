@@ -15,7 +15,7 @@ import { generateTimeNow } from "../../../lib/generateTime";
 const Markdown = lazy(() => import("react-markdown"));
 const CodeBlock = lazy(() => import("./CodeBlock"));
 
-const ChatBubble = ({ chat }) => {
+const ChatBubble = ({ chat, isPreviousRight, isPreviousLeft, chatIndex }) => {
   // hooks
   const [stillHold, triggerClearHolding] = useChatsStore(
     useShallow((state) => [state.stillHold, state.triggerClearHolding]),
@@ -58,8 +58,8 @@ const ChatBubble = ({ chat }) => {
       <div
         className={`${chatBubbleStyle} ${
           chat.position === "left"
-            ? `message message-left ${chat.type === "audio" ? "flex min-w-[300px] max-w-[300px] flex-col" : ""}`
-            : `message message-right ${chat.type === "audio" ? "flex min-w-[300px] max-w-[300px] flex-col" : ""}`
+            ? `message-left ${isPreviousLeft ? "rounded-tl-xl" : "message"} ${chatIndex === 0 ? "message rounded-tl-none" : ""} ${chat.type === "audio" ? "flex min-w-[300px] max-w-[300px] flex-col" : ""}`
+            : `message-right ${isPreviousRight ? "rounded-tr-xl" : "message"} ${chatIndex === 0 ? "message rounded-tr-none" : ""} ${chat.type === "audio" ? "flex min-w-[300px] max-w-[300px] flex-col" : ""}`
         }`}
       >
         <Suspense

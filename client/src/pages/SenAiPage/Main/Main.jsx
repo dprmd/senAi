@@ -66,8 +66,8 @@ const Main = () => {
         </div>
       ) : (
         <>
-          <ul className="mb-[58px] flex flex-col gap-y-1">
-            {chats.map((chat) => (
+          <ul className="mb-[58px] flex flex-col gap-y-[3px]">
+            {chats.map((chat, i) => (
               <Suspense
                 fallback={
                   <ChatBubbleSkeleton
@@ -76,7 +76,16 @@ const Main = () => {
                 }
                 key={chat.time}
               >
-                <ChatBubble chat={chat} />
+                <ChatBubble
+                  chat={chat}
+                  chatIndex={i}
+                  isPreviousRight={
+                    chats[i === 0 ? 0 : i - 1].position === "right"
+                  }
+                  isPreviousLeft={
+                    chats[i === 0 ? 0 : i - 1].position === "left"
+                  }
+                />
               </Suspense>
             ))}
           </ul>

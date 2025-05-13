@@ -56,10 +56,11 @@ const ChatBubble = ({ chat, isPreviousRight, isPreviousLeft, chatIndex }) => {
       ref={ref}
     >
       <div
-        className={`${chatBubbleStyle} ${chat.position === "left"
-            ? `select-none message-left ${isPreviousLeft && chatIndex !== 0 ? "rounded-tl-xl" : "message"} ${chat.type === "audio" ? "flex min-w-[300px] max-w-[300px] flex-col" : ""}`
-            : `select-none message-right ${isPreviousRight && chatIndex !== 0 ? "rounded-tr-xl" : "message"} ${chat.type === "audio" ? "flex min-w-[300px] max-w-[300px] flex-col" : ""}`
-          }`}
+        className={`${chatBubbleStyle} ${
+          chat.position === "left"
+            ? `message-left select-none ${isPreviousLeft && chatIndex !== 0 ? "rounded-tl-xl" : "message"} ${chat.type === "audio" ? "flex min-w-[300px] max-w-[300px] flex-col" : ""}`
+            : `message-right select-none ${isPreviousRight && chatIndex !== 0 ? "rounded-tr-xl" : "message"} ${chat.type === "audio" ? "flex min-w-[300px] max-w-[300px] flex-col" : ""}`
+        }`}
       >
         <Suspense
           fallback={
